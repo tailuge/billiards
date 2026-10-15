@@ -397,4 +397,37 @@ This project is open source and licensed under the GNU General Public License - 
 練球、調整物理參數的圖表工具與 Web Worker 批次模擬，2018 年起在 GitHub
 上公開發展的開源撞球專案。
 
+### Keywords
+
+billiards, billiards simulator, online billiards, free billiards game,
+pool game, snooker game, 8-ball, 9-ball, three-cushion billiards,
+three cushion carom, carom billiards, 4-ball billiards, open source billiards,
+ビリヤード, ビリヤードゲーム, 無料ビリヤード, 3クッション, スリークッション, 9ボール, 당구, 무료 당구, 온라인 당구, 당구 게임, 3쿠션,
+사구, 스누커, Bida 3 băng, bi-a 3 băng, Biliar 3 bandas, billar a tres bandas,
+billar de carambolas, jugar billar carambolas, billar online gratis,
+Üç bant bilardo, üç bant, driebanden, biljart, gratis biljart, biljart spel,
+Carom3D, ShootersPool
+
+### Mentions
+
+[Molbergen](https://pbc-molbergen.de/Simulator.html),
+[Bored](https://www.bored.com/link/tailuge-github-io-billiards/),
+[AZBilliards](https://forums.azbilliards.com/threads/open-source-three-cushion-simulator.587516/),
+[itch.io](https://tailuge.itch.io/),
+[SnookerForum](https://www.thesnookerforum.co.uk/board/forum/other-cuesports/billiards/1045334-3-cushion-billiards),
+[GameJolt](https://gamejolt.com/games/billiards/1083832),
+[Billard-aktuell](https://billard-aktuell.de/forum/viewtopic.php?t=59609),
+[Naver](https://blog.naver.com/jasuil/224416229214),
+[Tistory](https://news11213.tistory.com/1),
+[Ameblo](https://ameblo.jp/tailuge/entry-12981511558.html),
+[r/billiards](https://www.reddit.com/r/billiards/comments/1upm8vu/speedrun/),
+[FMHY](https://github.com/fmhy/FMHY/wiki/Gaming),
+[AppImageHub](https://www.appimagehub.com/p/2365428/),
+[WebGames](https://webgames.me/play/billards-by-tailuge),
+[IOGame](https://iogame.io/games/billards-by-tailuge),
+[RepoRank](https://reporank.net/en/repo/tailuge-billiards.html#repo-feedback),
+[IndexPage](https://indexpage.org/search?q=billiards),
+[Slowden](https://slowden.com/games/tailuge-billiards/),
+[Foundplay](https://foundplay.io/games/billiards)
+
 </details>
