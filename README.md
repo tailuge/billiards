@@ -32,8 +32,8 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * Generate SVG and PNG [diagrams](https://billiards.tailuge.workers.dev/diagrams/export?ruletype=threecushion&init=%5B0.12664656341075897%2C-0.566656768321991%2C-0.8321752548217773%2C0.6028573513031006%2C0.2764659821987152%2C0.1675983965396881%5D&initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.2879289388656616%2C%22power%22%3A2.619999885559082%2C%22offset%22%3A%7B%22x%22%3A-0.28158292174339294%2C%22y%22%3A0.35101431608200073%7D%2C%22elevation%22%3A0%7D) of shots for blog posts.
 * Race again the clock to clear the table in a [speedrun](https://billiards.tailuge.workers.dev/speedrun/index.html).
 * Customise your [cue](https://billiards.tailuge.workers.dev/cue) and [emblem](https://billiards.tailuge.workers.dev/wall) for other players to see
-* Sit a hand curated [exam](https://billiards.tailuge.workers.dev/exam/index.html) to asses your level of play. 
-* Measure your progress in rated games by tracking your [ELO](https://scoreboard-tailuge.vercel.app/elo) (Glicko2). 
+* Sit a hand curated [exam](https://billiards.tailuge.workers.dev/exam/index.html) to asses your level of play.
+* Measure your progress in rated games by tracking your [ELO](https://scoreboard-tailuge.vercel.app/elo) (Glicko2).
 * Reveal [textures](https://billiards.tailuge.workers.dev/reveal/) on the table cloth by potting balls in straight pool.
 * Invite friends and play to win as many games as you can in 30 mins in [hourly arenas](https://billiards.tailuge.workers.dev/arena.html) ([lichess.org](https://lichess.org/) style)
 
