@@ -20,6 +20,24 @@
   align-items: center;
 }
 
+/* Decorative crossed swords sitting between the incoming challenge pill and the
+   username pill. A real element (see dist/index.html) rather than generated
+   content, so it can be hidden from assistive tech, and it has no background:
+   it reads directly over the table. A hard 2px drop shadow (zero blur) keeps
+   the light glyph legible over bright cloth. The sibling rule keeps it out of
+   the way whenever no challenge is pending. */
+.challenge-vs {
+  margin-right: 3px;
+  font-size: 20px;
+  line-height: 1;
+  color: #e6e6e6;
+  text-shadow: 0 2px 0 rgb(0 0 0 / 60%);
+}
+
+.challenge-pill[hidden] ~ .challenge-vs {
+  display: none;
+}
+
 .lobby-count {
   display: inline-flex;
   align-items: center;
@@ -43,17 +61,26 @@
 }
 
 .challenge-pill {
+  /* Matches the adjacent username pill (a.pill in index.css) on height (30px),
+     radius (8px), fill (rgb(0 0 0 / 40%)) and rim (rgb(255 255 255 / 15%)),
+     so an incoming challenge reads as the same neutral chip rather than a
+     coloured badge. Horizontal padding is intentionally tighter than that
+     pill's 8px, keeping the content 4px from the rim. margin-right lifts the
+     pill 4px clear of its separator and the username pill. */
   display: inline-flex;
   align-items: center;
-  background-color: rgb(145 12 12);
+  gap: 4px;
+  background: rgb(0 0 0 / 40%);
   color: #fff;
   padding: 0 4px;
+  border: 1px solid rgb(255 255 255 / 15%);
   border-radius: 8px;
+  margin-right: 4px;
   font-size: 16px;
+  line-height: 1.25;
   height: 30px;
   box-sizing: border-box;
   white-space: nowrap;
-  box-shadow: 0 0 10px rgb(137 33 33 / 50%);
 }
 
 .challenge-pill[hidden] {
@@ -61,19 +88,35 @@
 }
 
 .challenge-pill button {
-  font-size: 0.65rem;
-  padding: 1px 3px;
-  margin-left: 4px;
-  cursor: pointer;
-  height: 80%;
+  /* Inline-flex centres the ✅/❌ glyphs in their own box, which keeps them
+     aligned with the text despite the uneven metrics of Unicode symbols. Dark
+     green/red fills keep the accept/decline meaning without the old glare. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1;
   color: #fff;
-  border-radius: 4px;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 
 #challengeAccept {
-  background: rgb(129 235 129 / 82.8%);
+  /* Sampled from the installed colour-emoji font (Noto Color Emoji, U+2705):
+     the tick's flat green is #7cb342, so the button disappears into the glyph
+     and only the tick reads. The dark green `color` is the monochrome-fallback
+     ink and keeps text/background contrast (~5.5:1) above AA if a platform
+     draws the tick from the font colour instead of its colour bitmap. */
+  background: #7cb342;
+  color: #15330b;
 }
 
 #challengeDecline {
-  background: rgb(182 71 71 / 49.2%);
+  background: #7f1d1d;
 }
