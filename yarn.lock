@@ -3249,7 +3249,7 @@ __metadata:
     eslint-plugin-html: "npm:8.2.1"
     eslint-plugin-sonarjs: "npm:4.2.2"
     fflate: "npm:^0.8.3"
-    html-validate: "npm:11.16.2"
+    html-validate: "npm:11.16.3"
     http-server: "npm:^14.1.1"
     interactjs: "npm:1.10.28"
     jest: "npm:30.5.2"
@@ -4999,9 +4999,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-validate@npm:11.16.2":
-  version: 11.16.2
-  resolution: "html-validate@npm:11.16.2"
+"html-validate@npm:11.16.3":
+  version: 11.16.3
+  resolution: "html-validate@npm:11.16.3"
   dependencies:
     "@html-validate/stylish": "npm:^6.0.0"
     "@sidvind/better-ajv-errors": "npm:7.0.0"
@@ -5028,7 +5028,7 @@ __metadata:
       optional: true
   bin:
     html-validate: bin/html-validate.mjs
-  checksum: 10c0/f64315aa01a72bcea340f307a3cc7e9aa265986668db714f2b39862d9ba01058d6569809ff3d7b72d17771714350d6990c4048cec050c4543a6989fcfd63b5b9
+  checksum: 10c0/42158dbaff28ddbf2e15eaa40ee342e2e023251f87056c6e7764dfcbe7e73bf596f9f933227613eb7aa292189ace7efb4db785dc7a181fadb51cea25dd53071c
   languageName: node
   linkType: hard
 
