@@ -119,7 +119,7 @@
   mask-composite: exclude;
   opacity: 0;
   pointer-events: none;
-  animation: challenge-glint 2s ease-out 1;
+  animation: challenge-glint 0.5s ease-out 1;
 }
 
 @keyframes challenge-glint {
