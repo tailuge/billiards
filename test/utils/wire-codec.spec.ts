@@ -52,6 +52,20 @@ describe("wire codec", () => {
   it("rejects invalid base64", () => {
     expect(() => decodeCoords("1|!!!!")).to.throw("bad base64 payload")
   })
+
+  it("rejects corrupt deflate data", () => {
+    expect(() => decodeCoords("1|AAAA")).to.throw("bad compressed payload")
+  })
+
+  it("compresses typical float32-rounded ball positions", () => {
+    const coords = Array.from({ length: 32 }, (_, i) =>
+      Math.fround(Math.sin(i) * 0.7)
+    )
+    const encoded = encodeCoords(coords)
+    const uncompressedBase64Length = Math.ceil((coords.length * 8 * 4) / 3)
+    expect(encoded.length).to.be.below(uncompressedBase64Length)
+    expect(decodeCoords(encoded)).to.deep.equal(coords)
+  })
 })
 
 describe("WATCHAIM packed event", () => {

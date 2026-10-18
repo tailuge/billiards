@@ -1,3 +1,5 @@
+import { deflateSync, inflateSync } from "fflate"
+
 /**
  * Compact wire encoding for WATCHAIM ball positions.
  *
@@ -41,14 +43,23 @@ export function encodeCoords(coords: number[]): string {
   const bytes = new Uint8Array(coords.length * BYTES_PER_DOUBLE)
   const view = new DataView(bytes.buffer)
   coords.forEach((val, i) => view.setFloat64(i * BYTES_PER_DOUBLE, val, true))
-  return PREFIX + toBase64url(bytes)
+  return PREFIX + toBase64url(deflateSync(bytes, { level: 9 }))
 }
 
 export function decodeCoords(s: string): number[] {
   if (!s.startsWith(PREFIX)) {
     throw new Error("unsupported wire version")
   }
-  const bytes = fromBase64url(s.slice(PREFIX.length))
+  const compressed = fromBase64url(s.slice(PREFIX.length))
+  if (compressed.length === 0) {
+    throw new Error("bad coordinate blob length")
+  }
+  let bytes: Uint8Array
+  try {
+    bytes = inflateSync(compressed)
+  } catch {
+    throw new Error("bad compressed payload")
+  }
   if (bytes.length === 0 || bytes.length % BYTES_PER_BALL !== 0) {
     throw new Error("bad coordinate blob length")
   }
