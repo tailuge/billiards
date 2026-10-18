@@ -174,7 +174,10 @@ export class Ball {
   }
 
   static updateFromSerialised(b, data) {
-    b.pos.copy(data.pos)
+    // Packed WATCHAIM frames carry x, y only. A potted ball keeps the z from
+    // its own simulation; anything else rests on the surface at z = 0.
+    const z = data.pos.z ?? (b.onTable() ? 0 : b.pos.z)
+    b.pos.set(data.pos.x, data.pos.y, z)
     b.vel.copy(data?.vel ?? zero)
     b.rvel.copy(data?.rvel ?? zero)
     return b

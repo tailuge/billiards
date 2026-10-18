@@ -15,10 +15,36 @@ import { NotificationEvent } from "./notificationevent"
 import { ScoreEvent } from "./scoreevent"
 import { StationaryEvent } from "./stationaryevent"
 import { ConcedeEvent } from "./concedeevent"
+import { decodeCoords, encodeCoords, wireConfig } from "../utils/wire-codec"
 
 export class EventUtil {
   static serialise(event: GameEvent) {
+    if (
+      wireConfig.compactWatchBalls &&
+      event.type === EventType.WATCHAIM &&
+      Array.isArray((event as WatchEvent).json?.balls)
+    ) {
+      const json = (event as WatchEvent).json
+      const coords = json.balls.flatMap((b) => [b.pos.x, b.pos.y])
+      return JSON.stringify({
+        ...event,
+        json: { ...json, balls: encodeCoords(coords) },
+      })
+    }
     return JSON.stringify(event)
+  }
+
+  /** Expands a packed `balls` string back to `Array<{pos: {x, y}, id}>`. */
+  private static unpackWatchBalls(json) {
+    if (typeof json?.balls !== "string") {
+      return json
+    }
+    const coords = decodeCoords(json.balls)
+    const balls: { pos: { x: number; y: number }; id: number }[] = []
+    for (let i = 0; i < coords.length; i += 2) {
+      balls.push({ pos: { x: coords[i], y: coords[i + 1] }, id: i / 2 })
+    }
+    return { ...json, balls }
   }
 
   private static fromJson(parsed) {
@@ -32,7 +58,7 @@ export class EventUtil {
       case EventType.BREAK:
         return BreakEvent.fromJson(parsed)
       case EventType.WATCHAIM:
-        return WatchEvent.fromJson(parsed.json)
+        return WatchEvent.fromJson(EventUtil.unpackWatchBalls(parsed.json))
       case EventType.HIT:
         return HitEvent.fromJson(parsed)
       case EventType.CHAT:
