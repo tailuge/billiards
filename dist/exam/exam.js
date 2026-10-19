@@ -68,7 +68,11 @@ function qIdForBlock(block) {
 }
 
 const STORAGE_KEY_PREFIX = "exam_results_"
-const storageKey = STORAGE_KEY_PREFIX + window.location.pathname
+// A page can pin its own key with <meta name="exam-storage-key">, so a copy of
+// an exam page stores its results separately from the original.
+const storageKey =
+  document.querySelector('meta[name="exam-storage-key"]')?.content ||
+  STORAGE_KEY_PREFIX + window.location.pathname
 
 function getResults() {
   const data = localStorage.getItem(storageKey)
