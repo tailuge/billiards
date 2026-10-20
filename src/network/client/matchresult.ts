@@ -172,7 +172,8 @@ export class MatchResultHelper {
     container.sendEvent(
       new NotificationEvent({
         type: "GameOver",
-        title: t("YOU LOST"),
+        // Source strings: the opponent renders this in their own language.
+        title: "YOU LOST",
         icon: "🥈",
         extraClass: "is-loser",
         extra: this.getRemoteGameOverButtons(rulename),
@@ -190,7 +191,7 @@ export class MatchResultHelper {
     container.sendEvent(
       new NotificationEvent({
         type: "GameOver",
-        title: t("YOU WON"),
+        title: "YOU WON",
         icon: "🏆",
         extraClass: "is-winner",
         extra: this.getRemoteGameOverButtons(rulename),

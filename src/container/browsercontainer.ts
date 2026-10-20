@@ -226,7 +226,7 @@ export class BrowserContainer {
       type: "Info",
       title: this.ruletype,
       subtext: `Playing vs 🦞 ${this.botName}`,
-      extra: t("You first"),
+      extra: "You first",
     } as const)
   }
 

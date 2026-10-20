@@ -22,7 +22,6 @@ import { SnookerScoring } from "./snookerscoring"
 import { StartAimEvent } from "../../events/startaimevent"
 import { RerackEvent } from "../../events/rerackevent"
 import { scaleTableModel } from "../../utils/table-scaler"
-import { t } from "../../utils/i18n"
 
 const tableModelStretchBySize: Record<number, { x: number; y: number }> = {
   // 6ft values copied from the 12ft table for manual tuning.
@@ -173,13 +172,13 @@ export class Snooker implements Rules {
     const notification = info.whitePotted
       ? ({
           type: "Foul",
-          title: t("FOUL"),
+          title: "FOUL",
           subtext: foulResult.reason || `Foul (${this.foulPoints} points)`,
-          extra: t("Ball in hand"),
+          extra: "Ball in hand",
         } as const)
       : ({
           type: "Foul",
-          title: t("FOUL"),
+          title: "FOUL",
           subtext: foulResult.reason || `Foul (${this.foulPoints} points)`,
         } as const)
     this.container.notify(notification)

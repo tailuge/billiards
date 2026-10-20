@@ -23,6 +23,29 @@ export interface NotificationData {
 
 export type NotificationActionHandlers = Record<string, () => void>
 
+/**
+ * Banner content travels as English source strings: it is recorded and
+ * broadcast to the opponent, so it must stay independent of whoever built it.
+ * Translation therefore happens here, at the single point where a banner is
+ * rendered for a viewer. `t` falls back to its input, which makes it safe for
+ * dynamic text (scores, names) and idempotent for anything a local caller
+ * already translated.
+ */
+function localizeText(text: string): string {
+  return t(text)
+}
+
+/** Badges are plain text; action buttons carry their label as the only text
+ * inside the tag, with locale-independent markup around it. */
+function localizeExtra(extra: string): string {
+  if (!extra.includes("<")) return localizeText(extra)
+  return extra.replace(
+    /(<button\b[^>]*>)([^<]*)(<\/button>)/g,
+    (_match, open: string, label: string, close: string) =>
+      open + localizeText(label) + close
+  )
+}
+
 export class Notification {
   element: HTMLDivElement
   overlay: HTMLDivElement | null
@@ -98,7 +121,7 @@ export class Notification {
           <div class="notification-main">
             <div class="notification-icon">${icon}</div>
             <div class="notification-text-group">
-              <div class="notification-title">${data.title}</div>
+              <div class="notification-title">${localizeText(data.title)}</div>
               ${(() => {
                 if (!data.subtext) return ""
                 const subtextClass =
@@ -163,9 +186,9 @@ export class Notification {
   private renderExtra(extra?: string): string {
     if (!extra) return ""
     if (extra.includes("<")) {
-      return `<div class="notification-actions">${extra}</div>`
+      return `<div class="notification-actions">${localizeExtra(extra)}</div>`
     }
-    return `<div class="notification-badge">${extra}</div>`
+    return `<div class="notification-badge">${localizeExtra(extra)}</div>`
   }
 
   private renderHighBreaks(highBreaks?: NotificationHighBreak[]): string {

@@ -15,21 +15,15 @@ describe("gameOverButtons", () => {
   })
 
   describe("translations", () => {
-    it("translates a notification button when Korean is selected", () => {
-      try {
-        globalThis.history.replaceState({}, "", "?locale=ko")
-        let buttons: typeof import("../../src/utils/gameover").gameOverButtons
-        jest.isolateModules(() => {
-          buttons = require("../../src/utils/gameover").gameOverButtons
-        })
-
-        // One phrase is enough to prove the labels are routed through t().
-        expect(buttons!.lobby).toContain("로비로 돌아가기")
-        // Actions stay English so the handlers keep matching.
-        expect(buttons!.lobby).toContain('data-notification-action="lobby"')
-      } finally {
-        globalThis.history.replaceState({}, "", originalSearch || "?")
-      }
+    it("keeps labels as English source strings for the viewer to translate", () => {
+      // The same markup is shown locally and sent to the opponent, so it must
+      // not be pinned to the language of whoever built it; Notification
+      // translates the label when it renders.
+      expect(gameOverButtons.lobby).toContain(">Back to Lobby<")
+      // Actions stay English so the handlers keep matching.
+      expect(gameOverButtons.lobby).toContain(
+        'data-notification-action="lobby"'
+      )
     })
   })
 
@@ -166,6 +160,22 @@ describe("gameOverButtons", () => {
       expect(html).not.toContain("userName=Me")
       expect(html).not.toContain("tableId=t123")
       expect(html).not.toContain("first=true")
+    })
+
+    it("does not carry the sender's locale onto the opponent's page", () => {
+      if (globalThis.history) {
+        globalThis.history.replaceState({}, "", "?locale=zh&raceTo=5")
+      }
+
+      const html = gameOverButtons.rematch(
+        "opponent-123",
+        "Alice",
+        "sagu",
+        "turn-123"
+      )
+      expect(html).not.toContain("locale=zh")
+      // Other play settings still travel with the rematch link.
+      expect(html).toContain("raceTo=5")
     })
   })
 })

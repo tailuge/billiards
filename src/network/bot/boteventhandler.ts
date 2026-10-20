@@ -18,7 +18,6 @@ import { TableGeometry } from "../../view/tablegeometry"
 import { Snooker } from "../../controller/rules/snooker"
 import { SnookerUtils } from "../../controller/rules/snookerutils"
 import { isFirstShot } from "../../utils/utils"
-import { t } from "../../utils/i18n"
 import { BotShotContext, BotStrategy } from "./botstrategy"
 import { ClawBreak } from "./strategies/clawbreak"
 import { TheFarJaw } from "./strategies/thefarjaw"
@@ -357,9 +356,9 @@ export class BotEventHandler {
 
     this.container.notify({
       type: "Foul",
-      title: t("FOUL"),
+      title: "FOUL",
       subtext: foulReason,
-      ...(ballInHand ? { extra: t("Ball in hand") } : {}),
+      ...(ballInHand ? { extra: "Ball in hand" } : {}),
     })
     if (!ballInHand) {
       ;(respottedOverride ?? this.container.rules.respot(outcome)).forEach(

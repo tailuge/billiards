@@ -36,6 +36,39 @@ describe("Notification", () => {
     expect(element?.innerHTML).toContain("Ball in hand")
   })
 
+  it("translates banner text for the viewer, not the sender", () => {
+    // Banners are recorded and sent to the opponent as English source
+    // strings. Rendering in the local locale is what keeps a Chinese
+    // opponent's foul from appearing in Chinese on an English screen.
+    const originalSearch = globalThis.location.search
+    try {
+      globalThis.history.replaceState({}, "", "?locale=zh")
+      let NotificationInChinese: typeof Notification
+      jest.isolateModules(() => {
+        NotificationInChinese =
+          require("../../src/view/notification").Notification
+      })
+
+      const localised = new NotificationInChinese!()
+      localised.show({
+        type: "GameOver",
+        title: "YOU WON",
+        extra:
+          '<button type="button" class="notification-btn" data-notification-action="lobby">Back to Lobby</button>',
+        duration: 0,
+      })
+
+      const element = document.getElementById("notification")
+      expect(element?.innerHTML).toContain("勝利")
+      expect(element?.innerHTML).toContain("返回大廳")
+      expect(element?.innerHTML).not.toContain("Back to Lobby")
+      // The action stays English so the click handler still matches.
+      expect(element?.innerHTML).toContain('data-notification-action="lobby"')
+    } finally {
+      globalThis.history.replaceState({}, "", originalSearch || "?")
+    }
+  })
+
   it("should render high breaks and actions inside the notification footer", () => {
     notification.show({
       type: "GameOver",

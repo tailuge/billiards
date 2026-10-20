@@ -1,13 +1,13 @@
 import { getLobbyUrl } from "../network/client/constants"
-import { t } from "./i18n"
 
 /**
- * Builds a notification footer button. The label is passed as the English
- * source string and translated, while the action and any extra attributes stay
- * locale-independent.
+ * Builds a notification footer button. The label stays an English source
+ * string: the same markup is shown locally and sent to the opponent, so the
+ * Notification view translates it for whoever is looking at it, while the
+ * action and any extra attributes stay locale-independent.
  */
 function button(action: string, label: string, attributes = ""): string {
-  return `<button type="button" class="notification-btn" data-notification-action="${action}"${attributes}>${t(label)}</button>`
+  return `<button type="button" class="notification-btn" data-notification-action="${action}"${attributes}>${label}</button>`
 }
 
 /**
@@ -55,6 +55,9 @@ export const gameOverButtons = {
         "opponent.userName",
         "ruletype",
         "nextTurnId",
+        // The locale is the reader's own: forwarding the sender's would make
+        // the opponent's rematch page open in the sender's language.
+        "locale",
       ])
       const currentParams = new URLSearchParams(globalThis.location.search)
       for (const [key, val] of currentParams.entries()) {

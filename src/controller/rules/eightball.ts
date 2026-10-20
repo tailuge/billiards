@@ -23,7 +23,6 @@ import { roundVec } from "../../utils/three-utils"
 import { Respot } from "../../utils/respot"
 import { RerackEvent } from "../../events/rerackevent"
 import { scaleTableModel } from "../../utils/table-scaler"
-import { t } from "../../utils/i18n"
 
 const flipType = (t: number) => {
   if (t === 1) return 2
@@ -225,9 +224,10 @@ export class EightBall implements Rules {
   private handleFoul(outcome: Outcome[], reason: string): Controller {
     this.container.notify({
       type: "Foul",
-      title: t("FOUL"),
+      // Source strings: this banner is broadcast to the opponent too.
+      title: "FOUL",
       subtext: reason,
-      extra: t("Ball in hand"),
+      extra: "Ball in hand",
     })
     this.startTurn()
     const pots = Outcome.pots(outcome)
