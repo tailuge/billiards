@@ -369,6 +369,64 @@ describe("MatchResult Construction", () => {
     }
   })
 
+  it("MatchResult should carry the decoded card name for reveal games", () => {
+    if (globalThis.history) {
+      globalThis.history.replaceState(
+        {},
+        "",
+        "?ruletype=reveal&card=" + encodeURIComponent("BoA")
+      )
+    }
+    try {
+      const result = (MatchResultHelper as any).createMatchResult(
+        "reveal",
+        Session.getInstance(),
+        true
+      )
+      expect(result.card).to.equal("BoA")
+    } finally {
+      if (globalThis.history) {
+        globalThis.history.replaceState({}, "", "?")
+      }
+    }
+  })
+
+  it("MatchResult should omit card when the URL has no card param", () => {
+    if (globalThis.history) {
+      globalThis.history.replaceState({}, "", "?ruletype=reveal")
+    }
+    try {
+      const result = (MatchResultHelper as any).createMatchResult(
+        "reveal",
+        Session.getInstance(),
+        true
+      )
+      expect(result).not.to.have.property("card")
+    } finally {
+      if (globalThis.history) {
+        globalThis.history.replaceState({}, "", "?")
+      }
+    }
+  })
+
+  it("MatchResult should ignore card param outside reveal games", () => {
+    if (globalThis.history) {
+      globalThis.history.replaceState({}, "", "?card=BoA")
+    }
+    try {
+      const result = (MatchResultHelper as any).createMatchResult(
+        "nineball",
+        Session.getInstance(),
+        true
+      )
+      expect(result).not.to.have.property("card")
+    } finally {
+      if (globalThis.history) {
+        globalThis.history.replaceState({}, "", "?")
+      }
+    }
+  })
+
   it("MatchResult should include bot flag when playing against bot", () => {
     Session.init("test-client", "TestPlayer", "test-table", false, true) // botMode: true
     container = createNineBallContainer()

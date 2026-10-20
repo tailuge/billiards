@@ -25,6 +25,7 @@ export interface MatchResult {
   arenaId?: string
   berserk?: boolean
   club?: string
+  card?: string
 }
 
 export class MatchResultHelper {
@@ -381,6 +382,12 @@ export class MatchResultHelper {
     const clubName = params.get("clubName")
     if (clubName) {
       result.club = clubName
+    }
+    // Reveal games are launched with the display name of the card being
+    // played (?card=BoA); keep the decoded name so the scoreboard can show it.
+    const card = params.get("card")
+    if (card && result.ruleType === "reveal") {
+      result.card = card
     }
   }
 }
