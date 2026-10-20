@@ -471,4 +471,45 @@ describe("LobbyIndicator", () => {
 
     await indicator.stop()
   })
+
+  it("announces opponent disconnect and reconnect in chat", async () => {
+    Session.init("p1", "Player 1", "table-1", false)
+    Session.getInstance().setOpponentClientId("p2")
+
+    const mockRules = { rulename: "nineball" } as any
+    const mockOnChatMessage = jest.fn()
+    const indicator = new LobbyIndicator(
+      false,
+      false,
+      mockRules,
+      mockOnChatMessage
+    )
+    await indicator.init()
+
+    const mockLobby = (indicator as any).lobby
+    const onUsersChangeCallback = mockLobby.onUsersChange.mock.calls[0][0]
+
+    // Waiting for the opponent to join is not a disconnect.
+    onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
+    expect(mockOnChatMessage).not.toHaveBeenCalled()
+
+    onUsersChangeCallback([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "table-1" },
+    ])
+    expect(mockOnChatMessage).not.toHaveBeenCalled()
+
+    // The opponent leaving the table is the same transition the dot reports.
+    onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
+    expect(mockOnChatMessage).toHaveBeenCalledWith("Opponent has disconnected")
+
+    mockOnChatMessage.mockClear()
+    onUsersChangeCallback([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "table-1" },
+    ])
+    expect(mockOnChatMessage).toHaveBeenCalledWith("Opponent has reconnected")
+
+    await indicator.stop()
+  })
 })

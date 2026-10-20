@@ -45,6 +45,9 @@ export class LobbyIndicator {
    */
   private readonly userName: string
   private opponentOnline: boolean | null = null
+  /** Set once the opponent has been seen at our table, so their first
+   * appearance reads as "joined", not "reconnected". */
+  private opponentSeen = false
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
   private readonly onShowOverlay: ((url: string) => void) | undefined
@@ -458,8 +461,23 @@ export class LobbyIndicator {
     wasOnline: boolean | null,
     opponentId: string
   ): void {
+    const isOnline = this.opponentOnline === true
+    const hadBeenSeen = this.opponentSeen
+    if (isOnline) {
+      this.opponentSeen = true
+    }
     if (wasOnline !== false && this.opponentOnline === false) {
       NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
+    }
+    // Only announce real transitions: an initial offline read (no opponent in
+    // the lobby yet) must not look like a disconnect, and the opponent's first
+    // appearance must not look like a reconnect. Chat is informational —
+    // sending is deliberately left enabled.
+    if (!this.isTwoPlayerGame()) return
+    if (wasOnline === true && !isOnline) {
+      this.onChatMessage?.("Opponent has disconnected")
+    } else if (wasOnline === false && isOnline && hadBeenSeen) {
+      this.onChatMessage?.("Opponent has reconnected")
     }
   }
 

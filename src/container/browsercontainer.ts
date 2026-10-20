@@ -286,16 +286,11 @@ export class BrowserContainer {
     await li.init()
     const mc = li.getMessagingClient()
     if (!mc) return
-    await relay.connect(
-      mc,
-      this.tableId,
-      () => {
-        this.container.chat.showMessage("🔌")
-      },
-      () => {
-        this.container.chat.showMessage("⚡")
-      }
-    )
+    // Opponent left/rejoined is announced from the presence transition in
+    // LobbyIndicator: that is the signal behind the status dot, and unlike the
+    // table's onOpponentLeft it also fires when the opponent navigates away
+    // (their teardown skips publishing table:leave).
+    await relay.connect(mc, this.tableId)
   }
 
   private connectRelayIfNeeded(): void {

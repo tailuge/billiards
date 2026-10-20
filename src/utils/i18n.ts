@@ -10,9 +10,16 @@
  * link in a given language), then the browser's preferred languages, then
  * English. Set `document.documentElement.lang` on load so assistive technology
  * announces the strings with the correct voice.
+ *
+ * Chinese ships as a single `zh` dictionary in Traditional characters: every
+ * `zh-*` tag (zh-CN, zh-TW, zh-HK, zh-Hans, zh-Hant) matches on the language
+ * subtag alone, so Simplified-browser visitors read Traditional too rather than
+ * falling back to English. `zh-Hant` is advertised to the document so the
+ * browser resolves Han-unified glyphs to Traditional forms instead of guessing
+ * from the region.
  */
 
-export const LOCALES = ["ko"] as const
+export const LOCALES = ["ko", "zh"] as const
 
 export type Locale = (typeof LOCALES)[number]
 
@@ -66,7 +73,50 @@ const translations: Record<Locale, Record<string, string>> = {
     "Break : {score}": "브레이크: {score}",
     "Open high break {score}": "하이브레이크 {score} 보기",
   },
+  // Traditional Chinese, in the vocabulary Taiwanese billiards players use:
+  // 母球 (cue ball), 自由球 (ball in hand), 出桿 (stroke), 單桿 (a break/run).
+  zh: {
+    Hit: "擊球",
+    "Place\nBall": "放置\n母球",
+    "Back to Lobby": "返回大廳",
+    "Back to Arena": "返回球場",
+    "Uploading result…": "正在上傳結果…",
+    "New Game": "新對局",
+    Replay: "重播",
+    // 再戰 is the idiomatic challenge wording, and shorter than 再次對戰.
+    Rematch: "再戰",
+    "Ball in hand": "自由球",
+    // Bot-mode info badge: the player breaks first.
+    "You first": "你先攻",
+    // Points-race length, in the "搶 N 分" (race to N) style.
+    "Race to: {score}": "搶 {score} 分",
+    FOUL: "犯規",
+    "YOU WON": "勝利",
+    "YOU LOST": "落敗",
+    "GAME OVER": "比賽結束",
+    // Conceding is 認輸 (admitting defeat); the confirmation button reuses it.
+    "Concede Game": "認輸",
+    "Replay Complete": "重播結束",
+    "Waiting for opponent to join": "等待對手加入",
+    Concede: "認輸",
+    "Play on": "繼續比賽",
+    // Three-cushion break prompt: stop and take the win, or carry the run on.
+    "Declare win": "宣告勝利",
+    "Continue break": "繼續出桿",
+    // Reveal (card game) game over.
+    "Update Deck": "更換牌組",
+    "Share replay link": "分享重播連結",
+    share: "分享",
+    upload: "上傳",
+    // High-break banner: 單桿 is the carom/snooker term for a single run.
+    "Break : {score}": "單桿：{score}",
+    "Open high break {score}": "查看最高單桿 {score}",
+  },
 }
+
+// Document language, when the locale code alone is too coarse for the browser
+// to pick the right script: `zh` is Traditional here, so advertise `zh-Hant`.
+const HTML_LANG: Partial<Record<Locale, string>> = { zh: "zh-Hant" }
 
 function fromTag(tag: string | undefined | null): Locale | undefined {
   if (!tag) return undefined
@@ -116,5 +166,6 @@ export function t(
 }
 
 if (typeof document !== "undefined") {
-  document.documentElement.lang = currentLocale() ?? "en"
+  const locale = currentLocale()
+  document.documentElement.lang = locale ? (HTML_LANG[locale] ?? locale) : "en"
 }
