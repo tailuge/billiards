@@ -52,6 +52,7 @@ export class LobbyIndicator {
   private readonly onChatMessage: ((msg: string) => void) | undefined
   private readonly onShowOverlay: ((url: string) => void) | undefined
   private readonly offlineHandler: () => void
+  private heartbeatStopTimer: ReturnType<typeof setTimeout> | null = null
 
   constructor(
     botMode: boolean,
@@ -273,6 +274,28 @@ export class LobbyIndicator {
     return this.messagingClient
   }
 
+  /** Stop the periodic presence heartbeat once the game has been idle in End. */
+  scheduleHeartbeatStop(delayMs: number): void {
+    this.cancelHeartbeatStop()
+    this.heartbeatStopTimer = setTimeout(() => {
+      this.heartbeatStopTimer = null
+      this.lobby?.pauseHeartbeat()
+    }, delayMs)
+  }
+
+  /** Resume the heartbeat when the page returns to active play. */
+  resumeHeartbeat(): void {
+    this.cancelHeartbeatStop()
+    this.lobby?.resumeHeartbeat()
+  }
+
+  private cancelHeartbeatStop(): void {
+    if (this.heartbeatStopTimer !== null) {
+      clearTimeout(this.heartbeatStopTimer)
+      this.heartbeatStopTimer = null
+    }
+  }
+
   setTableId(tableId: string | null | undefined): void {
     this.currentTableId = tableId ?? null
     if (this.lobby) {
@@ -482,6 +505,7 @@ export class LobbyIndicator {
   }
 
   async stop(): Promise<void> {
+    this.cancelHeartbeatStop()
     try {
       globalThis.removeEventListener?.("offline", this.offlineHandler)
       if (this.lobby) {
