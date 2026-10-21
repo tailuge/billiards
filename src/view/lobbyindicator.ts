@@ -26,6 +26,10 @@ export class LobbyIndicator {
     ruleType: string
     options?: Record<string, string>
     tournamentId?: string
+    // Carried so the Accept redirect can name the table the player accepted;
+    // without it the lobby has to invent a new one (see getLobbyUrl).
+    tableId?: string
+    nextTurnId?: string
   } | null = null
   private readonly rules: Rules
   private readonly ruleType: string
@@ -165,7 +169,7 @@ export class LobbyIndicator {
 
     id("challengeAccept")?.addEventListener("click", () => {
       if (typeof globalThis.open === "function") {
-        globalThis.open(this.getLobbyUrl(), "_self")
+        globalThis.open(this.getLobbyUrl(true), "_self")
       }
     })
   }
@@ -259,6 +263,8 @@ export class LobbyIndicator {
           ruleType: challenge.ruleType,
           options: challenge.options,
           tournamentId: challenge.options?.tournamentId,
+          tableId: challenge.tableId,
+          nextTurnId: challenge.nextTurnId,
         }
       } else if (challenge.type === "decline" || challenge.type === "cancel") {
         this.challenger = null
@@ -385,7 +391,12 @@ export class LobbyIndicator {
     }
   }
 
-  private getLobbyUrl(): string {
+  /**
+   * @param accept true only for the challenge pill's Accept button, which hands
+   *   the accepted tableId to the lobby. The plain lobby link stays a
+   *   re-challenge so returning to the lobby never joins an unaccepted game.
+   */
+  private getLobbyUrl(accept = false): string {
     const url = new URL(LOBBY_URL)
     const session = Session.getInstance()
 
@@ -413,6 +424,13 @@ export class LobbyIndicator {
     url.searchParams.set("ruletype", this.challenger.ruleType)
     url.searchParams.set("opponent.userId", this.challenger.userId)
     url.searchParams.set("opponent.userName", this.challenger.userName)
+
+    if (accept && this.challenger.tableId) {
+      url.searchParams.set("acceptTableId", this.challenger.tableId)
+      if (this.challenger.nextTurnId) {
+        url.searchParams.set("nextTurnId", this.challenger.nextTurnId)
+      }
+    }
 
     // Forward the rule options (tableSize, reds, raceTo, shotClock, freeaim,
     // collaboration, practice, ...) so the lobby can re-issue the challenge with
