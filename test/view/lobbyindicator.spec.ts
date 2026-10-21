@@ -501,15 +501,52 @@ describe("LobbyIndicator", () => {
 
     // The opponent leaving the table is the same transition the dot reports.
     onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
-    expect(mockOnChatMessage).toHaveBeenCalledWith("Opponent has disconnected")
+    expect(mockOnChatMessage).toHaveBeenCalledWith("🔌")
 
     mockOnChatMessage.mockClear()
     onUsersChangeCallback([
       { userId: "p1", tableId: "table-1" },
       { userId: "p2", tableId: "table-1" },
     ])
-    expect(mockOnChatMessage).toHaveBeenCalledWith("Opponent has reconnected")
+    expect(mockOnChatMessage).toHaveBeenCalledWith("⚡")
 
     await indicator.stop()
+  })
+
+  it("leaves the lobby after the scheduled delay", async () => {
+    jest.useFakeTimers()
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    await indicator.init()
+
+    const mockLobby = (indicator as any).lobby
+
+    indicator.scheduleLeave(60 * 1000)
+    jest.advanceTimersByTime(59 * 1000)
+    expect(mockLobby.leave).not.toHaveBeenCalled()
+
+    jest.advanceTimersByTime(1000)
+    expect(mockLobby.leave).toHaveBeenCalledTimes(1)
+
+    jest.useRealTimers()
+    await indicator.stop()
+  })
+
+  it("cancels the scheduled leave on stop", async () => {
+    jest.useFakeTimers()
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    await indicator.init()
+
+    const mockLobby = (indicator as any).lobby
+
+    indicator.scheduleLeave(60 * 1000)
+    await indicator.stop()
+    jest.advanceTimersByTime(60 * 1000)
+
+    // stop() already leaves once; the cancelled timer must not leave again.
+    expect(mockLobby.leave).toHaveBeenCalledTimes(1)
+
+    jest.useRealTimers()
   })
 })

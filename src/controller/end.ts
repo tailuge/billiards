@@ -55,7 +55,7 @@ async function submitResults(
   }
 }
 
-const HEARTBEAT_STOP_DELAY_MS = 5 * 60 * 1000
+const LOBBY_LEAVE_DELAY_MS = 60 * 1000
 
 export class End extends Controller {
   override get name(): string {
@@ -101,7 +101,7 @@ export class End extends Controller {
       void submitResults(this.container, this.result)
     }
     this.container.lobbyIndicator.setTableId(undefined)
-    this.container.lobbyIndicator.scheduleHeartbeatStop(HEARTBEAT_STOP_DELAY_MS)
+    this.container.lobbyIndicator.scheduleLeave(LOBBY_LEAVE_DELAY_MS)
 
     const wasBotWin = !this.result && Session.isBotMode()
     if (wasBotWin) {
@@ -135,14 +135,12 @@ export class End extends Controller {
   }
 
   override handleBegin(_: BeginEvent): Controller {
-    this.container.lobbyIndicator.resumeHeartbeat()
     this.container.particles.dispose()
     return new Init(this.container)
   }
 
   override handleBreak(event: BreakEvent): Controller {
     if (event.init) {
-      this.container.lobbyIndicator.resumeHeartbeat()
       this.container.table.updateFromShortSerialised(event.init)
       return new Replay(
         this.container,

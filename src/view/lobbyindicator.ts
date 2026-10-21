@@ -52,7 +52,7 @@ export class LobbyIndicator {
   private readonly onChatMessage: ((msg: string) => void) | undefined
   private readonly onShowOverlay: ((url: string) => void) | undefined
   private readonly offlineHandler: () => void
-  private heartbeatStopTimer: ReturnType<typeof setTimeout> | null = null
+  private lobbyLeaveTimer: ReturnType<typeof setTimeout> | null = null
 
   constructor(
     botMode: boolean,
@@ -274,25 +274,19 @@ export class LobbyIndicator {
     return this.messagingClient
   }
 
-  /** Stop the periodic presence heartbeat once the game has been idle in End. */
-  scheduleHeartbeatStop(delayMs: number): void {
-    this.cancelHeartbeatStop()
-    this.heartbeatStopTimer = setTimeout(() => {
-      this.heartbeatStopTimer = null
-      this.lobby?.pauseHeartbeat()
+  /** Leave the lobby once the game has been idle in End, so no ghost presence lingers. */
+  scheduleLeave(delayMs: number): void {
+    this.cancelScheduledLeave()
+    this.lobbyLeaveTimer = setTimeout(() => {
+      this.lobbyLeaveTimer = null
+      void this.lobby?.leave()
     }, delayMs)
   }
 
-  /** Resume the heartbeat when the page returns to active play. */
-  resumeHeartbeat(): void {
-    this.cancelHeartbeatStop()
-    this.lobby?.resumeHeartbeat()
-  }
-
-  private cancelHeartbeatStop(): void {
-    if (this.heartbeatStopTimer !== null) {
-      clearTimeout(this.heartbeatStopTimer)
-      this.heartbeatStopTimer = null
+  private cancelScheduledLeave(): void {
+    if (this.lobbyLeaveTimer !== null) {
+      clearTimeout(this.lobbyLeaveTimer)
+      this.lobbyLeaveTimer = null
     }
   }
 
@@ -498,14 +492,14 @@ export class LobbyIndicator {
     // sending is deliberately left enabled.
     if (!this.isTwoPlayerGame()) return
     if (wasOnline === true && !isOnline) {
-      this.onChatMessage?.("Opponent has disconnected")
+      this.onChatMessage?.("🔌")
     } else if (wasOnline === false && isOnline && hadBeenSeen) {
-      this.onChatMessage?.("Opponent has reconnected")
+      this.onChatMessage?.("⚡")
     }
   }
 
   async stop(): Promise<void> {
-    this.cancelHeartbeatStop()
+    this.cancelScheduledLeave()
     try {
       globalThis.removeEventListener?.("offline", this.offlineHandler)
       if (this.lobby) {
