@@ -47,7 +47,7 @@ describe("i18n", () => {
       // picks Traditional glyphs instead of guessing from the region.
       globalThis.history.replaceState({}, "", "?locale=zh")
       expect(loadI18n().t("Hit")).toBe("擊球")
-      expect(loadI18n().t("Place\nBall")).toBe("放置\n母球")
+      expect(loadI18n().t("Place\nBall")).toBe("擺母球")
       expect(loadI18n().t("FOUL")).toBe("犯規")
       expect(loadI18n().t("YOU WON")).toBe("勝利")
       expect(loadI18n().t("Race to: {score}", { score: 20 })).toBe("搶 20 分")

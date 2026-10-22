@@ -77,7 +77,10 @@ const translations: Record<Locale, Record<string, string>> = {
   // 母球 (cue ball), 自由球 (ball in hand), 出桿 (stroke), 單桿 (a break/run).
   zh: {
     Hit: "擊球",
-    "Place\nBall": "放置\n母球",
+    // 擺球 is how Taiwanese players say "place a ball", so the label reads as
+    // one phrase and keeps no line break: split 放置 / 母球 reads like a caption
+    // and 放置 alone is stiffer than the billiards-native verb.
+    "Place\nBall": "擺母球",
     "Back to Lobby": "返回大廳",
     "Back to Arena": "返回球場",
     "Uploading result…": "正在上傳結果…",
