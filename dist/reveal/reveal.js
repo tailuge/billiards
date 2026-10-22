@@ -1466,10 +1466,7 @@
           <div class="intro-head">
             <h2>${this._deck().title}</h2>
           </div>
-          <p>
-            Play billiards to uncover hidden pictures. Each successful pot
-            reveals another part of the mystery image.
-          </p>
+          <p>Play pool to reveal cards. Collect the deck.</p>
         </section>
 
         <section class="panel" aria-labelledby="collection-heading">
