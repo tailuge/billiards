@@ -176,8 +176,7 @@ export class Container {
       this.replayMode,
       this.rules,
       (msg) => this.chat.showMessage(msg),
-      config.messagingUrl,
-      (url) => this.menu.showOverlay(url)
+      config.messagingUrl
     )
     if (this.freeAim) {
       // "freeaim=true": hide the aim helper (no shot preview line) and apply

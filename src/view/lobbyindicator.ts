@@ -54,7 +54,6 @@ export class LobbyIndicator {
   private opponentSeen = false
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
-  private readonly onShowOverlay: ((url: string) => void) | undefined
   private readonly offlineHandler: () => void
   private lobbyLeaveTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -63,8 +62,7 @@ export class LobbyIndicator {
     replayMode: boolean,
     rules: Rules,
     onChatMessage?: (msg: string) => void,
-    messagingUrl?: string,
-    onShowOverlay?: (url: string) => void
+    messagingUrl?: string
   ) {
     this.offlineHandler = () => {
       this.onChatMessage?.("🚫")
@@ -72,7 +70,6 @@ export class LobbyIndicator {
     this.rules = rules
     this.replayMode = replayMode
     this.onChatMessage = onChatMessage
-    this.onShowOverlay = onShowOverlay
     const isInsecure =
       messagingUrl?.startsWith("ws://") || messagingUrl?.startsWith("http://")
     const httpProtocol = isInsecure ? "http" : "https"
@@ -126,24 +123,6 @@ export class LobbyIndicator {
     }
 
     this.element.addEventListener("click", (e) => {
-      if ((e.target as HTMLElement).closest(".status-emoji")) {
-        e.preventDefault()
-        e.stopPropagation()
-        const game = encodeURIComponent(
-          JSON.stringify(NetworkLogger.getGameLogs())
-        )
-        const lobby = encodeURIComponent(
-          JSON.stringify(NetworkLogger.getLobbyLogs())
-        )
-        const url = `net.html?game=${game}&lobby=${lobby}`
-        if (this.onShowOverlay) {
-          this.onShowOverlay(url)
-        } else {
-          globalThis.open(url, "_blank")
-        }
-        return
-      }
-
       // Two-player games stay put; only the status emoji (above) is clickable.
       if (this.isTwoPlayerGame()) {
         e.preventDefault()
@@ -344,11 +323,9 @@ export class LobbyIndicator {
         status = "🔴"
       }
     }
-    const statusEmoji = ` <span class='status-emoji' title='Network Logs'>${status}</span>`
+    const statusEmoji = ` <span class='status-emoji'>${status}</span>`
     // Own element so .lobby-count (a flex row) centers it separately from the
     // name; bare text would be glued to the name in one anonymous flex item.
-    // Deliberately not .status-emoji: that class is the click target opening
-    // the network log overlay.
     const lobbyIcon = `<span class="lobby-icon">${this.isSpectator ? "👀" : "👥"}</span>`
 
     // Not session.playername: in replay that has already been overwritten with

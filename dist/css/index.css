@@ -287,49 +287,7 @@ label {
   top: -2px;
 }
 
-#helpOverlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(90%, 380px);
-  height: min(90%, 620px);
-  background: rgb(0 0 0 / 100%);
-  border: 1px solid rgb(255 255 255 / 25%);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  z-index: 3000;
-  box-shadow: 0 8px 16px rgb(0 0 0 / 75%);
-}
-
-#helpOverlay[hidden] {
-  display: none !important;
-}
-
-#helpOverlay iframe {
-  width: 100%;
-  flex: 1;
-  border: none;
-  border-radius: 8px;
-}
-
-.help-footer {
-  display: flex;
-  gap: 4px;
-  padding: 8px 16px;
-  border-top: 1px solid rgb(255 255 255 / 10%);
-  justify-content: center;
-  align-items: center;
-}
-
-.help-text {
-  color: #ccc;
-  font-size: 0.75rem;
-}
-
-.lobby-btn,
-#helpClose {
+.lobby-btn {
   padding: 6px;
   background: rgb(255 255 255 / 10%);
   color: white;
@@ -340,8 +298,7 @@ label {
   transition: all 0.2s ease;
 }
 
-.lobby-btn:hover,
-#helpClose:hover {
+.lobby-btn:hover {
   background: rgb(255 255 255 / 20%);
   border-color: rgb(255 255 255 / 40%);
 }

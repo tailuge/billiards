@@ -25,13 +25,13 @@ describe("Menu", () => {
     const dropdown = document.getElementById(
       "menuDropdown"
     ) as HTMLDetailsElement
-    const helpOverlay = document.getElementById("helpOverlay")
+    const aboutPanel = document.getElementById("about-more")
 
     expect(dropdown.open).to.be.false
     fireEvent.click(menu)
 
     expect(dropdown.open).to.be.true
-    expect(helpOverlay?.hasAttribute("hidden")).to.be.true
+    expect(aboutPanel?.hasAttribute("hidden")).to.be.true
     done()
   })
 

@@ -37,6 +37,13 @@ export class Menu {
       "menuDropdown"
     ) as HTMLDetailsElement | null
 
+    this.setModeNavVisible(
+      this.container.isSinglePlayer ||
+        this.container.replayMode ||
+        Session.isBotMode() ||
+        Session.isSpectator()
+    )
+
     if (this.analysis) {
       this.analysis.onclick = () => this.handleExport(true)
     }
@@ -106,11 +113,10 @@ export class Menu {
       // toggle out of it.
       document.body.classList.add("chromeless")
     }
-    const closeBtn = document.getElementById("helpClose")
+    const closeBtn = document.getElementById("aboutClose")
     if (closeBtn) {
       closeBtn.onclick = () => {
-        const overlay = document.getElementById("helpOverlay")
-        overlay?.setAttribute("hidden", "true")
+        document.getElementById("about-more")?.setAttribute("hidden", "true")
       }
     }
     if (this.concede) {
@@ -219,6 +225,13 @@ export class Menu {
     }
   }
 
+  /** Game-mode links only make sense away from live two-player games. */
+  setModeNavVisible(visible: boolean) {
+    document
+      .querySelectorAll<HTMLElement>("#playNav .game-mode")
+      .forEach((link) => (link.hidden = !visible))
+  }
+
   setFfwdVisible(visible: boolean) {
     if (this.ffwd) {
       this.ffwd.hidden = !visible
@@ -239,25 +252,13 @@ export class Menu {
   }
 
   toggleHelpOverlay() {
-    const overlay = document.getElementById("helpOverlay")
-    if (overlay) {
-      const isHidden = overlay.hasAttribute("hidden")
-      if (isHidden) {
-        this.showOverlay("help.html")
+    const panel = document.getElementById("about-more")
+    if (panel) {
+      if (panel.hasAttribute("hidden")) {
+        panel.removeAttribute("hidden")
       } else {
-        overlay.setAttribute("hidden", "true")
+        panel.setAttribute("hidden", "true")
       }
-    }
-  }
-
-  showOverlay(url: string) {
-    const overlay = document.getElementById("helpOverlay")
-    if (overlay) {
-      const iframe = overlay.querySelector("iframe")
-      if (iframe) {
-        iframe.setAttribute("src", url)
-      }
-      overlay.removeAttribute("hidden")
     }
   }
 }
