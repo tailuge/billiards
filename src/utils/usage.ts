@@ -1,4 +1,4 @@
-export function logusage() {
+export function logusage(key: string = "game") {
   if (
     globalThis.location.hostname === "localhost" ||
     globalThis.location.hostname === "127.0.0.1"
@@ -7,7 +7,7 @@ export function logusage() {
     return
   }
 
-  const url = `https://billiards-network.onrender.com/api/usage/game`
+  const url = `https://billiards-network.onrender.com/api/usage/${key}`
 
   fetch(url, {
     method: "PUT",

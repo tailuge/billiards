@@ -2,6 +2,7 @@
 import { MatchResult } from "./matchresult"
 import { ARENA_BASE_URL } from "./constants"
 import { t } from "../../utils/i18n"
+import { logusage } from "../../utils/usage"
 
 export class ScoreReporter {
   private readonly baseURL: string
@@ -17,6 +18,7 @@ export class ScoreReporter {
       console.log("Skipping match result upload for Alice/Bob")
       return
     }
+    logusage("complete")
     const url = `https://${this.baseURL}/api/match-results`
     const maxRetries = 3
 
