@@ -227,9 +227,10 @@ export class Menu {
 
   /** Game-mode links only make sense away from live two-player games. */
   setModeNavVisible(visible: boolean) {
-    document
-      .querySelectorAll<HTMLElement>("#playNav .game-mode")
-      .forEach((link) => (link.hidden = !visible))
+    const playSection = document.querySelector<HTMLElement>(".play-section")
+    if (playSection) {
+      playSection.hidden = !visible
+    }
   }
 
   setFfwdVisible(visible: boolean) {

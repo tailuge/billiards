@@ -35,6 +35,39 @@ describe("Menu", () => {
     done()
   })
 
+  it("help opens the panel while chromeless", (done) => {
+    document.body.classList.add("chromeless")
+    const help = document.getElementById("help") as HTMLButtonElement
+    const aboutPanel = document.getElementById("about-more")!
+
+    expect(aboutPanel.hasAttribute("hidden")).to.be.true
+    fireEvent.click(help)
+    expect(aboutPanel.hasAttribute("hidden")).to.be.false
+    expect(getComputedStyle(aboutPanel).display).to.not.equal("none")
+
+    document.body.classList.remove("chromeless")
+    done()
+  })
+
+  it("hides the play section in two-player games", (done) => {
+    container.isSinglePlayer = false
+    new Menu(container)
+
+    const playSection = document.querySelector(".play-section") as HTMLElement
+    expect(playSection.hidden).to.be.true
+    done()
+  })
+
+  it("shows the play section while spectating", (done) => {
+    Session.init("test-client", "TestPlayer", "test-table", true)
+    container.isSinglePlayer = false
+    new Menu(container)
+
+    const playSection = document.querySelector(".play-section") as HTMLElement
+    expect(playSection.hidden).to.be.false
+    done()
+  })
+
   it("visibility controls are independent", (done) => {
     const menu = new Menu(container)
     const share = document.getElementById("share") as HTMLButtonElement
