@@ -67,6 +67,10 @@ export class Comment {
       )
       if (emojiMode) {
         this.populateEmojiList(emojiList)
+      } else {
+        // The input is display:none in emoji mode, so focus it only now that
+        // it is visible again, letting the player type without another click.
+        inputText.focus()
       }
     })
 
