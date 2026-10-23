@@ -104,5 +104,11 @@ https://playpixelsprout.com/games/billiards.html
 
 https://4388.fun/
 
+https://4388.fun/g/631
+
+https://4388.fun/g/2294
+
+https://4388.fun/g/2295
+
 https://popshof.com/practice
 
