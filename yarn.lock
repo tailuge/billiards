@@ -3256,7 +3256,7 @@ __metadata:
     ts-jest: "npm:29.4.15"
     typescript: "npm:6.0.3"
     typescript-eslint: "npm:8.72.0"
-    webpack: "npm:5.112.1"
+    webpack: "npm:5.112.2"
     webpack-cli: "npm:7.2.3"
     webpack-dev-server: "npm:6.1.0"
   languageName: unknown
@@ -8835,9 +8835,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.112.1":
-  version: 5.112.1
-  resolution: "webpack@npm:5.112.1"
+"webpack@npm:5.112.2":
+  version: 5.112.2
+  resolution: "webpack@npm:5.112.2"
   dependencies:
     "@types/estree": "npm:^1.0.8"
     "@types/json-schema": "npm:^7.0.15"
@@ -8861,7 +8861,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10c0/478fff0dac0128e52b60a1fbfd03a0a915905041e5b6794661c1f783da05211b99182e37ee9b79d9bb49b4b6c234f49796163116c6ad8395d3a2a7579b9be5b9
+  checksum: 10c0/e3b299c0ce691f22d9c9bd75731f6406d9fb5166c20eb0f61f5a4f8f59c55ddddda9b4633a0348c272dfded407735b8d20311bc8a5d6d13d80d0088440e93283
   languageName: node
   linkType: hard
 
