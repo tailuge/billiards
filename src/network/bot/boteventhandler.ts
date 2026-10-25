@@ -70,7 +70,8 @@ export class BotEventHandler {
     )
     if (
       container.rules.rulename === "threecushion" ||
-      container.rules.rulename === "sagu"
+      container.rules.rulename === "sagu" ||
+      container.rules.rulename === "libre"
     ) {
       this.botRules.cueball = this.container.table.balls[1]
     }
@@ -129,7 +130,8 @@ export class BotEventHandler {
     )
     if (
       this.container.rules.rulename !== "threecushion" &&
-      this.container.rules.rulename !== "sagu"
+      this.container.rules.rulename !== "sagu" &&
+      this.container.rules.rulename !== "libre"
     ) {
       this.botRules.advanceState?.(outcome)
     }
@@ -171,6 +173,8 @@ export class BotEventHandler {
         return this.validThreeCushionTargets()
       case "sagu":
         return this.validSaguTargets()
+      case "libre":
+        return this.validLibreTargets()
       default:
         return []
     }
@@ -255,6 +259,17 @@ export class BotEventHandler {
     const opponentCue = this.container.table.balls[0]
     return this.container.table.balls.filter(
       (ball) => ball !== cueball && ball !== opponentCue && ball.onTable()
+    )
+  }
+
+  private validLibreTargets(): Ball[] {
+    if (isFirstShot(this.container.recorder)) {
+      return []
+    }
+
+    const cueball = this.container.table.balls[1]
+    return this.container.table.balls.filter(
+      (ball) => ball !== cueball && ball.onTable()
     )
   }
 
@@ -417,7 +432,10 @@ export class BotEventHandler {
     this.assignEightBallType(session, outcome)
 
     if (
-      this.container.rules.rulename === "snooker" &&
+      (this.container.rules.rulename === "snooker" ||
+        this.container.rules.rulename === "threecushion" ||
+        this.container.rules.rulename === "sagu" ||
+        this.container.rules.rulename === "libre") &&
       this.botRules.isEndOfGame(outcome, this.botType())
     ) {
       this.handleGameEnd()
@@ -503,7 +521,8 @@ export class BotEventHandler {
   private buildShotContext(): BotShotContext {
     const cueBall =
       this.container.rules.rulename === "threecushion" ||
-      this.container.rules.rulename === "sagu"
+      this.container.rules.rulename === "sagu" ||
+      this.container.rules.rulename === "libre"
         ? this.container.table.balls[1]
         : this.container.table.cueball
 
