@@ -112,6 +112,7 @@ export const ruleTypeMap: Record<string, { emoji: string; title: string }> = {
   snooker: { emoji: "🔴", title: "snooker" },
   threecushion: { emoji: "③", title: "threecushion" },
   sagu: { emoji: "④", title: "sagu" },
+  libre: { emoji: "🆓", title: "libre" },
 }
 
 export function getRuleEmoji(ruleType: string): string {

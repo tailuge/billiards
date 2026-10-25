@@ -28,7 +28,11 @@ export class Camera {
   static aimPresetDistancePortrait = R * 22
 
   static configureForRule(ruleType: string) {
-    if (ruleType === "threecushion" || ruleType === "sagu") {
+    if (
+      ruleType === "threecushion" ||
+      ruleType === "sagu" ||
+      ruleType === "libre"
+    ) {
       Camera.defaultHeight = R * 19
       Camera.defaultDistance = R * 24
       Camera.defaultFovOffset = 6

@@ -277,7 +277,11 @@ export class MatchResultHelper {
     container: Container,
     rulename: string
   ): string {
-    if (rulename === "threecushion" || rulename === "sagu") {
+    if (
+      rulename === "threecushion" ||
+      rulename === "sagu" ||
+      rulename === "libre"
+    ) {
       const stats = this.calculateInningsStats(container)
       if (container.isSinglePlayer) {
         const score = Session.getInstance().myScore()

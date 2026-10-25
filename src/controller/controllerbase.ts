@@ -60,7 +60,9 @@ export abstract class ControllerBase extends Controller {
     const rulename = this.container.rules.rulename
     if (!this.container.replayMode && this.name !== "End") {
       if (
-        (rulename === "threecushion" || rulename === "sagu") &&
+        (rulename === "threecushion" ||
+          rulename === "sagu" ||
+          rulename === "libre") &&
         this.container.rules.isEndOfGame([])
       ) {
         const myTarget = session.getRaceTargetForPlayer(session.clientId)

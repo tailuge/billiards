@@ -368,7 +368,7 @@ export class BrowserContainer {
           type: "Info",
           title: `${this.ruletype}, ${names.p1Name} vs ${names.p2Name}`,
           extra:
-            this.ruletype === "threecushion"
+            this.ruletype === "threecushion" || this.ruletype === "libre"
               ? t("Race to: {score}", { score: ThreeCushionConfig.raceTo })
               : undefined,
         })
