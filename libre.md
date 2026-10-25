@@ -1,7 +1,7 @@
-# Free Game (Straight Rail) — Implementation Plan
+# Libre (Straight Rail) — Implementation Plan
 
 Reference: https://en.wikipedia.org/wiki/Straight_rail (also "straight rail", "three-ball
-billiards", "the free game").
+billiards", "libre").
 
 ## Rules to implement
 
@@ -17,12 +17,12 @@ billiards", "the free game").
   ball leaves the corner. The third carom scores nothing and ends the inning; it is not a
   foul. (Phase 2 uses a limit of 3; see the Phases section.)
 
-## Design: standalone `FreeGame`, no inheritance
+## Design: standalone `Libre`, no inheritance
 
-New file `src/controller/rules/freegame.ts`:
+New file `src/controller/rules/libre.ts`:
 
 ```ts
-export class FreeGame implements Rules {
+export class Libre implements Rules {
   ...
 }
 ```
@@ -50,9 +50,9 @@ New logic (see the next sections): `update()`, `getAmountScored()`, `isPartOfBre
 `isEndOfGame()`, `foulReason()`, plus the corner-zone helpers.
 
 Deliberately absent: `initialController`, `hideScoreHud`, `advanceState` (all optional on
-`Rules`) and the `winDeferred` latch — free game ends the moment the target is reached.
+`Rules`) and the `winDeferred` latch — libre ends the moment the target is reached.
 
-`rulename = "freegame"`.
+`rulename = "libre"`.
 
 ## Scoring
 
@@ -100,7 +100,7 @@ that helper is private, so write it again here: map `session.playerIndex` / `cli
 
 ## Phases
 
-**Phase 1: no fouls.** The corner limit is not enforced, so free game has no fouls at all.
+**Phase 1: no fouls.** The corner limit is not enforced, so libre has no fouls at all.
 
 - `foulReason()` is not written, or always returns `null`. There is no `Foul` notification,
   no `cornerRun`, no `CORNER_ZONE` constants and no zone helpers.
@@ -184,14 +184,14 @@ Mirrors `ThreeCushion` minus the deferral:
 
 | File | Change |
 | --- | --- |
-| `src/controller/rules/rulefactory.ts` | `case "freegame": return new FreeGame(container)` |
-| `src/view/tablegeometry.ts` (`configureForRule`) | add `"freegame"` to the carom branch: UMB dimensions, `hasPockets = false` |
-| `src/view/camera.ts` (`configureForRule`) | add `"freegame"` to the carom branch |
-| `src/controller/controllerbase.ts` (`handleScore`) | add `"freegame"` to the `isEndOfGame` rulename list, so the watching client also ends |
-| `src/network/client/matchresult.ts` (`getScoreSubtext`) | add `"freegame"` to the carom branch for the score/average line |
-| `src/container/browsercontainer.ts` (~371) | show the `Race to: {score}` line for `"freegame"` too |
-| `src/utils/utils.ts` (`ruleTypeMap`) | display emoji/title for `"freegame"` (cosmetic; lobby and spectator labels) |
-| `src/container/container.ts` (`applyHandicapTargets`) | optional: include `"freegame"` in `isHandicapRule` so URL handicaps show in the HUD; the rules honour them through `getRaceTargetForPlayer` either way |
+| `src/controller/rules/rulefactory.ts` | `case "libre": return new Libre(container)` |
+| `src/view/tablegeometry.ts` (`configureForRule`) | add `"libre"` to the carom branch: UMB dimensions, `hasPockets = false` |
+| `src/view/camera.ts` (`configureForRule`) | add `"libre"` to the carom branch |
+| `src/controller/controllerbase.ts` (`handleScore`) | add `"libre"` to the `isEndOfGame` rulename list, so the watching client also ends |
+| `src/network/client/matchresult.ts` (`getScoreSubtext`) | add `"libre"` to the carom branch for the score/average line |
+| `src/container/browsercontainer.ts` (~371) | show the `Race to: {score}` line for `"libre"` too |
+| `src/utils/utils.ts` (`ruleTypeMap`) | add `libre: { emoji: "🆓", title: "libre" }` (cosmetic; lobby and spectator labels) |
+| `src/container/container.ts` (`applyHandicapTargets`) | optional: include `"libre"` in `isHandicapRule` so URL handicaps show in the HUD; the rules honour them through `getRaceTargetForPlayer` either way |
 
 No change needed, and why:
 
@@ -204,18 +204,18 @@ No change needed, and why:
   tooling.
 - Lobby tiles and landing pages (`dist/lobby.js` bundle, `dist/arena.html`, the
   per-language pages) are built outside `src`; until a tile exists the mode is reachable
-  at `?ruletype=freegame`.
+  at `?ruletype=libre`.
 
 ## Bot
 
-The shot strategies are three-cushion strategies, so the bot plays free game legally but
+The shot strategies are three-cushion strategies, so the bot plays libre legally but
 not strongly — enough to be playable.
 
-- `boteventhandler.ts` constructor and `buildShotContext()`: add `"freegame"` to the
+- `boteventhandler.ts` constructor and `buildShotContext()`: add `"libre"` to the
   `threecushion`/`sagu` lists that use `table.balls[1]` as the bot's cue ball.
-- `validTargetBalls()`: `case "freegame": return this.validFreeGameTargets()` — the object
+- `validTargetBalls()`: `case "libre": return this.validLibreTargets()` — the object
   balls (on table, minus `balls[1]`), the same shape as `validThreeCushionTargets`.
-- `handleFoul()`: `ballInHand` must be `false` for free game, so the corner foul takes the
+- `handleFoul()`: `ballInHand` must be `false` for libre, so the corner foul takes the
   existing `StartAimEvent` path and ends the bot's inning without offering a place-ball.
 - `foulReason` and `getAmountScored` need no bot special case: both are derived from the
   shared recorder, so the bot's own rule instance returns the same verdict.
@@ -233,7 +233,7 @@ not strongly — enough to be playable.
 - regression guard: `isThreeCushionPoint` still demands 3 cushions before the second
   contact.
 
-`test/rules/freegame.spec.ts` (setup copied from `test/rules/threecushion.spec.ts`:
+`test/rules/libre.spec.ts` (setup copied from `test/rules/threecushion.spec.ts`:
 `Session.init`, `Container` with `Assets.localAssets()`, `PlayShot` + `StationaryEvent`):
 
 - carom with no cushions keeps the break and returns `Aim` (single player) and does not
@@ -252,7 +252,7 @@ not strongly — enough to be playable.
 - Phase 2 only: the count applies only when both object balls are in the same corner; a
   carom with only the cue ball in a corner does not count.
 
-`test/network/bot/...`: `validTargetBalls()` for freegame returns both object balls, and a
+`test/network/bot/...`: `validTargetBalls()` for libre returns both object balls, and a
 corner foul publishes no `PlaceBallEvent`.
 
 Then `yarn lint`, `yarn test` and `yarn prettify`.
@@ -265,13 +265,13 @@ Then `yarn lint`, `yarn test` and `yarn prettify`.
 2. **Zone size.** No published dimension was found for the corner triangle on a UMB
    table, so `CORNER_ZONE` is a game constant (`R * 6` is a starting guess), not a
    rulebook transcription.
-3. **Foul cost: moot.** Free game has no fouls under this reading. The third corner carom
+3. **Foul cost: moot.** Libre has no fouls under this reading. The third corner carom
    is a turn loss with no points, no penalty and no ball-in-hand.
 
 ## Order
 
 1. `Outcome.isCaromPoint` with tests — done.
-2. `FreeGame` (class, corner verdict, target check) and `RuleFactory`.
+2. `Libre` (class, corner verdict, target check) and `RuleFactory`.
 3. Wiring: geometry, camera, HUD/end-of-game, match result, `ruleTypeMap`.
 4. Bot cases.
 5. `yarn lint`, `yarn test`, `yarn prettify`.
