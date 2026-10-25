@@ -11,9 +11,11 @@ billiards", "the free game").
   No cushion requirement, no pockets.
 - A carom keeps the shooter at the table; a shot without a carom ends the inning. First
   to the race target wins.
-- Corner limit (tunable house rule): at most **2** consecutive caroms may be scored with
-  the three balls in a corner zone. The next shot must drive a ball out of the zone; a
-  third corner carom is a foul.
+- Corner limit (Britannica): only **3** consecutive caroms may be scored while **both
+  object balls** are in the same corner triangle. On the third, one or both object balls must
+  be driven out of the corner, or the player loses the turn. The count resets when an object
+  ball leaves the corner. The third carom scores nothing and ends the inning; it is not a
+  foul. (Phase 2 uses a limit of 3; see the Phases section.)
 
 ## Design: standalone `FreeGame`, no inheritance
 
@@ -96,13 +98,32 @@ minus a corner foul (see below). `isEndOfGame()` mirrors `ThreeCushion.isTargetR
 that helper is private, so write it again here: map `session.playerIndex` / `clientId` /
 `opponentClientId` to the p1/p2 targets and compare against `orderedScoresForHud()`.
 
+## Phases
+
+**Phase 1: no fouls.** The corner limit is not enforced, so free game has no fouls at all.
+
+- `foulReason()` is not written, or always returns `null`. There is no `Foul` notification,
+  no `cornerRun`, no `CORNER_ZONE` constants and no zone helpers.
+- `isPartOfBreak(outcome)` = `Outcome.isCaromPoint(cueBall, outcomes)`.
+- `update()`: carom → score 1 and keep the break; no carom → inning ends like a miss.
+- Turn flow and scoring are exactly as below, minus the foul branch.
+- Open items 1 and 2 (corner criterion and zone size) do not block phase 1. Item 3 (foul
+  cost) is moot.
+- Tests: carom keeps the break; miss ends the inning; reaching the target ends the game;
+  the `isCaromPoint` tests already in `outcome.spec.ts`.
+- The wiring and bot sections apply unchanged. The bot's `handleFoul` path simply never fires.
+
+**Phase 2: corner limit (Britannica).** Adds the zone geometry, `cornerRun`, the turn-loss
+check and the corner tests below. There is no foul and no `Foul` notification. It changes
+nothing in phase 1's wiring, so it can be added later with no rework.
+
 ## Corner-zone rule
 
 **Geometry.** Four corner zones, one per corner: a square of side `CORNER_ZONE` measured
-along both cushions from the corner.
+along both cushions from the corner (an approximation of Britannica's corner triangle).
 
 ```ts
-const CORNER_ZONE_LIMIT = 2 // caroms allowed in a corner before the next one is a foul
+const CORNER_ZONE_LIMIT = 3 // caroms allowed while both object balls are in one corner
 const CORNER_ZONE = R * 6 // tunable, see open items
 ```
 
@@ -125,25 +146,27 @@ and any order in which events are dispatched.
 private cornerRun(last: number): number
 ```
 
-Walk `entries` backwards from `last - 1`; an entry counts when `entry.isPartOfBreak` is
-true and its `state` has all three balls in one corner zone; stop at the first entry that
-does not count.
+Walk `entries` backwards from `last - 1`, skipping `SCORE` and `RERACK` entries (the same
+skip list `findLastIndex()` uses; otherwise the `SCORE` entry logged after a corner carom
+would end the walk at zero). An entry counts when it is a `HIT` with `isPartOfBreak` true
+(set by `updateBreak()` on that entry) and its `state` has **both object balls** in one
+corner zone; the cue ball's position is ignored. Stop at the first entry that does not
+count. This also gives the reset: an object ball leaving the corner ends the run.
 
-**Foul test** (`foulReason`): the shot is a corner foul when it is a carom and
-`cornerRun(recorder.last()) >= CORNER_ZONE_LIMIT`; return a message such as
-`"Foul: third carom in the corner"`, else `null`. Pure, so asking twice gives the same
-answer — which matters because `PlayShot` asks `isPartOfBreak` immediately after `update`.
+**Turn-loss test** (`isCornerLoss`, pure): the shot is a turn loss when it is a carom,
+`cornerRun(recorder.last()) >= CORNER_ZONE_LIMIT`, and the shot does not drive an object
+ball out of the corner. Pure, so asking twice gives the same answer, which matters because
+`PlayShot` asks `isPartOfBreak` immediately after `update`.
 
-**`isPartOfBreak`** is the carom test *without* a foul. That marks an offending shot as
-not part of the break, which both ends the break in the ball tray and stops the corner
-run at the foul, so the count cannot leak into the next inning.
+**`isPartOfBreak`** is the carom test *without* the turn-loss check. A turn-loss shot is
+not part of the break, which ends the break in the ball tray. Because `cornerRun` reads the
+`isPartOfBreak` flag, the run stops there and the count cannot leak into the next inning.
 
-**`update()` order** matters: evaluate the foul first, otherwise the third corner carom
-scores before it is judged.
+**`update()` order** matters: check the turn loss before scoring.
 
-1. carom and not a foul → score the point (see Scoring);
-2. carom and a foul → no points, no penalty, `container.notify({ type: "Foul", title:
-   "FOUL", subtext })`, then the inning ends like a miss;
+1. carom and not a turn loss → score the point (see Scoring);
+2. carom and a turn loss → no points, no `Foul` notification, no penalty; the inning ends
+   like a miss;
 3. no carom → inning ends like a miss.
 
 ## Turn flow
@@ -223,6 +246,11 @@ not strongly — enough to be playable.
 - the run restarts when a shot's pre-shot state has a ball outside the zone, and when a
   carom is made with the cue ball outside every zone;
 - reaching the target ends the game immediately (no deferral).
+- Phase 2 only: a `SCORE` entry between two corner caroms does not reset the run; a third
+  corner carom ends the inning with no points and no `Foul` notification; a run resets when
+  an object ball leaves the corner, and a turn-loss shot resets it for the next inning.
+- Phase 2 only: the count applies only when both object balls are in the same corner; a
+  carom with only the cue ball in a corner does not count.
 
 `test/network/bot/...`: `validTargetBalls()` for freegame returns both object balls, and a
 corner foul publishes no `PlaceBallEvent`.
@@ -231,17 +259,14 @@ Then `yarn lint`, `yarn test` and `yarn prettify`.
 
 ## Open items
 
-1. **Corner criterion.** Britannica describes the classic straight-rail limit on *both
-   object balls* in the corner triangle ("crotch"), allows *three* caroms and only loses
-   the turn on the third. This plan implements the version asked for (cue ball in the
-   zone, limit 2, foul) and additionally requires both object balls in that same zone, so
-   that the clause "either object ball leaving the zone resets the count" has an effect.
-   Confirm which reading is wanted — it is one predicate either way.
+1. **Corner criterion: resolved.** Britannica: both object balls in the crotch, limit 3,
+   turn lost on the third carom unless an object ball is driven out. Adopted as written
+   above. The UMB articles (24 and 51–61) are not yet checked for zone size or reset detail.
 2. **Zone size.** No published dimension was found for the corner triangle on a UMB
    table, so `CORNER_ZONE` is a game constant (`R * 6` is a starting guess), not a
    rulebook transcription.
-3. **Foul cost.** Assumed: no points, no penalty, no ball-in-hand — only the inning ends.
-   `Sagu` subtracts a point; say so if free game should too.
+3. **Foul cost: moot.** Free game has no fouls under this reading. The third corner carom
+   is a turn loss with no points, no penalty and no ball-in-hand.
 
 ## Order
 
