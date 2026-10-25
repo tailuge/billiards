@@ -2,6 +2,10 @@ import { MessagingClient, Table, TableMessage } from "@tailuge/messaging"
 import { MessageRelay } from "./messagerelay"
 import { Session } from "./session"
 import { NetworkLogger } from "../../utils/network-logger"
+import {
+  removeZeroVectorEntries,
+  reinstateZeroVectorEntries,
+} from "../../utils/wire-codec"
 
 /**
  * MessageRelay backed by @tailuge/messaging.
@@ -42,6 +46,7 @@ export class MessagingMessageRelay implements MessageRelay {
     // the table; later joinTable() calls reuse the existing Table and do not
     // add or replace listeners.
     const onMessage = (msg: TableMessage) => {
+      reinstateZeroVectorEntries(msg.data)
       const data = JSON.stringify(msg.data)
       for (const cb of this.subscribers) cb(data, msg.meta?.msgId)
     }
@@ -80,7 +85,8 @@ export class MessagingMessageRelay implements MessageRelay {
     let type = "unknown"
     let data: unknown = message
     try {
-      const parsed = JSON.parse(message)
+      const compacted = removeZeroVectorEntries(message)
+      const parsed = JSON.parse(compacted)
       type = parsed.type || "unknown"
       data = parsed
     } catch {

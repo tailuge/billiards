@@ -46,6 +46,81 @@ export function encodeCoords(coords: number[]): string {
   return PREFIX + toBase64url(deflateSync(bytes, { level: 9 }))
 }
 
+const VECTOR_ZERO_REGEX =
+  /(,\s*"(?:x|y|z)"\s*:\s*-?0(?:\.0+)?(?![0-9\.])|"(?:x|y|z)"\s*:\s*-?0(?:\.0+)?(?![0-9\.])\s*,|"(?:x|y|z)"\s*:\s*-?0(?:\.0+)?(?![0-9\.]))/g
+
+/**
+ * Strips x=0, y=0, z=0 entries individually from vector objects in a serialized JSON string.
+ */
+export function removeZeroVectorEntries(str: string): string {
+  let prev: string
+  do {
+    prev = str
+    str = str.replace(VECTOR_ZERO_REGEX, "")
+  } while (str !== prev)
+  return str.replace(/\{\s+\}/g, "{}")
+}
+
+const KNOWN_VECTOR_KEYS = new Set([
+  "pos",
+  "offset",
+  "vel",
+  "rvel",
+  "spin",
+  "rspin",
+  "acceleration",
+  "startPos",
+  "endPos",
+  "target",
+  "center",
+  "point",
+  "p1",
+  "p2",
+])
+
+const KNOWN_VECTOR_ARRAY_KEYS = new Set([
+  "points",
+  "coords",
+  "vectors",
+  "positions",
+])
+
+/**
+ * Reinstates missing x, y, z properties at 0 on vector objects in a parsed JSON object.
+ */
+export function reinstateZeroVectorEntries(obj: any, parentKey: string = ""): any {
+  if (!obj || typeof obj !== "object") return obj
+  if (Array.isArray(obj)) {
+    const isVectorElem = KNOWN_VECTOR_ARRAY_KEYS.has(parentKey)
+    for (let i = 0; i < obj.length; i++) {
+      if (isVectorElem && typeof obj[i] === "object" && obj[i] !== null) {
+        if (obj[i].x === undefined) obj[i].x = 0
+        if (obj[i].y === undefined) obj[i].y = 0
+        if (obj[i].z === undefined) obj[i].z = 0
+      }
+      reinstateZeroVectorEntries(obj[i], parentKey)
+    }
+    return obj
+  }
+  const keys = Object.keys(obj)
+  const isVector =
+    KNOWN_VECTOR_KEYS.has(parentKey) ||
+    (keys.length > 0 && keys.every((k) => k === "x" || k === "y" || k === "z"))
+
+  if (isVector) {
+    if (obj.x === undefined) obj.x = 0
+    if (obj.y === undefined) obj.y = 0
+    if (obj.z === undefined) obj.z = 0
+  }
+
+  for (const k of keys) {
+    if (typeof obj[k] === "object" && obj[k] !== null) {
+      reinstateZeroVectorEntries(obj[k], k)
+    }
+  }
+  return obj
+}
+
 export function decodeCoords(s: string): number[] {
   if (!s.startsWith(PREFIX)) {
     throw new Error("unsupported wire version")

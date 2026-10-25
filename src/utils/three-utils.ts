@@ -5,7 +5,8 @@ export const zero = new Vector3(0, 0, 0)
 export const up = new Vector3(0, 0, 1)
 
 export function vec(v) {
-  return new Vector3(v.x, v.y, v.z)
+  if (!v) return new Vector3(0, 0, 0)
+  return new Vector3(v.x ?? 0, v.y ?? 0, v.z ?? 0)
 }
 
 const upCrossVec = new Vector3()

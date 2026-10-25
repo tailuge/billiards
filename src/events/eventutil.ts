@@ -15,10 +15,17 @@ import { NotificationEvent } from "./notificationevent"
 import { ScoreEvent } from "./scoreevent"
 import { StationaryEvent } from "./stationaryevent"
 import { ConcedeEvent } from "./concedeevent"
-import { decodeCoords, encodeCoords, wireConfig } from "../utils/wire-codec"
+import {
+  decodeCoords,
+  encodeCoords,
+  removeZeroVectorEntries,
+  reinstateZeroVectorEntries,
+  wireConfig,
+} from "../utils/wire-codec"
 
 export class EventUtil {
   static serialise(event: GameEvent) {
+    let result: string
     if (
       wireConfig.compactWatchBalls &&
       event.type === EventType.WATCHAIM &&
@@ -26,12 +33,14 @@ export class EventUtil {
     ) {
       const json = (event as WatchEvent).json
       const coords = json.balls.flatMap((b) => [b.pos.x, b.pos.y])
-      return JSON.stringify({
+      result = JSON.stringify({
         ...event,
         json: { ...json, balls: encodeCoords(coords) },
       })
+    } else {
+      result = JSON.stringify(event)
     }
-    return JSON.stringify(event)
+    return removeZeroVectorEntries(result)
   }
 
   /** Expands a packed `balls` string back to `Array<{pos: {x, y}, id}>`. */
@@ -86,6 +95,7 @@ export class EventUtil {
 
   static fromSerialised(data: string) {
     const parsed = JSON.parse(data)
+    reinstateZeroVectorEntries(parsed)
     const event = EventUtil.fromJson(parsed)
     if ("sequence" in parsed) {
       event.sequence = parsed.sequence
