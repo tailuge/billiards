@@ -117,6 +117,24 @@ export class Outcome {
     return onTable.length === 1 && onTable[0] === table.cueball
   }
 
+  /** Carom point: the cue ball contacted both other balls in the same stroke,
+   * with no cushion requirement — the free game (straight rail) score. Shares
+   * the contact normalisation with isThreeCushionPoint but not its cushion or
+   * proximity conditions. */
+  static isCaromPoint(cueBall: Ball, outcomes: Outcome[]): boolean {
+    const hits = new Set<Ball>()
+    for (const outcome of Outcome.cueBallFirst(cueBall, outcomes)) {
+      if (
+        outcome.type === OutcomeType.Collision &&
+        outcome.ballA === cueBall &&
+        outcome.ballB !== null
+      ) {
+        hits.add(outcome.ballB)
+      }
+    }
+    return hits.size >= 2
+  }
+
   static isThreeCushionPoint(cueBall, outcomes: Outcome[]) {
     outcomes = Outcome.cueBallFirst(cueBall, outcomes).filter(
       (outcome) => outcome.ballA === cueBall
