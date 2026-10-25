@@ -881,4 +881,28 @@ describe("BotEventHandler Respot Logic", () => {
     expect(validTargetBalls).toContain(saguContainer.table.balls[2])
     expect(validTargetBalls).toContain(saguContainer.table.balls[3])
   })
+
+  it("validTargetBalls excludes the bot cue ball in libre", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+
+    const libreContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "libre",
+    })
+    libreContainer.recorder.entries.push({
+      event: { type: EventType.AIM },
+    } as any)
+
+    const handler = createBotEventHandler(libreContainer, [])
+
+    const validTargetBalls = handler.validTargetBalls()
+
+    expect(validTargetBalls).toHaveLength(2)
+    expect(validTargetBalls).not.toContain(libreContainer.table.balls[1])
+    expect(validTargetBalls).toContain(libreContainer.table.balls[0])
+    expect(validTargetBalls).toContain(libreContainer.table.balls[2])
+  })
 })
