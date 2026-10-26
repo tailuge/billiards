@@ -11,10 +11,11 @@ import { MessagingMessageRelay } from "../../src/network/client/messagingmessage
 
 describe("Wire Vector Compaction", () => {
   describe("removeZeroVectorEntries and reinstateZeroVectorEntries", () => {
-    it("individually removes x=0, y=0, z=0 entries from vectors in JSON strings", () => {
+    it("individually removes x=0, y=0, z=0 and elevation=0 entries in JSON strings", () => {
       const input = JSON.stringify({
         offset: { x: 0, y: 0, z: 0 },
-        pos: { x: 1.25, y: 0, z: 0 },
+        pos: { x: -1.022, y: 0.512, z: 0 },
+        elevation: 0,
         spin: { x: 0, y: -0.5, z: 0 },
       })
 
@@ -22,44 +23,54 @@ describe("Wire Vector Compaction", () => {
       expect(compacted).toBe(
         JSON.stringify({
           offset: {},
-          pos: { x: 1.25 },
+          pos: { x: -1.022, y: 0.512 },
           spin: { y: -0.5 },
         })
       )
     })
 
-    it("reinstates missing vector properties at 0 on parsed JSON objects", () => {
+    it("reinstates missing vector properties and elevation at 0 on parsed AIM JSON objects", () => {
       const parsed = {
+        type: "AIM",
         offset: {},
-        pos: { x: 1.25 },
+        pos: { x: -1.022, y: 0.512 },
         spin: { y: -0.5 },
       }
 
       reinstateZeroVectorEntries(parsed)
       expect(parsed).toEqual({
+        type: "AIM",
         offset: { x: 0, y: 0, z: 0 },
-        pos: { x: 1.25, y: 0, z: 0 },
+        pos: { x: -1.022, y: 0.512, z: 0 },
         spin: { x: 0, y: -0.5, z: 0 },
+        elevation: 0,
       })
     })
   })
 
   describe("EventUtil serialization and deserialization", () => {
-    it("compacts zero vectors when serialising AimEvent and reinstates them when deserialising", () => {
+    it("compacts AIM messages by omitting elevation=0, offset=0, pos.z=0 and reinstates them on receipt", () => {
       const aim = new AimEvent()
+      aim.clientId = "erri-9f3n6"
+      aim.playername = "erriep"
       aim.offset = new Vector3(0, 0, 0)
-      aim.pos = new Vector3(0, 0, 0)
-      aim.power = 3.406
+      aim.angle = 0.2741175889968872
+      aim.power = 0.5763999819755554
+      aim.elevation = 0
+      aim.pos = new Vector3(-1.0222185850143433, 0.5128058195114136, 0)
+      aim.i = 1
 
       const serialised = EventUtil.serialise(aim)
       expect(serialised).toContain('"offset":{}')
-      expect(serialised).toContain('"pos":{}')
-      expect(serialised).not.toContain('"x":0')
+      expect(serialised).not.toContain('"elevation"')
+      expect(serialised).not.toContain('"z":0')
 
       const deserialised = EventUtil.fromSerialised(serialised) as AimEvent
       expect(deserialised.offset).toEqual(new Vector3(0, 0, 0))
-      expect(deserialised.pos).toEqual(new Vector3(0, 0, 0))
-      expect(deserialised.power).toBe(3.406)
+      expect(deserialised.pos).toEqual(
+        new Vector3(-1.0222185850143433, 0.5128058195114136, 0)
+      )
+      expect(deserialised.elevation).toBe(0)
     })
 
     it("compacts zero vectors in WATCHAIM payloads", () => {

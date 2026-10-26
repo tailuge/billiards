@@ -47,7 +47,7 @@ export function encodeCoords(coords: number[]): string {
 }
 
 const VECTOR_ZERO_REGEX =
-  /(,\s*"(?:x|y|z)"\s*:\s*-?0(?:\.0+)?(?![0-9\.])|"(?:x|y|z)"\s*:\s*-?0(?:\.0+)?(?![0-9\.])\s*,|"(?:x|y|z)"\s*:\s*-?0(?:\.0+)?(?![0-9\.]))/g
+  /(,\s*"(?:x|y|z|elevation)"\s*:\s*-?0(?:\.0+)?(?![0-9\.])|"(?:x|y|z|elevation)"\s*:\s*-?0(?:\.0+)?(?![0-9\.])\s*,|"(?:x|y|z|elevation)"\s*:\s*-?0(?:\.0+)?(?![0-9\.]))/g
 
 /**
  * Strips x=0, y=0, z=0 entries individually from vector objects in a serialized JSON string.
@@ -111,6 +111,9 @@ export function reinstateZeroVectorEntries(obj: any, parentKey: string = ""): an
     if (obj.x === undefined) obj.x = 0
     if (obj.y === undefined) obj.y = 0
     if (obj.z === undefined) obj.z = 0
+  }
+  if (parentKey === "aim" || obj.type === "AIM") {
+    if (obj.elevation === undefined) obj.elevation = 0
   }
 
   for (const k of keys) {
