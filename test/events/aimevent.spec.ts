@@ -155,6 +155,39 @@ describe("AimEvent compact JSON", () => {
     done()
   })
 
+  it("keeps angle, power and pos exact in HIT and WATCHAIM", (done) => {
+    const table = new Table(Rack.diamond())
+    const angle = 0.14088277518749237
+    const power = Math.fround(0.37 * 5.24)
+    table.cue.aim = AimEvent.fromJson({
+      pos: [-0.7566816210746765, -0.18933309614658356],
+      angle,
+      power,
+    })
+    table.cueball.pos.set(-0.7566816210746765, -0.18933309614658356, 0)
+
+    const hit = JSON.parse(
+      EventUtil.serialise(new HitEvent(table.serialiseHit()))
+    )
+    // delta 0: HIT and WATCHAIM must carry the source values untouched
+    expect(hit.tablejson.aim.angle).to.be.closeTo(angle, 0)
+    expect(hit.tablejson.aim.power).to.be.closeTo(power, 0)
+    expect(hit.tablejson.aim.pos).to.deep.equal([
+      table.cueball.pos.x,
+      table.cueball.pos.y,
+    ])
+
+    const watch = JSON.parse(
+      EventUtil.serialise(new WatchEvent(table.serialise()))
+    )
+    expect(watch.json.aim.angle).to.be.closeTo(angle, 0)
+    expect(watch.json.aim.power).to.be.closeTo(power, 0)
+    expect(watch.json.aim.pos).to.deep.equal([
+      -0.7566816210746765, -0.18933309614658356,
+    ])
+    done()
+  })
+
   it("never writes z for pos or offset", (done) => {
     const event = new AimEvent()
     event.pos = new Vector3(1, 2, 0)

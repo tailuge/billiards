@@ -17,8 +17,30 @@ import { StationaryEvent } from "./stationaryevent"
 import { ConcedeEvent } from "./concedeevent"
 import { decodeCoords, encodeCoords, wireConfig } from "../utils/wire-codec"
 
+/**
+ * Live AIM is an advisory preview, superseded within 250 ms and always by HIT,
+ * so it carries reduced precision. HIT, WATCHAIM, replay shots and resume
+ * snapshots keep full precision because they stringify their AimEvents
+ * directly and never come through `serialise`.
+ */
+const AIM_ANGLE_DP = 4
+const AIM_POWER_DP = 2
+const AIM_POS_DP = 5
+
+const roundTo = (v: number, places: number) =>
+  Math.round(v * 10 ** places) / 10 ** places
+
 export class EventUtil {
   static serialise(event: GameEvent) {
+    if (event.type === EventType.AIM) {
+      const json = (event as AimEvent).toJSON()
+      return JSON.stringify({
+        ...json,
+        angle: roundTo(json.angle, AIM_ANGLE_DP),
+        power: roundTo(json.power, AIM_POWER_DP),
+        pos: json.pos.map((v) => roundTo(v, AIM_POS_DP)),
+      })
+    }
     if (
       wireConfig.compactWatchBalls &&
       event.type === EventType.WATCHAIM &&

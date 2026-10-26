@@ -1,4 +1,5 @@
 import { expect } from "chai"
+import { Vector3 } from "three"
 import { AimEvent } from "../../src/events/aimevent"
 import { AbortEvent } from "../../src/events/abortevent"
 import { WatchEvent } from "../../src/events/watchevent"
@@ -134,5 +135,72 @@ describe("EventUtil", () => {
     const deserialised = EventUtil.fromSerialised(serialised)
     expect(deserialised.playername).to.be.undefined
     done()
+  })
+
+  describe("live AIM precision", () => {
+    it("rounds angle to 4 dp, power to 2 dp and pos to 5 dp", (done) => {
+      const event = new AimEvent()
+      event.angle = 0.14088277518749237
+      event.power = 3.406123
+      event.pos.set(-0.7566816210746765, -0.18933309614658356, 0)
+
+      const json = JSON.parse(EventUtil.serialise(event))
+
+      // delta 0: the rounded value is exact, not merely close
+      expect(json.angle).to.be.closeTo(0.1409, 0)
+      expect(json.power).to.be.closeTo(3.41, 0)
+      expect(json.pos).to.deep.equal([-0.75668, -0.18933])
+      expect(json.pos).to.have.lengthOf(2)
+      expect(typeof json.angle).to.equal("number")
+      expect(typeof json.power).to.equal("number")
+      json.pos.forEach((v: number) => expect(typeof v).to.equal("number"))
+      done()
+    })
+
+    it("round-trips within half a step and leaves offset, elevation and i", (done) => {
+      const event = new AimEvent()
+      event.angle = 0.123456789
+      event.power = 1.23456
+      event.pos.set(0.111111111, -0.222222222, 0)
+      event.offset.set(0.1, -0.2, 0)
+      event.elevation = 0.15
+      event.i = 1
+
+      const serialised = EventUtil.serialise(event)
+      const decoded = EventUtil.fromSerialised(serialised) as AimEvent
+
+      expect(decoded.angle).to.be.closeTo(event.angle, 5e-5)
+      expect(decoded.power).to.be.closeTo(event.power, 5e-3)
+      expect(decoded.pos.x).to.be.closeTo(event.pos.x, 5e-6)
+      expect(decoded.pos.y).to.be.closeTo(event.pos.y, 5e-6)
+      expect(decoded.pos.z).to.equal(0)
+      expect(decoded.offset.equals(new Vector3(0.1, -0.2, 0))).to.be.true
+      expect(decoded.elevation).to.be.closeTo(0.15, 1e-9)
+      expect(decoded.i).to.equal(1)
+      done()
+    })
+
+    it("shortens a long-tailed pos and keeps it within 5e-6", (done) => {
+      const event = new AimEvent()
+      event.pos.set(-0.7566816210746765, -0.18933309614658356, 0)
+
+      const serialised = EventUtil.serialise(event)
+      const decoded = EventUtil.fromSerialised(serialised) as AimEvent
+
+      expect(serialised).to.include("[-0.75668,-0.18933]")
+      expect(decoded.pos.x).to.be.closeTo(event.pos.x, 5e-6)
+      expect(decoded.pos.y).to.be.closeTo(event.pos.y, 5e-6)
+      done()
+    })
+
+    it("does not turn a NaN angle into a valid 0", (done) => {
+      const event = new AimEvent()
+      event.angle = NaN
+
+      const json = JSON.parse(EventUtil.serialise(event))
+
+      expect(json.angle).to.be.null
+      done()
+    })
   })
 })
