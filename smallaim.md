@@ -56,14 +56,14 @@ Read:
 
 ## Field-by-field safety
 
-| Field | Omit when | Current reader | Reader change needed |
-|---|---|---|---|
-| `offset` | omit when `x === 0 && y === 0`; otherwise write `[x, y]` | `vec(json.offset)` | **Yes** — array/absent handling |
-| `elevation` | `elevation === 0` | `json.elevation \|\| 0` | No (already defaults) |
-| `i` | `i === 0` | field default `0`, then `if (json.i)` | No (already defaults) |
-| `pos` | always write `[x, y]` (never omit) | `vec(json.pos)` | **Yes** — array handling |
-| `angle` | never | direct | No — `0` is a valid direction |
-| `power` | never | direct | No |
+| Field       | Omit when                                                | Current reader                        | Reader change needed            |
+| ----------- | -------------------------------------------------------- | ------------------------------------- | ------------------------------- |
+| `offset`    | omit when `x === 0 && y === 0`; otherwise write `[x, y]` | `vec(json.offset)`                    | **Yes** — array/absent handling |
+| `elevation` | `elevation === 0`                                        | `json.elevation \|\| 0`               | No (already defaults)           |
+| `i`         | `i === 0`                                                | field default `0`, then `if (json.i)` | No (already defaults)           |
+| `pos`       | always write `[x, y]` (never omit)                       | `vec(json.pos)`                       | **Yes** — array handling        |
+| `angle`     | never                                                    | direct                                | No — `0` is a valid direction   |
+| `power`     | never                                                    | direct                                | No                              |
 
 Notes:
 
@@ -101,7 +101,7 @@ toJSON() {
   return {
     ...rest,
     pos: [pos.x, pos.y],
-    ...(offset.x !== 0 || offset.y !== 0
+    ...(offset && (offset.x !== 0 || offset.y !== 0)
       ? { offset: [offset.x, offset.y] }
       : {}),
     ...(elevation === 0 ? {} : { elevation }),
@@ -110,9 +110,11 @@ toJSON() {
 }
 ```
 
-- `...rest` keeps `type`, `sequence`, `clientId`, `playername`, `angle` and
-  `power`, so future scalar fields are carried automatically. Class methods
-  live on the prototype and are not serialised.
+- `...rest` preserves `type`, `sequence`, `clientId`, `playername`, `angle` and
+  `power`. Using object rest/spread guarantees that metadata like `sequence` and
+  identity fields are preserved automatically without manual synchronization,
+  and any future scalar fields on `GameEvent` or `AimEvent` are carried along.
+  Class methods live on the prototype and are not serialised.
 - `offset` is omitted for a centre-ball strike and written as `[x, y]`
   otherwise. `z` is not written for either field; it is `0` in this model.
 - This applies everywhere an `AimEvent` is stringified: live AIM, HIT's
@@ -121,26 +123,9 @@ toJSON() {
 - **Do not mutate the event itself.** The AIM event is the live
   `table.cue.aim`; deleting `offset` from it would wipe the local spin and
   break `copy()`. Build a separate object as above.
-
-If explicit key ordering/forward-compatibility is preferred over the spread,
-the same result can be built field by field:
-
-```ts
-const json: Record<string, unknown> = {
-  type: this.type,
-  angle: this.angle,
-  power: this.power,
-  pos: [this.pos.x, this.pos.y],
-}
-if (this.clientId !== undefined) json.clientId = this.clientId
-if (this.playername !== undefined) json.playername = this.playername
-if (this.offset.x !== 0 || this.offset.y !== 0) {
-  json.offset = [this.offset.x, this.offset.y]
-}
-if (this.elevation !== 0) json.elevation = this.elevation
-if (this.i !== 0) json.i = this.i
-return json
-```
+- The spread implementation is adopted over manual field-by-field construction
+  because manual property assignment is prone to omitting fields (such as
+  `sequence`) and requires maintenance whenever `GameEvent` properties change.
 
 Result for the sample message:
 
@@ -164,17 +149,17 @@ reader:
 function toVec2(value) {
   return Array.isArray(value)
     ? new Vector3(value[0] ?? 0, value[1] ?? 0, 0)
-    : new Vector3(value?.x ?? 0, value?.y ?? 0, 0)
+    : new Vector3(value?.x ?? 0, value?.y ?? 0, value?.z ?? 0)
 }
 
 static fromJson(json) {
   const event = new AimEvent()
   event.pos = toVec2(json.pos)
-  event.angle = json.angle
+  event.angle = json.angle ?? 0
   if (json.offset) {
     event.offset = toVec2(json.offset)
   }
-  event.power = json.power
+  event.power = json.power ?? 0
   event.elevation = json.elevation ?? 0
   if (json.i) {
     event.i = json.i
@@ -270,17 +255,17 @@ alone. This is the only path that builds a live AIM wire message:
 
 ```ts
 if (event.type === EventType.AIM) {
-  const aim = event as AimEvent
-  const json = { ...aim } as Record<string, unknown>
-  json.pos = [aim.pos.x, aim.pos.y]
+  const aim = event as AimEvent;
+  const json = { ...aim } as Record<string, unknown>;
+  json.pos = [aim.pos.x, aim.pos.y];
   if (aim.offset.x === 0 && aim.offset.y === 0) {
-    delete json.offset
+    delete json.offset;
   } else {
-    json.offset = [aim.offset.x, aim.offset.y]
+    json.offset = [aim.offset.x, aim.offset.y];
   }
-  if (aim.elevation === 0) delete json.elevation
-  if (aim.i === 0) delete json.i
-  return JSON.stringify(json)
+  if (aim.elevation === 0) delete json.elevation;
+  if (aim.i === 0) delete json.i;
+  return JSON.stringify(json);
 }
 ```
 
@@ -298,31 +283,31 @@ means `pos: [x, y]` and, when nonzero, `offset: [x, y]`, with zero
 
 Zero-offset AIM (the common case):
 
-| Form | Length |
-|---|---|
-| Inner AIM JSON, current | 213 |
-| Inner AIM JSON, arrays + zero omission | 150 |
-| Saved | **63 (30%)** |
-| Full envelope, current | 304 |
-| Full envelope, arrays + zero omission | 241 |
-| Saved | **63 (21%)** |
-| Full envelope deflated (zlib raw), current | 202 |
-| Full envelope deflated, arrays + zero omission | 173 |
-| Saved | **29 (14%)** |
+| Form                                           | Length       |
+| ---------------------------------------------- | ------------ |
+| Inner AIM JSON, current                        | 213          |
+| Inner AIM JSON, arrays + zero omission         | 150          |
+| Saved                                          | **63 (30%)** |
+| Full envelope, current                         | 304          |
+| Full envelope, arrays + zero omission          | 241          |
+| Saved                                          | **63 (21%)** |
+| Full envelope deflated (zlib raw), current     | 202          |
+| Full envelope deflated, arrays + zero omission | 173          |
+| Saved                                          | **29 (14%)** |
 
 Non-zero offset (spin shot):
 
-| Form | Length |
-|---|---|
-| Inner AIM JSON, current | 249 |
-| Inner AIM JSON, arrays + zero omission | 201 |
-| Saved | **48 (19%)** |
-| Full envelope, current | 340 |
-| Full envelope, arrays + zero omission | 292 |
-| Saved | **48 (14%)** |
-| Full envelope deflated, current | 213 |
-| Full envelope deflated, arrays + zero omission | 194 |
-| Saved | **19 (9%)** |
+| Form                                           | Length       |
+| ---------------------------------------------- | ------------ |
+| Inner AIM JSON, current                        | 249          |
+| Inner AIM JSON, arrays + zero omission         | 201          |
+| Saved                                          | **48 (19%)** |
+| Full envelope, current                         | 340          |
+| Full envelope, arrays + zero omission          | 292          |
+| Saved                                          | **48 (14%)** |
+| Full envelope deflated, current                | 213          |
+| Full envelope deflated, arrays + zero omission | 194          |
+| Saved                                          | **19 (9%)**  |
 
 Each array shape saves 14 characters when present: the digits are unchanged,
 and the object's `{"x":`, `,"y":`, `,"z":0}` overhead becomes `[`, `,`, `]`.
@@ -377,9 +362,9 @@ always `0`. The chosen encoding drops `z` and the object keys:
 Writer, inside `AimEvent.toJSON()` (or the scoped AIM branch):
 
 ```ts
-pos: [this.pos.x, this.pos.y]
+pos: [this.pos.x, this.pos.y];
 // and, when nonzero:
-offset: [this.offset.x, this.offset.y]
+offset: [this.offset.x, this.offset.y];
 ```
 
 Reader, via the shared helper in `AimEvent.fromJson`:
@@ -388,7 +373,7 @@ Reader, via the shared helper in `AimEvent.fromJson`:
 function toVec2(value) {
   return Array.isArray(value)
     ? new Vector3(value[0] ?? 0, value[1] ?? 0, 0)
-    : new Vector3(value?.x ?? 0, value?.y ?? 0, 0)
+    : new Vector3(value?.x ?? 0, value?.y ?? 0, value?.z ?? 0);
 }
 ```
 
