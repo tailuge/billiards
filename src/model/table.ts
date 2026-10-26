@@ -198,7 +198,7 @@ export class Table {
     aim.pos.copy(this.cueball.pos)
 
     return {
-      balls: [this.balls[0].serialise()],
+      balls: [this.cueball.serialise()],
       aim,
     }
   }
