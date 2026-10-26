@@ -483,7 +483,206 @@ scoped variant is chosen instead, `EventUtil.serialise` gains the AIM branch and
 - Keep `pos` mandatory and keep the class fields as `Vector3`; do not switch
   to tuple types.
 - Do not omit `angle`, even when `0` — `0` is a legitimate aim direction.
-- Only `pos`/`offset` are known to be 2D. Do not assume every other ball
-  state is `z = 0`; `Ball.updateFromSerialised` preserves z for potted balls.
+- Only `pos`/`offset` are known to be 2D. Do not assume every other ball state is `z = 0`; `Ball.updateFromSerialised` preserves z for potted balls.
 - Deploy the writer and reader together. Old readers are out of scope and will
   see `NaN` positions (or throw on a missing `offset`); no staging is planned.
+
+## Addendum: rounding `angle` and `power` on live AIM
+
+Status: **proposal only, nothing implemented.** It extends the decision above and
+leaves the compaction as shipped.
+
+### Verdict
+
+Yes. A live AIM can carry a rounded `angle` and `power` while HIT, WATCHAIM,
+replay shots and resume snapshots keep full precision — but the rounding must be
+applied to the **bare AIM message only**. It must not go inside
+`AimEvent.toJSON()`, because that writer is shared by every container.
+
+### Why not in `toJSON()`
+
+`toJSON()` is the single writer for live AIM, HIT's `tablejson.aim`, WATCHAIM's
+`aim`, recorded replay shots and `ResumeStore` snapshots. Rounding there rounds
+the HIT.
+
+The split has to happen one message type wide, on the send path.
+
+### Where the code lives
+
+`src/events/eventutil.ts`, as the first branch of `EventUtil.serialise`, next to
+the existing `WATCHAIM` blob branch:
+
+```ts
+const AIM_ANGLE_DP = 4
+const AIM_POWER_DP = 2
+const roundTo = (v: number, places: number) =>
+  Math.round(v * 10 ** places) / 10 ** places
+
+static serialise(event: GameEvent) {
+  if (event.type === EventType.AIM) {
+    const json = (event as AimEvent).toJSON() // keeps the compact pos
+    return JSON.stringify({
+      ...json,
+      angle: roundTo(json.angle, AIM_ANGLE_DP),
+      power: roundTo(json.power, AIM_POWER_DP),
+    })
+  }
+  // existing WATCHAIM branch, unchanged
+}
+```
+
+`EventUtil` already imports `AimEvent`, `EventType` and `wireConfig`, so no new
+imports are needed. The constants and helper sit at module scope above the
+class; if a kill switch is wanted, the precision and a `roundAim` flag belong in
+`wireConfig` (`src/utils/wire-codec.ts`), alongside `compactWatchBalls`.
+
+This branch is reached only by:
+
+- `BrowserContainer.broadcast` → `EventUtil.serialise(event)`
+  (`src/container/browsercontainer.ts:386`);
+- `BotRelay.publish` and `publishSequenceToPlayer`
+  (`src/network/bot/botrelay.ts`).
+
+Both carry advisory AIM previews. HIT, WATCHAIM, `BreakEvent.shots` and
+`ResumeStore` stringify their `AimEvent`s through `JSON.stringify` in their own
+modules and never pass a bare `AimEvent` through this function.
+
+Not the right home, for the record:
+
+- `AimEvent.toJSON()` — shared by HIT and WATCHAIM; that is the one place that
+  breaks the requirement.
+- `Container.sendEvent` (`src/container/container.ts:213`) — it also calls
+  `recorder.record(event)` on the same line, and the recorder must keep the
+  exact local shot; it would additionally need a copy of the live
+  `table.cue.aim`, since rounding in place changes the shooter's own shot.
+- `Aim.handleInput` (`src/controller/aim.ts:92`) and `PlaceBall.handleInput`
+  (`src/controller/placeball.ts:74`) — two sites to keep in sync, wire
+  formatting in controllers, and the bot AIM path bypasses both.
+- `Throttle` (`src/events/throttle.ts`) — it decides when an event goes out, not
+  what it looks like.
+
+### Why HIT and WATCHAIM stay exact
+
+Strictly, today's receive-side consumers would not notice rounded values: a
+received HIT reproduces the shot from `balls[0]` position and velocity, not from
+its aim; `WatchAim.handleAim` only assigns `cue.aim` and copies `pos`;
+`ResumeHandler` constructs a fresh `Aim`, which re-aims locally; and the only code
+that re-simulates physics from an `AimEvent` is `Replay.playNextShot`, which
+reads locally recorded shots (`Recorder.recordHitEvent` runs on
+`Container.sendEvent`, i.e. local events only).
+
+The rule is kept anyway because it is about the message contract, not about
+precision: **AIM is advisory — superseded within 250 ms, and always by HIT —
+while HIT is the event of record.** Confining the rounding to the advisory
+message keeps everything that could later be replayed, resumed, audited or
+rebroadcast exact, at no cost: the shooter's full-precision values already exist
+on the local object.
+
+### Precision budget
+
+| Field   | Rounding           | Worst-case error                                      |
+| ------- | ------------------ | ----------------------------------------------------- |
+| `angle` | 4 dp (0.1 mrad)    | 0.15 mm at the cue tip (1.45 m cue), 0.25 mm over 2.5 m |
+| `angle` | 3 dp (1 mrad)      | 1.45 mm at the cue tip — still sub-pixel, but closer   |
+| `angle` | 2 dp (10 mrad)     | 14.5 mm — visible as a step on the opponent's cue line |
+| `power` | 2 dp               | 0.19% of full scale (`maxPower = 160*R = 5.24`)        |
+
+The power HUD shows integer percent, i.e. 0.0524 in power units, so 2 dp is
+roughly 5× finer than the display it feeds. 3 dp for the angle is defensible;
+4 dp is comfortably invisible at any zoom.
+
+Do **not** round `pos`, `offset`, `elevation` or `i`. `pos` is not a preview in
+the same sense: `WatchAim.handleAim` copies it into `cueball.pos`, so quantising
+it moves a ball on the opponent's table and feeds the cue-placement overlap
+check. `offset` is already rounded locally by `roundVec` in `Cue.setSpin`.
+
+### Size impact
+
+Measured on the already-compacted sample (post-array/omission change). “4dp/2dp”
+is `angle` to 4 decimals, `power` to 2.
+
+| Form                                                       | Length      | Deflated |
+| ---------------------------------------------------------- | ----------- | -------- |
+| Full precision                                             | 150         | 128      |
+| 4 dp / 2 dp                                                | 136         | 119      |
+| Saved                                                      | **14 (9%)** | **9 (7%)** |
+| Worst case (`Math.fround` tail, e.g. `1.9387999773025513`)  | 163         | —        |
+| Worst case rounded                                         | 137         | —        |
+| Saved                                                      | **26 (16%)**| —        |
+
+At ≤ 4 AIM/s that is roughly 56–100 B/s raw and ~35 B/s deflated per sender —
+same order as, a little below, the 250 B/s the array change buys.
+
+Two things the same measurement makes obvious: `pos` is 41 of the 136
+characters, and `clientId` + `playername` are another ~41 that duplicate the
+envelope's `senderId`. Rounding the two scalars is the third-best lever on this
+message, not the best one.
+
+### Compatibility
+
+Strictly easier than the array forms: the schema does not change, the field
+names and units do not change, and the value stays a JSON number. Old readers,
+old replay links, old fixtures and pasted bug reports are unaffected — no
+`toVec2` tolerance, no “old readers are out of scope” caveat, no version
+negotiation. It also ships independently of the compaction, in either order.
+
+### Pitfalls to avoid
+
+- **Do not `{...event}` in the branch.** Spreading the instance copies `pos` and
+  `offset` as `Vector3`s, and `JSON.stringify` turns them back into
+  `{"x":…,"y":…,"z":0}` — undoing the array compaction and costing more than
+  the rounding saves. Build on `aim.toJSON()`.
+- **Do not use `toFixed`/fixed-point strings.** That changes the JSON type;
+  `json.angle` becomes a string and any consumer doing arithmetic gets `NaN`.
+  `Math.round(x * 10 ** n) / 10 ** n` keeps the number type and the units.
+- Do not round `pos` (see above), and do not round `offset` — it is already
+  rounded and it is part of the strike, not just the preview.
+- Do not omit `angle` or `power` when they round to `0`; `0` is a legitimate
+  direction and a legitimate power.
+- Rounding a `NaN` yields `NaN`, which `JSON.stringify` writes as `null` — the
+  same behaviour the message already has, so nothing new to guard.
+- Keep the rounding out of the recorder path: `Container.sendEvent` calls
+  `recorder.record` before the throttle, and recorded HIT aims must stay exact
+  because `Replay.playNextShot` re-simulates the shot from them.
+
+### Tests
+
+1. `EventUtil.serialise` on an `AimEvent` rounds `angle` and `power`, and both
+   remain JSON numbers (not strings).
+2. Round-trip error is within half a step, and `pos`, `offset`, `elevation` and
+   `i` are untouched.
+3. **Regression guard for the constraint:** a HIT, a WATCHAIM and a recorded
+   replay shot built from the same table keep `angle` and `power` bit-for-bit —
+   including a deliberately long-tailed value such as
+   `Math.fround(0.37 * 5.24)`. This is the test that fails the day the rounding
+   moves into `toJSON()`.
+4. A `NaN` angle is not turned into a valid `0` (same `!==` reasoning as the
+   zero-field omission).
+
+### Files to change (if implemented)
+
+- `src/events/eventutil.ts` — AIM branch plus the precision constants and helper.
+- `src/utils/wire-codec.ts` — only if a `roundAim` toggle is wanted in
+  `wireConfig`.
+- `test/events/eventutil.spec.ts` — rounding and type assertions.
+- `test/events/aimevent.spec.ts` — HIT/WATCHAIM exactness guard; it already
+  builds both from one table.
+
+### Related levers not taken
+
+- **`pos` to 1 mm** (3 dp): ~30 characters, more than `angle` and `power`
+  together, and 0.5 mm is invisible. It is the one field the receiver treats as
+  state rather than styling (`cueball.pos.copy(event.pos)`), so it is a
+  different risk class and a separate decision.
+- **Skip the send when the quantised message equals the last one sent.** Rounding
+  coarsens the value, so a batch of tiny pointer moves becomes a no-op; this
+  could cut message count, not just bytes, which dwarfs the character savings.
+  It is a behaviour change — the throttle currently ticks on every handled
+  input — and needs measuring first.
+- **Drop `clientId`/`playername` from AIM** (~41 characters): larger than this
+  whole proposal, but the receiver uses `event.clientId` for echo suppression
+  and `playername` for the spectate HUD, so relay metadata would have to be
+  plumbed through. Separate wire change.
+- **Integers plus a documented scale** (`angle` as milliradians): saves 2–3 more
+  characters but needs a reader-side divide and a flag, because an old reader
+  would take `141` for radians. Not worth the delta.
