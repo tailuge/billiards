@@ -33,7 +33,10 @@ const roundTo = (v: number, places: number) =>
 export class EventUtil {
   static serialise(event: GameEvent) {
     if (event.type === EventType.AIM) {
-      const json = (event as AimEvent).toJSON()
+      const json = { ...(event as AimEvent).toJSON() }
+      // No handler reads the name on AIM: a spectator's names come from BEGIN
+      // and WATCHAIM, so the chattiest message does not carry it.
+      delete json.playername
       return JSON.stringify({
         ...json,
         angle: roundTo(json.angle, AIM_ANGLE_DP),

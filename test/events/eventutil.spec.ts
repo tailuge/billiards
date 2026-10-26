@@ -121,7 +121,7 @@ describe("EventUtil", () => {
   })
 
   it("Serialise and deserialise GameEvent with playername", (done) => {
-    const event: AimEvent = new AimEvent()
+    const event = new BeginEvent()
     event.playername = "Player 1"
     const serialised = EventUtil.serialise(event)
     const deserialised = EventUtil.fromSerialised(serialised)
@@ -138,6 +138,20 @@ describe("EventUtil", () => {
   })
 
   describe("live AIM precision", () => {
+    it("omits playername", (done) => {
+      const event = new AimEvent()
+      event.playername = "Player 1"
+
+      const serialised = EventUtil.serialise(event)
+      const json = JSON.parse(serialised)
+      const decoded = EventUtil.fromSerialised(serialised) as AimEvent
+
+      expect(json).to.not.have.property("playername")
+      expect(serialised).to.not.include("Player 1")
+      expect(decoded.playername).to.be.undefined
+      done()
+    })
+
     it("rounds angle to 4 dp, power to 2 dp and pos to 5 dp", (done) => {
       const event = new AimEvent()
       event.angle = 0.14088277518749237
