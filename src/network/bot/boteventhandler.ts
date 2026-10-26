@@ -170,11 +170,10 @@ export class BotEventHandler {
       case "snooker":
         return this.validSnookerTargets()
       case "threecushion":
-        return this.validThreeCushionTargets()
+      case "libre":
+        return this.validTwoCueBallTargets()
       case "sagu":
         return this.validSaguTargets()
-      case "libre":
-        return this.validLibreTargets()
       default:
         return []
     }
@@ -239,7 +238,9 @@ export class BotEventHandler {
     return coloursOnTable.length > 0 ? [coloursOnTable[0]] : []
   }
 
-  private validThreeCushionTargets(): Ball[] {
+  /** libre and three-cushion share one target rule: every ball on the table
+   * except the second cue ball. */
+  private validTwoCueBallTargets(): Ball[] {
     if (isFirstShot(this.container.recorder)) {
       return []
     }
@@ -259,17 +260,6 @@ export class BotEventHandler {
     const opponentCue = this.container.table.balls[0]
     return this.container.table.balls.filter(
       (ball) => ball !== cueball && ball !== opponentCue && ball.onTable()
-    )
-  }
-
-  private validLibreTargets(): Ball[] {
-    if (isFirstShot(this.container.recorder)) {
-      return []
-    }
-
-    const cueball = this.container.table.balls[1]
-    return this.container.table.balls.filter(
-      (ball) => ball !== cueball && ball.onTable()
     )
   }
 
