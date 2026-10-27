@@ -3,6 +3,7 @@ import {
   PHYSICS_DEFAULTS,
   PHYSICS_KEYS,
   readConstants,
+  changedConstants,
   capturePreset,
   loadPresets,
   savePresets,
@@ -90,6 +91,30 @@ describe("editor state", () => {
     expect(readConstants(params("mu=0.006&muS=0.25")).mu).toBeCloseTo(0.006)
     expect(readConstants(params("mu=0.006&muS=0.25")).muS).toBeCloseTo(0.25)
     expect(readConstants(params("mu=nonsense")).mu).toBeCloseTo(0.0055)
+  })
+
+  it("lists only the constants a URL actually moved", () => {
+    expect(changedConstants()).toEqual({})
+
+    // What the exporter is handed today: a link repeating the physics it
+    // inherited, all of it at the defaults the worker starts on.
+    expect(
+      changedConstants(
+        params(
+          "mu=0.0055&muS=0.126&%CE%BCs=0.2&%CE%BCw=0.175&ee=0.85&" +
+            "stronge_omega_ratio=1.76&stronge_e_n=0.77&stronge_%CE%BC=0.25"
+        )
+      )
+    ).toEqual({})
+
+    expect(changedConstants(params("mu=0.006&%CE%BCs=0.2"))).toEqual({
+      mu: 0.006,
+    })
+    // Blank and unreadable values are treated as not given at all.
+    expect(changedConstants(params("ee="))).toEqual({})
+    expect(changedConstants(params("ee=nonsense&rho=0.04"))).toEqual({
+      rho: 0.04,
+    })
   })
 
   describe("share links", () => {

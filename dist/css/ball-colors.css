@@ -255,6 +255,31 @@
   stroke: #f00;
 }
 
+/* Libre Overrides: 3-ball carom -- yellow and red object balls */
+.libre .ball {
+  --ball-stroke: #000;
+}
+
+.libre .trajectory-line {
+  stroke: #000;
+}
+
+.libre .ball-1 {
+  --ball-stroke: #ffd700;
+}
+
+.libre .traj-1 {
+  stroke: #ffd700;
+}
+
+.libre .ball-2 {
+  --ball-stroke: #f00;
+}
+
+.libre .traj-2 {
+  stroke: #f00;
+}
+
 /* Three-Cushion Overrides: remain as it was (no colour) */
 
 /* We ensure any colored strokes are reset to black for threecushion */

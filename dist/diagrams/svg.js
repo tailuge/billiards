@@ -31,7 +31,8 @@ const UMB_TABLE_X = 92.36;
 const UMB_TABLE_Y = 46.18;
 const urlParams = new URLSearchParams(window.location.search);
 const tableSize = parseFloat(urlParams.get("tableSize") || "10");
-const caromRule = (r) => r === "threecushion" || r === "sagu"
+const caromRule = (r) =>
+  r === "threecushion" || r === "sagu" || r === "libre"
 const sizeScale = (caromRule(urlParams.get("ruletype")) || !urlParams.get("ruletype"))
   ? tableSize / 10
   : 1.0;
@@ -457,7 +458,11 @@ async function runElement(el) {
   const ruletype = configs[0]?.ruleType;
 
   // Render table with correct type and class
-  const isPool = ruletype && ruletype !== "threecushion" && ruletype !== "sagu"
+  const isPool =
+    ruletype &&
+    ruletype !== "threecushion" &&
+    ruletype !== "sagu" &&
+    ruletype !== "libre"
   const jsonTableSize = configs[0]?.params?.tableSize ?? 10
   const tableResult = isPool
     ? generatePoolTable(jsonTableSize)

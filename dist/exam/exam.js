@@ -28,19 +28,93 @@ function proximityPoints(outcomes, ruleType) {
   return 0
 }
 
+// A made point is worth 3, the same credit a made billiard earns in three
+// cushion. Position zones pay a point for every ball that finishes inside one.
+const CAROM_POINTS = 3
+
+/**
+ * Libre is a carom game on a pocketless table: the cue ball must contact both
+ * object balls. There is no cushion requirement, so no proximity credit.
+ */
+function caromPoints(outcomes, ruleType) {
+  if (ruleType !== "libre") return 0
+  const contacted = new Set()
+  for (const o of outcomes) {
+    if (o.type !== "Collision") continue
+    if (o.ballA && o.ballA.id === 0 && o.ballB) contacted.add(o.ballB.id)
+    else if (o.ballB && o.ballB.id === 0 && o.ballA) contacted.add(o.ballA.id)
+  }
+  return contacted.size >= 2 ? CAROM_POINTS : 0
+}
+
 function potPoints(outcomes, ruleType, noPot) {
-  if (ruleType === "threecushion" || noPot) return 0
+  if (ruleType === "threecushion" || ruleType === "libre" || noPot) return 0
   return (
     outcomes.filter((o) => o.type === "Pot" && o.ballA && o.ballA.id !== 0)
       .length * 3
   )
 }
 
-function maxPoints(ellipseCount, ruleType, noPot) {
-  if (ruleType === "threecushion") {
-    return 3 + ellipseCount
+function maxPoints(zonePoints, ruleType, noPot) {
+  if (ruleType === "threecushion" || ruleType === "libre") {
+    return CAROM_POINTS + zonePoints
   }
-  return ellipseCount + (noPot ? 0 : 3)
+  return zonePoints + (noPot ? 0 : CAROM_POINTS)
+}
+
+/**
+ * A ball counts as positioned when its centre sits inside the ellipse. Diagram
+ * coordinates are y-up while SVG is y-down, hence the flip.
+ */
+function isInsideEllipse(ball, ellipseCheck) {
+  const dx = ball.pos.x - ellipseCheck.cx
+  const dy = -ball.pos.y - ellipseCheck.cy
+  return (
+    (dx * dx) / (ellipseCheck.rx * ellipseCheck.rx) +
+      (dy * dy) / (ellipseCheck.ry * ellipseCheck.ry) <=
+    1
+  )
+}
+
+/**
+ * Ellipses that count towards the score. A data-id names the single ball the
+ * zone is about. An ellipse without one is a whole-table position zone in the
+ * libre exam, scoring every ball that finishes inside it, while on the other
+ * papers it stays decoration, because there a zone is always for one ball.
+ */
+function scoredEllipses(svg, ruleType) {
+  return Array.from(svg.querySelectorAll("ellipse")).filter(
+    (e) => e.dataset.id !== undefined || ruleType === "libre"
+  )
+}
+
+/** How many balls the shot's diagram puts on the table. */
+function diagramBallCount(svg) {
+  try {
+    return parseJsonShots(svg.dataset.jsonShots || "")[0]?.balls?.length ?? 0
+  } catch {
+    return 0
+  }
+}
+
+/**
+ * The scored zones of a diagram, each carrying what it can pay: a data-id zone
+ * asks about its one ball, a whole-table zone asks about every ball, so one
+ * point per ball is the ceiling for either.
+ */
+function readEllipseChecks(svg, ruleType) {
+  const ballCount = diagramBallCount(svg)
+  return scoredEllipses(svg, ruleType).map((e) => {
+    const ballId = e.dataset.id === undefined ? null : parseInt(e.dataset.id, 10)
+    return {
+      ballId,
+      points: ballId === null ? ballCount : 1,
+      cx: parseFloat(e.getAttribute("cx")),
+      cy: parseFloat(e.getAttribute("cy")),
+      rx: parseFloat(e.getAttribute("rx")),
+      ry: parseFloat(e.getAttribute("ry")),
+    }
+  })
 }
 
 function qIdForBlock(block) {
@@ -105,9 +179,12 @@ function calculateAssessment(results) {
     const qId = qIdForBlock(block)
     const svg = block.querySelector(".billiards-table")
     if (!svg) return
-    const ellipseCount = svg.querySelectorAll("ellipse[data-id]").length
+    const zonePoints = readEllipseChecks(svg, ruleType).reduce(
+      (n, ec) => n + ec.points,
+      0
+    )
     const noPot = svg.dataset.nopot !== undefined
-    const max = maxPoints(ellipseCount, ruleType, noPot)
+    const max = maxPoints(zonePoints, ruleType, noPot)
     totalPossible += max
 
     const r = results[qId]
@@ -442,25 +519,19 @@ export function initExam() {
       currentNoPot = false
       const svg = qBlock.querySelector(".billiards-table")
 
-      const ellipses = svg.querySelectorAll("ellipse[data-id]")
-      currentEllipseChecks =
-        ellipses.length > 0
-          ? Array.from(ellipses).map((e) => ({
-              ballId: parseInt(e.dataset.id, 10),
-              cx: parseFloat(e.getAttribute("cx")),
-              cy: parseFloat(e.getAttribute("cy")),
-              rx: parseFloat(e.getAttribute("rx")),
-              ry: parseFloat(e.getAttribute("ry")),
-            }))
-          : null
-      currentNoPot = svg.dataset.nopot !== undefined
-
       let configs = []
       if (svg.dataset.jsonShots) {
         configs = parseJsonShots(svg.dataset.jsonShots)
       } else if (svg.dataset.shots) {
         configs = parseShots(svg.dataset.shots)
       }
+
+      const ruleType = configs[0]?.ruleType || "threecushion"
+      currentRuleType = configs.length > 0 ? ruleType : null
+
+      currentEllipseChecks = readEllipseChecks(svg, ruleType)
+      if (currentEllipseChecks.length === 0) currentEllipseChecks = null
+      currentNoPot = svg.dataset.nopot !== undefined
 
       if (configs.length > 0) {
         const config = configs[0]
@@ -476,9 +547,6 @@ export function initExam() {
           i: config.shot.cueBallId,
           pos: config.balls[config.shot.cueBallId].pos,
         }
-
-        const ruleType = config.ruleType || "threecushion"
-        currentRuleType = ruleType
 
         const url = `../index.html?ruletype=${ruleType}&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}${tableSizeParam(config)}`
         if (iframe.contentWindow && iframe.src) {
@@ -498,38 +566,33 @@ export function initExam() {
       let ellipseHits = 0
       if (currentEllipseChecks && event.data.table?.balls) {
         for (const ec of currentEllipseChecks) {
-          const targetBall = event.data.table.balls.find(
-            (b) => b.id === ec.ballId
-          )
-          if (targetBall) {
-            const dx = targetBall.pos.x - ec.cx
-            const svgY = -targetBall.pos.y
-            const dy = svgY - ec.cy
-            const ex = (dx * dx) / (ec.rx * ec.rx)
-            const ey = (dy * dy) / (ec.ry * ec.ry)
-            if (ex + ey <= 1) ellipseHits++
-            console.log("ellipse check", {
-              ballId: ec.ballId,
-              ballPos: targetBall.pos,
-              svgY,
-              dx,
-              dy,
-              ex,
-              ey,
-              sum: ex + ey,
-              hit: ex + ey <= 1,
-            })
-          }
+          // A data-id zone only ever matches one ball; a whole-table zone
+          // matches them all, and each ball inside pays a point.
+          const candidates =
+            ec.ballId === null
+              ? event.data.table.balls
+              : event.data.table.balls.filter((b) => b.id === ec.ballId)
+          if (candidates.length === 0) continue
+          const inside = candidates.filter((ball) => isInsideEllipse(ball, ec))
+          ellipseHits += inside.length
+          console.log("ellipse check", {
+            ballId: ec.ballId,
+            inside: inside.length,
+            of: ec.points,
+          })
         }
       }
 
       // Score this attempt
       const pts =
         proximityPoints(outcomes, currentRuleType) +
+        caromPoints(outcomes, currentRuleType) +
         ellipseHits +
         potPoints(outcomes, currentRuleType, currentNoPot)
       const max = maxPoints(
-        currentEllipseChecks ? currentEllipseChecks.length : 0,
+        currentEllipseChecks
+          ? currentEllipseChecks.reduce((n, ec) => n + ec.points, 0)
+          : 0,
         currentRuleType,
         currentNoPot
       )

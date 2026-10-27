@@ -236,6 +236,30 @@ export function readConstants(params = new URLSearchParams()) {
 }
 
 /**
+ * The physics constants a link has actually moved, keyed as the setters take
+ * them.
+ *
+ * `readConstants` fills the gaps with defaults for a caller that needs a full
+ * set; this is for a caller writing them down. Repeating a default says nothing
+ * the reader does not already run, so only the moved values come back -- what
+ * `shareShotUrl` leaves off a link, and what the exporter leaves out of a
+ * diagram's data-json-shots rather than baking it in.
+ */
+export function changedConstants(params = new URLSearchParams()) {
+  const values = {};
+  PHYSICS_KEYS.forEach((key) => {
+    const raw = params.get(key);
+    // Number(null) is 0, so an absent key has to be ruled out before reading.
+    if (raw === null || raw.trim() === "") return;
+    const given = Number(raw);
+    if (!Number.isFinite(given)) return;
+    if (given === PHYSICS_DEFAULTS[key]) return;
+    values[key] = given;
+  });
+  return values;
+}
+
+/**
  * A link back to this page with one shot on it.
  *
  * The `init`/`initShot` pair is the same one the launch links write, so a shot

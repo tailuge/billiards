@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Libre Exam</title>
+    <meta
+      name="description"
+      content="Take the online Libre billiards exam. Practise a curated carom shot list on a realistic physics simulation and get instant, machine-graded assessment."
+    />
+    <link rel="stylesheet" href="../css/ball-colors.css" />
+    <link rel="stylesheet" href="exam.css" />
+    <style>
+      /*
+       * exam.css reserves room for the 20 shot rows of threecushion.html so
+       * buildSummaryList() cannot shift the page after first paint. This paper
+       * has two shots, so reserve their two rows instead of twenty.
+       */
+      #shotList {
+        min-height: 3.6rem;
+      }
+    </style>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📜</text></svg>"
+    />
+  </head>
+
+  <body>
+    <header>
+      <h1>
+        <a href="https://billiards.tailuge.workers.dev/lobby">Libre Exam</a>
+      </h1>
+    </header>
+
+    <main>
+      <div class="assessment-line">
+        <span id="assessmentLevel" class="assessment-item assessment unknown"
+          >Assessment: Unknown</span
+        >
+        <span id="completionPct" class="assessment-item">—</span>
+        <span id="scorePct" class="assessment-item">—</span>
+        <div>
+          <a
+            href="https://billiards.tailuge.workers.dev/lobby"
+            class="lobby-btn"
+            >Lobby</a
+          >
+          <button id="resetExam" class="reset-btn" type="button">Reset</button>
+        </div>
+      </div>
+
+      <section class="summary">
+        <h2>Shot List</h2>
+        <ul id="shotList"></ul>
+      </section>
+
+      <h2>Basic</h2>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Half ball gathering</h3>
+          <p>
+            To make a break in this game the objective is often to bring the
+            balls together after the shot - a gathering shot. Here its easy to
+            aim half ball but the skill is to play it as gently as possible
+            bringing the red to the same position ready for the next shot.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.127761,"y":-0.623153,"z":0}},{"id":1,"pos":{"x":-0.959021,"y":0.637775,"z":0}},{"id":2,"pos":{"x":-1.324066,"y":-0.188937,"z":0}}],"cushionModel":"mathavan","ruleType":"libre","shot":{"cueBallId":0,"angle":1.92773,"power":0.8384,"offset":{"x":0.023988,"y":0.308646,"z":0},"elevation":0},"params":{"tableSize":10,"mu":0.0055,"muS":0.126,"μs":0.2,"μw":0.175,"ee":0.85,"stronge_omega_ratio":1.76,"stronge_e_n":0.77,"stronge_μ":0.25}}]'
+            data-figure="0.84 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <ellipse
+              cx="-1.0045686066150665"
+              cy="-0.5008526667952538"
+              rx="0.4149305522441864"
+              ry="0.35669467598199844"
+              class="fine-stroke"
+            ></ellipse>
+          </svg>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Long corner gathering</h3>
+          <p>
+            Balancing the power to get the red back across the table and not hit
+            the white too hard is key on this one.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.306299,"y":0.683724,"z":0}},{"id":1,"pos":{"x":1.326888,"y":0.701196,"z":0}},{"id":2,"pos":{"x":-0.75657,"y":0.371834,"z":0}}],"cushionModel":"mathavan","ruleType":"libre","shot":{"cueBallId":0,"angle":5.811027,"power":1.2052,"offset":{"x":0.009743,"y":0.449895,"z":0},"elevation":0},"params":{"tableSize":10,"mu":0.0055,"muS":0.126,"μs":0.2,"μw":0.175,"ee":0.85,"stronge_omega_ratio":1.76,"stronge_e_n":0.77,"stronge_μ":0.25}}]'
+            data-figure="1.21 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <ellipse
+              cx="1.2035413682460785"
+              cy="-0.556662067770958"
+              rx="0.4489014446735382"
+              ry="0.2960323244333267"
+              class="fine-stroke"
+            ></ellipse>
+          </svg>
+        </div>
+      </div>
+    </main>
+
+    <div id="gameOverlay">
+      <button class="close-btn" id="closeGame" type="button">Quit</button>
+      <div class="iframe-container">
+        <iframe id="gameIframe" title="libre exam"></iframe>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initExam } from "./exam.js"
+      initExam()
+    </script>
+  </body>
+</html>
