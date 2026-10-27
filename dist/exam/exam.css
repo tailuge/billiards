@@ -65,10 +65,16 @@ header h1 a:hover {
   box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
 
-body > h2 {
+/*
+ * Section headings (Basic / Intermediate / Advanced) are direct children of
+ * main. Centred so they sit over the middle of the question column rather
+ * than hugging the left edge of the viewport.
+ */
+main > h2 {
   max-width: 1200px;
   margin: 1rem auto 0.5rem;
   padding: 0 0.75rem;
+  text-align: center;
 }
 
 .summary h2 {

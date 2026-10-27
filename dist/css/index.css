@@ -1001,27 +1001,44 @@ body.chromeless #panel .powerSliderContainer {
      leaves it looking high. Padding the top pushes the centred line down by
      half the padding, so 2px nudges the glyph down 1px. */
   padding: 2px 0 0;
-  background: linear-gradient(180deg, rgb(255 255 255 / 16%) 0%, rgb(255 255 255 / 6%) 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 16%) 0%,
+    rgb(255 255 255 / 6%) 100%
+  );
   border: 1px solid rgb(255 255 255 / 25%);
   border-radius: 6px;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 40%), inset 0 1px 0 rgb(255 255 255 / 20%);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 40%),
+    inset 0 1px 0 rgb(255 255 255 / 20%);
   color: #eee;
   font-family: inherit;
   font-size: 1.1rem;
   line-height: 1;
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  transition:
+    background 0.15s,
+    transform 0.1s,
+    box-shadow 0.15s;
 }
 
 .about-close:hover {
-  background: linear-gradient(180deg, rgb(255 255 255 / 24%) 0%, rgb(255 255 255 / 12%) 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 24%) 0%,
+    rgb(255 255 255 / 12%) 100%
+  );
   border-color: rgb(255 255 255 / 40%);
-  box-shadow: 0 2px 4px rgb(0 0 0 / 50%), inset 0 1px 0 rgb(255 255 255 / 30%);
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 50%),
+    inset 0 1px 0 rgb(255 255 255 / 30%);
 }
 
 .about-close:active {
   transform: translateY(1px);
-  box-shadow: 0 1px 1px rgb(0 0 0 / 60%), inset 0 1px 2px rgb(0 0 0 / 40%);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 60%),
+    inset 0 1px 2px rgb(0 0 0 / 40%);
 }
 
 .about-panel section,
@@ -1090,12 +1107,7 @@ body.chromeless #panel .powerSliderContainer {
   border: 2px solid #666;
   border-radius: 12px;
   overflow: hidden;
-  background: linear-gradient(
-    to bottom,
-    #1b2d44 0%,
-    #13212f 50%,
-    #1a1611 100%
-  );
+  background: linear-gradient(to bottom, #1b2d44 0%, #13212f 50%, #1a1611 100%);
 }
 
 .about-panel .top,
@@ -1243,7 +1255,10 @@ body.chromeless #panel .powerSliderContainer {
 
 .about-panel .input-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, max-content) minmax(0, max-content));
+  grid-template-columns: repeat(
+    2,
+    minmax(0, max-content) minmax(0, max-content)
+  );
   justify-content: center;
   align-items: center;
   gap: 3px 6px;
@@ -1323,8 +1338,14 @@ body.chromeless #panel .powerSliderContainer {
   text-decoration: none;
   font-size: 12px;
   font-weight: 400;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 30%), inset 0 1px 0 rgb(255 255 255 / 15%);
-  transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 30%),
+    inset 0 1px 0 rgb(255 255 255 / 15%);
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.1s,
+    box-shadow 0.15s;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1338,12 +1359,16 @@ body.chromeless #panel .powerSliderContainer {
   );
   border-color: rgb(255 255 255 / 40%);
   border-bottom-color: rgb(0 0 0 / 50%);
-  box-shadow: 0 2px 4px rgb(0 0 0 / 40%), inset 0 1px 0 rgb(255 255 255 / 25%);
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 40%),
+    inset 0 1px 0 rgb(255 255 255 / 25%);
 }
 
 .mode-nav a:active {
   transform: translateY(1px);
-  box-shadow: 0 1px 1px rgb(0 0 0 / 50%), inset 0 1px 2px rgb(0 0 0 / 40%);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 50%),
+    inset 0 1px 2px rgb(0 0 0 / 40%);
 }
 
 /* The rim glint of an incoming challenge (.challenge-pill::after in
