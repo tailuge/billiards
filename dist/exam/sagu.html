@@ -1,16 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sagu Exam - Korean Four-Ball Billiards (사구)</title>
+    <title>4구(사구) 시험 - 모아치기·배치 연습 무료 당구 테스트</title>
     <meta
       name="description"
-      content="Free online sagu exam: six Korean four-ball (사구) carom positions on a realistic physics simulation, graded instantly on the carom and on where the balls finish."
+      content="브라우저에서 바로 치는 무료 4구(사구) 시험. 모아치기와 배치 중심의 샷 6개를 실제 물리 엔진 위에서 직접 쳐 보고, 캐롬과 공의 위치를 즉시 채점받습니다. 회원가입 없이 시작하세요."
     />
     <meta
       name="keywords"
-      content="sagu exam, 사구, 4구, korean four-ball, four ball carom, sagu billiards test, online carom exam, 사구 시험, 당구 시험, carom exam, billiards exam, free billiards test, 사구 배치, 당구 연습"
+      content="4구 시험, 사구 시험, 4구 배치, 4구배치, 모아치기, 당구 배치, 사구, 4구, 당구 시험, 온라인 당구, 무료 당구, 4구 규칙, 사구 규칙, 캐롬, 수구, 적구, 당점, 두께, 반두께, 세기 조절, 끌어치기, 밀어치기, 마세, 세워치기, 하프 볼, sagu exam, korean four-ball"
     />
     <meta name="robots" content="index,follow" />
     <link
@@ -19,13 +19,14 @@
     />
     <meta
       property="og:title"
-      content="Sagu Exam - Korean Four-Ball Billiards (사구)"
+      content="4구(사구) 시험 - 모아치기·배치 연습 무료 당구 테스트"
     />
     <meta
       property="og:description"
-      content="Free online sagu exam: six Korean four-ball (사구) carom positions on a realistic physics simulation, graded instantly on the carom and on where the balls finish."
+      content="브라우저에서 바로 치는 무료 4구(사구) 시험. 모아치기와 배치 중심의 샷 6개를 실제 물리 엔진 위에서 직접 쳐 보고, 캐롬과 공의 위치를 즉시 채점받습니다. 회원가입 없이 시작하세요."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
     <meta
       property="og:url"
       content="https://billiards.tailuge.workers.dev/exam/sagu"
@@ -39,15 +40,21 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Sagu Exam - Korean Four-Ball Billiards (사구)"
+      content="4구(사구) 시험 - 모아치기·배치 연습 무료 당구 테스트"
     />
     <meta
       name="twitter:description"
-      content="Free online sagu exam: six Korean four-ball (사구) carom positions on a realistic physics simulation, graded instantly on the carom and on where the balls finish."
+      content="브라우저에서 바로 치는 무료 4구(사구) 시험. 모아치기와 배치 중심의 샷 6개를 실제 물리 엔진 위에서 직접 쳐 보고, 캐롬과 공의 위치를 즉시 채점받습니다. 회원가입 없이 시작하세요."
     />
     <meta
       name="twitter:image"
       content="https://billiards.tailuge.workers.dev/images/billiards.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&amp;display=swap"
+      rel="stylesheet"
     />
     <link rel="stylesheet" href="../css/ball-colors.css" />
     <link rel="stylesheet" href="exam.css" />
@@ -60,6 +67,27 @@
       #shotList {
         min-height: 3.6rem;
       }
+
+      /*
+       * Korean-first paper. exam.css is written for the English papers, so the
+       * Hangul font stack and the leading are set here rather than there, and
+       * only on this page. `word-break: keep-all` matters: the default `normal`
+       * lets Korean break between any two syllables, splitting words mid-word.
+       */
+      body {
+        font-family:
+          "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui,
+          sans-serif;
+        line-height: 1.75;
+      }
+
+      h1,
+      h2,
+      h3,
+      .question-text p,
+      .guide-panel p {
+        word-break: keep-all;
+      }
     </style>
     <link
       rel="icon"
@@ -69,8 +97,8 @@
 
   <body>
     <header>
-      <h1>
-        <a href="https://billiards.tailuge.workers.dev/lobby">Sagu Exam</a>
+      <h1 data-en="Sagu Exam">
+        <a href="https://billiards.tailuge.workers.dev/lobby">4구(사구) 시험</a>
       </h1>
     </header>
 
@@ -85,41 +113,56 @@
           <details class="guide" id="guide">
             <summary>Guide</summary>
             <div class="guide-panel">
-              <h2>What sagu is</h2>
-              <p>
-                Sagu (사구), or four-ball, is the Korean carom game played with
-                two cue balls — white for one player, yellow for the other — and
-                two red object balls, on a pocketless table. A point is a carom:
-                the cue ball has to reach both reds. The two cue balls keep out
-                of each other's way, because touching your opponent's cue ball
-                is a foul.
+              <h2 data-en="What sagu is">4구(사구)란?</h2>
+              <p
+                data-en="Sagu (사구), or four-ball, is the Korean carom game played on a pocketless table with four balls: two cue balls, one for each player, and two red object balls. A point is a carom - the cue ball has to reach both reds. Touching your opponent's cue ball is a foul and costs a point; in the diagrams on this page the opponent's cue ball is the yellow one."
+              >
+                4구(사구)는 쿠션 없는 당구대에서 공 네 개로 치는 한국의 대표
+                캐롬 경기입니다. 수구 두 개 중 하나가 내 공, 나머지가 상대
+                공이고, 나머지 두 개는 빨간 적구입니다. 내 수구로 빨간 공 두
+                개를 모두 맞히면 1점입니다. 상대 수구에 닿으면 파울로 1점을
+                잃습니다. 이 페이지의 그림에서는 상대 수구가 노란 공으로
+                그려집니다.
               </p>
-              <h2>How this paper is graded</h2>
-              <p>
-                Every diagram has a faint ellipse drawn on the cloth. That is
-                the position zone, and it is what the paper is really about. A
-                shot scores three points for the carom and one point for each
-                ball — the cue ball and both reds — that comes to rest inside
-                the ellipse, so six points are on offer in each position. Play
-                Shot opens the position on the table, you play it, and the
-                simulation scores it straight away. Your best attempt on a shot
-                is the one that counts.
+              <h2 data-en="Gathering and position">모아치기와 배치</h2>
+              <p
+                data-en="Most four-ball points come from gathering shots. Bringing the balls back together instead of scattering them leaves the next carom easy; scatter them and you hand the table over. Position play is the same idea in miniature - the ellipse in each diagram marks where the cue ball and both reds should finish."
+              >
+                4구의 득점은 대부분 모아치기에서 나옵니다. 공을 흩어 놓지 않고
+                다시 모아 주면 다음 캐롬이 쉬워지고, 흩어 버리면 상대에게
+                테이블을 넘기게 됩니다. 배치도 같은 개념입니다. 그림에 그려진
+                타원은 수구와 빨간 공 두 개가 어디에 멈춰야 하는지를 표시한
+                것입니다.
               </p>
-              <h2>Reading the assessment</h2>
-              <p>
-                The strip at the top shows how many shots you have completed and
-                your percentage of the points available, with an assessment band
-                that climbs from Beginner to Master as the score improves. Reset
-                clears the paper and starts you again.
+              <h2 data-en="How this paper is graded">채점 방식</h2>
+              <p
+                data-en="Every diagram has a faint ellipse drawn on the cloth. That is the position zone, and it is what the paper is really about. A shot scores three points for the carom and one point for each ball - the cue ball and both reds - that comes to rest inside the ellipse, so six points are on offer in each position. Play Shot opens the position on the table, you play it, and the simulation scores it straight away. Your best attempt on a shot is the one that counts."
+              >
+                모든 그림에는 천 위에 흐린 타원이 그려져 있습니다. 이것이 포지션
+                존이고, 이 시험의 핵심입니다. 캐롬을 성공시키면 3점, 수구와 빨간
+                공 두 개 가운데 타원 안에 멈춘 공마다 1점이 붙어 한 샷에 최대
+                6점을 얻을 수 있습니다. 'Play Shot'을 누르면 그 배치가 테이블에
+                열리고, 샷을 마치면 시뮬레이션이 바로 채점합니다. 샷마다 가장
+                좋은 시도 하나가 기록됩니다.
               </p>
-              <p>
-                Prefer to just play? Open a
-                <a href="../?ruletype=sagu">full game of sagu</a>, or compare
-                this paper with the
-                <a href="threecushion.html">three-cushion</a> and
-                <a href="libre.html">libre</a> exams.
-                <a href="index.html">All four papers</a> are free and need no
-                account.
+              <h2 data-en="Reading the assessment">평가 읽는 법</h2>
+              <p
+                data-en="The strip at the top shows how many shots you have completed and your percentage of the points available, with an assessment band that climbs from Beginner to Master as the score improves. Reset clears the paper and starts you again."
+              >
+                화면 위쪽 띠에는 몇 개의 샷을 마쳤는지와 얻을 수 있는 점수 중 몇
+                퍼센트를 얻었는지가 표시됩니다. 점수가 오를수록 평가 등급이
+                Beginner에서 Master까지 올라갑니다. 'Reset'은 시험지를 지우고
+                처음부터 다시 시작합니다.
+              </p>
+              <p
+                data-en="Prefer to just play? Open a full game of sagu, or compare this paper with the three-cushion and libre exams. All four papers are free and need no account."
+              >
+                그냥 한 판 치고 싶다면
+                <a href="../?ruletype=sagu">사구(4구) 게임</a>을 열어 보세요.
+                <a href="threecushion.html">3쿠션 시험</a>,
+                <a href="libre.html">리브르 시험</a>,
+                <a href="index.html">네 종목 시험지 전체</a>도 무료이고 가입이
+                필요 없습니다.
               </p>
             </div>
           </details>
@@ -133,19 +176,21 @@
       </div>
 
       <section class="summary">
-        <h2>Shot List</h2>
+        <h2 data-en="Shot List">샷 목록</h2>
         <ul id="shotList"></ul>
       </section>
 
-      <h2>Basic</h2>
+      <h2 data-en="Basic">초급</h2>
       <div class="question-block">
         <div class="question-text">
-          <h3>Half ball gathering</h3>
-          <p>
-            Half ball is the easiest thickness to aim here, so the shot is
-            really a test of pace. Play it as gently as the carom allows and
-            both reds gather back near where the cue ball started, ready for the
-            next point.
+          <h3 data-en="Half ball gathering">하프 볼 모아치기</h3>
+          <p
+            data-en="Half ball is the easiest thickness to aim here, so the shot is really a test of pace. Play it as gently as the carom allows and both reds gather back near where the cue ball started, ready for the next point."
+          >
+            하프 볼은 여기서 가장 맞히기 쉬운 두께입니다. 반두께라고도 부릅니다.
+            그래서 이 샷은 결국 세기 조절 싸움입니다. 캐롬이 성립할 만큼만
+            부드럽게 치면 두 빨간 공이 수구가 있던 자리 근처로 다시 모여 다음
+            샷을 준비할 수 있습니다.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -170,11 +215,13 @@
 
       <div class="question-block">
         <div class="question-text">
-          <h3>Long corner gathering</h3>
-          <p>
-            A long trip for the red, so the power has to do two jobs: bring it
-            back across the table and still leave the cue ball short enough to
-            stay in the zone.
+          <h3 data-en="Long corner gathering">코너로 길게 모아치기</h3>
+          <p
+            data-en="A long trip for the red, so the power has to do two jobs: bring it back across the table and still leave the cue ball short enough to stay in the zone."
+          >
+            빨간 공이 테이블을 가로질러 멀리 다녀와야 합니다. 공을 되돌려 오는
+            세기와, 수구를 포지션 존 안에 남겨 둘 만큼만 굴리는 세기를 동시에
+            맞춰야 하는 샷입니다.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -199,12 +246,13 @@
 
       <div class="question-block">
         <div class="question-text">
-          <h3>Short angle draw</h3>
-          <p>
-            Small angles are sensitive here. Draw takes the red around the
-            corner while the cue ball holds on the contact, and the yellow has
-            to be played around rather than into — reaching it is a foul in
-            sagu.
+          <h3 data-en="Short angle draw">짧은 각 끌어치기</h3>
+          <p
+            data-en="Small angles are sensitive here. Draw takes the red around the corner while the cue ball holds on the contact, and the yellow cue ball has to be played around rather than into - touching it is a foul."
+          >
+            각이 짧을수록 예민합니다. 끌어치기로 빨간 공을 코너 쪽으로 돌리고,
+            수구는 맞은 자리에 붙여 둡니다. 노란 공은 상대 수구이므로 맞히지
+            말고 피해서 돌아가야 합니다. 닿는 순간 파울입니다.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -229,12 +277,13 @@
 
       <div class="question-block">
         <div class="question-text">
-          <h3>Long recovery</h3>
-          <p>
-            A position that comes up constantly: the red has to come back round
-            to the same side of the table as the cue ball. Play it with a tip
-            less than full draw, so you can hit it firmly without the cue ball
-            running away after the contact.
+          <h3 data-en="Long recovery">길게 되돌려 모아치기</h3>
+          <p
+            data-en="A position that comes up constantly: the red has to come back round to the same side of the table as the cue ball. Play it with a tip less than full draw, so you can hit it firmly without the cue ball running away after the contact."
+          >
+            아주 자주 나오는 배치입니다. 빨간 공을 수구와 같은 쪽으로 다시 돌려
+            놓는 것이 핵심입니다. 끌어치기를 최대로 주지 말고 한 팁 덜 준 채
+            세게 쳐서, 맞은 뒤에 수구가 흘러나가지 않게 합니다.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -259,11 +308,13 @@
 
       <div class="question-block">
         <div class="question-text">
-          <h3>Full ball</h3>
-          <p>
-            A fine cut can reach both reds, but full-ball contact with top spin
-            or natural roll is the reliable way to hold the cue ball and gather
-            the reds together.
+          <h3 data-en="Full ball">풀 볼(가득 두께)</h3>
+          <p
+            data-en="A fine cut can reach both reds, but full-ball contact with follow or natural roll is the reliable way to hold the cue ball and gather the reds together."
+          >
+            얇게 잘라서 두 빨간 공을 노리는 방법도 있지만, 가득 두께로 맞히고
+            밀어치기나 자연스러운 굴림을 주는 편이 수구를 붙잡고 빨간 공을
+            모으는 데 훨씬 안정적입니다.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -286,17 +337,18 @@
         </div>
       </div>
 
-      <h2>Advanced</h2>
+      <h2 data-en="Advanced">고급</h2>
 
       <div class="question-block">
         <div class="question-text">
-          <h3>Masse</h3>
-          <p>
-            The dark arts. Raising the butt of the cue is a last resort in most
-            games, and four-ball players reach for it far more often. Bend the
-            cue ball around the yellow — without touching it, which would be a
-            foul — to glance the red at very low pace and leave both balls
-            nursed in the corner.
+          <h3 data-en="Masse">마세(맛세)</h3>
+          <p
+            data-en="The dark arts. An elevated cue is a last resort in most games, and four-ball players reach for it far more often. Bend the cue ball around the yellow without touching it - contact is a foul - to glance the red at very low pace and leave both balls nursed in the corner."
+          >
+            흔히 사술이라고 부르는 영역입니다. 큐대를 세워 치는 세워치기는
+            대부분의 경기에서 최후의 수단이지만, 4구에서는 훨씬 자주 쓰입니다.
+            노란 공은 상대 수구이므로 닿으면 파울입니다. 그 위를 돌아가며 아주
+            약한 세기로 빨간 공을 스치듯 맞혀 두 공을 코너에 붙여 둡니다.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -323,7 +375,7 @@
     <div id="gameOverlay">
       <button class="close-btn" id="closeGame" type="button">Quit</button>
       <div class="iframe-container">
-        <iframe id="gameIframe" title="sagu exam"></iframe>
+        <iframe id="gameIframe" title="사구 시험"></iframe>
       </div>
     </div>
 

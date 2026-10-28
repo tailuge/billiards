@@ -357,15 +357,32 @@ main > h2 {
   animation: ring-expand-red 2s ease-out 2;
 }
 
-/* Background darkened so the white label clears 4.5:1. */
+/*
+ * The three controls in the assessment bar - Guide, Lobby and Reset - are one
+ * size, so their box metrics live here once. A <button> does not inherit the
+ * page font and its UA line-height is `normal`, which made Reset come out in a
+ * different typeface and taller than the <a> and <summary> beside it.
+ */
+.guide summary,
+.lobby-btn,
 .reset-btn {
+  display: inline-block;
   padding: 0.25rem 0.5rem;
-  background-color: #e81414;
-  color: white;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
+  color: white;
+  font-family: inherit;
   font-size: 0.85rem;
+  line-height: 1.6;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  list-style: none;
+}
+
+/* Background darkened so the white label clears 4.5:1. */
+.reset-btn {
+  background-color: #e81414;
   margin-left: 0.25rem;
 }
 
@@ -374,14 +391,7 @@ main > h2 {
 }
 
 .lobby-btn {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
   background-color: #2563eb;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
 }
 
 .lobby-btn:hover {
@@ -406,15 +416,9 @@ main > h2 {
   display: inline-block;
 }
 
+/* Box metrics come from the shared control rule above the Reset button. */
 .guide summary {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
   background-color: #4b5563;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  list-style: none;
 }
 
 .guide summary::-webkit-details-marker {
