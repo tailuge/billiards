@@ -56,6 +56,16 @@
   transform: translateY(-2px);
 }
 
+.lobby-rule {
+  /* The game mark left of the name: its own flex item, so the row centres it
+     against the name instead of sharing the name's line box, and a size of its
+     own -- smaller than the name -- with no line box of its own to add. A
+     circled digit is a symbol-font glyph whose metrics are taller than the
+     text's, which is what would push the name down with it. */
+  font-size: 0.8em;
+  line-height: 1;
+}
+
 .lobby-count.is-hidden {
   display: none;
 }

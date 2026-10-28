@@ -46,6 +46,35 @@ export const DEFAULT_STATE = {
   },
 };
 
+/**
+ * What each carom rule racks, in the flat init order a state carries.
+ *
+ * threecushion and libre both rack Rack.three(): the two cue balls on the head
+ * spots, the red on the foot spot. sagu racks Rack.fourBall(), which puts its
+ * second cue between the foot spot and the far cushion and gives its pair of
+ * reds a spot each -- Sagu reads balls[2] and balls[3] as that pair, so their
+ * order is as much the rule as their positions are. The numbers are the game's
+ * own at tableSize 10, rounded the way the page rounds a state.
+ */
+export const CAROM_LAYOUTS = {
+  threecushion: [
+    { x: -0.756, y: -0.189 },
+    { x: -0.756, y: 0 },
+    { x: 0.756, y: 0 },
+  ],
+  libre: [
+    { x: -0.756, y: -0.189 },
+    { x: -0.756, y: 0 },
+    { x: 0.756, y: 0 },
+  ],
+  sagu: [
+    { x: -0.756, y: -0.189 },
+    { x: 1.134, y: 0 },
+    { x: -0.756, y: 0 },
+    { x: 0.756, y: 0 },
+  ],
+}
+
 // The page's own convention: three.html rounds a state to six places so a share
 // link stays short and the numbers read as measurements.
 const round = (value) => +Number(value).toFixed(6);
@@ -81,13 +110,53 @@ function toShot(json) {
   };
 }
 
+/**
+ * The state's layout, holding the number of balls its rule racks.
+ *
+ * The count is not a detail the editor may leave to its caller. The game maps
+ * an init over the rack it built (Rack.fromInitParam), so a sagu state carrying
+ * three positions leaves the fourth ball where the rack put it while a
+ * three-cushion state carrying four writes undefined positions into the table.
+ * So a carom state is trimmed to its rule's count, or filled in from that rule's
+ * rack -- at a spot of the rack's own that nothing else is using, so a layout
+ * carried over from another rule comes back as a legal table rather than a pile
+ * of coincident balls.
+ */
+function caromBalls(ruleType, balls) {
+  const layout = CAROM_LAYOUTS[ruleType]
+  if (!layout) return balls.length > 0 ? balls : DEFAULT_STATE.balls
+  if (balls.length === 0) {
+    // The three-cushion default is the page's own opening shot rather than the
+    // rack, so that one is kept; the other rules have no curated shot and open
+    // on the layout the game racks.
+    return ruleType === DEFAULT_RULETYPE
+      ? DEFAULT_STATE.balls
+      : layout.map((ball) => ({ ...ball }))
+  }
+
+  const kept = balls.slice(0, layout.length)
+  const gap = 2 * PHYSICS_DEFAULTS.R
+  while (kept.length < layout.length) {
+    const spot = layout.find((candidate) =>
+      kept.every(
+        (ball) => Math.hypot(ball.x - candidate.x, ball.y - candidate.y) >= gap
+      )
+    )
+    // Every spot taken: the ball goes where its own rack puts it anyway, and
+    // the page can still drag it clear.
+    kept.push({ ...(spot ?? layout[kept.length]) })
+  }
+  return kept
+}
+
 function toState(shot, balls, params) {
+  const ruleType = params.get("ruletype") ?? shot.ruleType ?? DEFAULT_RULETYPE
   return {
-    ruleType: params.get("ruletype") ?? shot.ruleType ?? DEFAULT_RULETYPE,
+    ruleType,
     cushionModel:
       params.get("cushionModel") ?? shot.cushionModel ?? DEFAULT_CUSHION_MODEL,
     practice: params.has("practice"),
-    balls: balls.length > 0 ? balls : DEFAULT_STATE.balls,
+    balls: caromBalls(ruleType, balls),
     shot: toShot(shot),
   };
 }

@@ -252,6 +252,39 @@
         outline-offset: 1px;
       }
 
+      /* The rule type, at the right end of the input panel's title bar: the bar
+         is the one piece of chrome above the table with room in it, so choosing
+         a game type costs the table no height. The bar is a flex row for it, so
+         the label and the select share a baseline without absolute placement.
+         A select rather than a row of buttons: three options out of a set that
+         only grows, and one click to see them all. */
+      .panel-input > h2 {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .ruletype-select {
+        box-sizing: border-box;
+        height: calc(var(--title-height) - 2px);
+        padding: 0 0.2rem;
+        background: #f5f5f5;
+        color: #666;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        font: inherit;
+        font-size: 0.6rem;
+        cursor: pointer;
+
+        /* The title bar it sits in is uppercased; the option text is not. */
+        text-transform: none;
+      }
+
+      .ruletype-select:focus-visible {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+
       /* Same fixed height as the header, and a direct child of body, so the
          height budget above stays exact. It also holds the research details'
          fold-out panel, which is why it is the positioning context below. */
@@ -490,6 +523,16 @@
 
       .action-button:hover {
         background: #f5f5f5;
+      }
+
+      /* A button that does not apply to the game type on the table. Greyed
+         rather than hidden: the action is still part of what this page does,
+         and a control that comes and goes between rules is harder to find. */
+      .action-button:disabled {
+        color: #aaa;
+        background: #fafafa;
+        border-color: #e5e5e5;
+        cursor: not-allowed;
       }
 
       /* A button that carries an icon instead of a label, the way the share
@@ -957,6 +1000,14 @@
         --ball-stroke: #8d1b25;
       }
 
+      /* sagu's fourth ball is its second red: that rack is two cue balls and two
+         reds, and Sagu reads balls[2] and balls[3] as the pair. Scoped to the
+         rule, so a pool id 3 in a link keeps the colour it had. */
+      svg.billiards-table.sagu .ball-3 {
+        --ball-fill: #e63946;
+        --ball-stroke: #8d1b25;
+      }
+
       svg.billiards-table .ball {
         cursor: grab;
       }
@@ -1178,10 +1229,22 @@
       </section>
 
       <section class="panel panel-input" aria-label="Shot input">
-        <h2>shot input</h2>
+        <h2>
+          shot input
+          <!-- The game type is read from the URL and fixed for the page load:
+               the rule decides the rack, the ball colours and the physics the
+               game and the exporter run, and the diagram bundle builds its
+               rules once, at construction. Picking another one reloads the
+               page on it, carrying the shot across as a share link. -->
+          <select id="ruletype" class="ruletype-select" aria-label="Game type">
+            <option value="threecushion">three cushion</option>
+            <option value="libre">libre</option>
+            <option value="sagu">sagu</option>
+          </select>
+        </h2>
         <div class="panel-body">
           <div class="table-panel">
-            <svg class="billiards-table threecushion"></svg>
+            <svg class="billiards-table"></svg>
           </div>
         </div>
 
@@ -1816,6 +1879,14 @@
       const ZOOM_STEP = 0.0015
 
       const svg = document.querySelector(".billiards-table")
+      // The rule rides on the element as a class, as a diagram's does, so the
+      // shared ball colours in ball-colors.css key on the same names here as
+      // they do in an exported figure. A link naming something that is not a
+      // class name leaves the element as it is rather than throwing on the way
+      // to drawing the table.
+      if (/^[a-z][a-z0-9-]*$/i.test(state.ruleType)) {
+        svg.classList.add(state.ruleType)
+      }
       const { tableGroup, trajectoriesGroup, ballsGroup, statusEl } =
         setupSvgRoot(svg)
       // Tighter than the shared default so the cloth fills more of the canvas.
@@ -2535,6 +2606,37 @@
         radio.checked = radio.value === state.cushionModel
       })
 
+      // The game type, as the page was opened on it. It is fixed for this load:
+      // the rule decides the rack, which ball is which colour and the physics
+      // the game and the exporter then run, and the diagram bundle builds its
+      // rules once, when it is constructed. So the select reloads the page
+      // rather than switching anything in place, and the shot on the table
+      // travels with it as the share link the button below copies -- the
+      // editor's own way of naming a state in a URL. readState() trims or fills
+      // the layout back to the number of balls the chosen rule racks, so a
+      // three-cushion layout arriving on sagu gains its second red instead of
+      // losing the ball.
+      const ruletypeSelect = document.getElementById("ruletype")
+
+      if (ruletypeSelect) {
+        // Only the rules this page has a layout for are offered; a link naming
+        // another one leaves the select where it is rather than claiming a game
+        // type the page is not running.
+        const offers = (ruleType) =>
+          [...ruletypeSelect.options].some(
+            (option) => option.value === ruleType
+          )
+
+        if (offers(state.ruleType)) ruletypeSelect.value = state.ruleType
+
+        ruletypeSelect.addEventListener("change", () => {
+          const ruleType = ruletypeSelect.value
+          if (ruleType === state.ruleType) return
+          state.ruleType = ruleType
+          window.location.assign(shotLink())
+        })
+      }
+
       // The constant sliders belong to the bundle: Sliders owns each value, the
       // physics setter it drives and the readout, all keyed on the input's id.
       // So the editor only has to notice the change. The values are read back
@@ -2692,13 +2794,22 @@
         window.open(url.toString(), "_blank")
       })
 
+      // The fit page solves a three-cushion shot and nothing else, so the button
+      // is only live on a three-cushion table: a libre or sagu layout would be
+      // searched as the three-ball game and come back with an aim for a shot
+      // that is not the one on the table.
+      const solutionButton = document.getElementById("solution")
+      if (solutionButton && state.ruleType !== "threecushion") {
+        solutionButton.disabled = true
+      }
+
       // Fit a shot to this layout. The fit page solves for the aim rather than
       // replaying one, so the aim in `initShot` means nothing to it -- but the
       // ball it is played from does, so the pair goes along and the fit reads
       // the one field it needs. Sent whole because `init` and `initShot` are
       // the pair every other link here hands a shot over as, and a search that
       // resumed on the wrong ball would be solving the wrong shot.
-      document.getElementById("solution")?.addEventListener("click", () => {
+      solutionButton?.addEventListener("click", () => {
         const url = addConstants(
           new URL("../fit/solution.html", window.location.href)
         )

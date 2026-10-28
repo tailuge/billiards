@@ -331,7 +331,7 @@ export class LobbyIndicator {
     // Not session.playername: in replay that has already been overwritten with
     // the footage's player 1 (see the userName field).
     const name = this.userName
-    this.countElement.innerHTML = `${name} ${lobbyIcon}${this.count}${statusEmoji}`
+    this.countElement.innerHTML = `${this.ruleBadge()}${name} ${lobbyIcon}${this.count}${statusEmoji}`
 
     // One entry per name; a name playing a game carries its rule emoji so the
     // tooltip shows e.g. "veli ④" for a sagu player. ruleType is absent for
@@ -351,6 +351,24 @@ export class LobbyIndicator {
     } else {
       this.countElement.removeAttribute("title")
     }
+  }
+
+  /**
+   * The game the reader is playing, as the mark shown left of their own name:
+   * the same map the tooltip uses. This page's ruleType carries a suffix in
+   * bot, exam, speedrun and club games, so it is the base that names the rule;
+   * a replay, a spectator or any base the map does not know shows nothing
+   * rather than printing the label as text.
+   *
+   * Its own element, like the lobby icon: inside the name's own text the mark's
+   * fallback font gave the line a taller box than the name's and the pair sat
+   * low against the rest of the row. As a flex item it is centred by the row
+   * instead, and its size is the CSS's to set without moving the name.
+   */
+  private ruleBadge(): string {
+    const base = this.ruleType.split("-")[0]
+    const emoji = ruleTypeMap[base]?.emoji
+    return emoji ? `<span class="lobby-rule">${emoji}</span>` : ""
   }
 
   private updateChallengePill(challenged: boolean): void {

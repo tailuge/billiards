@@ -1,4 +1,5 @@
 import {
+  CAROM_LAYOUTS,
   DEFAULT_STATE,
   PHYSICS_DEFAULTS,
   PHYSICS_KEYS,
@@ -78,6 +79,50 @@ describe("editor state", () => {
     expect(readState(params(serializeState(DEFAULT_STATE)))).toEqual(
       DEFAULT_STATE
     )
+  })
+
+  it("opens each carom rule on a layout of its own", () => {
+    // threecushion opens on the page's curated shot; the rules with no curated
+    // shot of their own open on the rack the game lays out for them.
+    expect(readState().balls).toEqual(DEFAULT_STATE.balls)
+
+    const libre = readState(params("ruletype=libre"))
+    expect(libre.ruleType).toBe("libre")
+    expect(libre.balls).toEqual(CAROM_LAYOUTS.libre)
+
+    // sagu is four balls: the second cue between the foot spot and the far
+    // cushion, then the pair of reds Sagu reads as balls[2] and balls[3].
+    const sagu = readState(params("ruletype=sagu"))
+    expect(sagu.ruleType).toBe("sagu")
+    expect(sagu.balls).toHaveLength(4)
+    expect(sagu.balls[1]).toEqual({ x: 1.134, y: 0 })
+    expect(sagu.balls[3]).toEqual({ x: 0.756, y: 0 })
+  })
+
+  it("holds the number of balls its rule racks", () => {
+    const init = (values: number[]) =>
+      `init=${encodeURIComponent(JSON.stringify(values))}`
+
+    // A sagu state arriving with a three-ball layout gains its second red, at a
+    // spot of sagu's own rack that nothing is already using -- rather than
+    // being left a ball short, which the game's Rack.fromInitParam would let
+    // pass silently by keeping the rack's ball where it was.
+    const padded = readState(
+      params(`ruletype=sagu&${init([-0.756, -0.189, -0.756, 0, 0.756, 0])}`)
+    )
+    expect(padded.balls).toHaveLength(4)
+    expect(padded.balls[1]).toEqual({ x: -0.756, y: 0 })
+    expect(padded.balls[3]).toEqual({ x: 1.134, y: 0 })
+
+    // And a four-ball one is trimmed back for a rule that racks three, so a
+    // three-cushion init never carries a position with no ball behind it.
+    const trimmed = readState(
+      params(
+        `ruletype=threecushion&${init([0.1, 0.1, 0.2, 0.2, 0.3, 0.3, 0.4, 0.4])}`
+      )
+    )
+    expect(trimmed.balls).toHaveLength(3)
+    expect(trimmed.balls[2]).toEqual({ x: 0.3, y: 0.3 })
   })
 
   it("carries the physics constants the launch links forward", () => {
@@ -183,6 +228,16 @@ describe("editor state", () => {
       expect(url.searchParams.get("init")).not.toBeNull()
     })
 
+    it("carries the rule type and sagu's four balls through the link", () => {
+      const sagu = readState(params("ruletype=sagu"))
+      const url = shareShotUrl(href, sagu)
+
+      expect(url.searchParams.get("ruletype")).toBe("sagu")
+      const state = readState(new URLSearchParams(url.search))
+      expect(state.ruleType).toBe("sagu")
+      expect(state.balls).toEqual(sagu.balls)
+    })
+
     it("reopens the shot it wrote", () => {
       const url = shareShotUrl(href, shotState, { mu: "0.006" })
       // The link is only worth having if opening it puts the same shot on the
@@ -202,10 +257,13 @@ describe("editor state", () => {
         )
       )
 
-      expect(state.balls).toEqual([
+      // The two positions come through as given, and the third ball is the
+      // rack's -- a three-cushion state is never a ball short.
+      expect(state.balls.slice(0, 2)).toEqual([
         { x: 0.5, y: 0.2 },
         { x: -0.9, y: -0.4 },
       ])
+      expect(state.balls).toHaveLength(3)
       expect(state.shot.angle).toBeCloseTo(0.5)
       // `cueBallId` is the launch links' name for the shot's `i`.
       expect(state.shot.i).toBe(1)
