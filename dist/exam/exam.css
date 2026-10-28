@@ -388,6 +388,70 @@ main > h2 {
   background-color: #1d4ed8;
 }
 
+/*
+ * "Guide" disclosure. The copy lives in the served HTML inside a <details>, so
+ * a crawler reads it without running the script, and it opens as a card pinned
+ * under the sticky assessment bar instead of pushing the shot list down. The
+ * wrapper above it supplies the positioning context; .guide stays static so the
+ * card hangs off the right-hand edge of the button group rather than off the
+ * trigger, which would overflow a narrow viewport.
+ */
+.assessment-line > div {
+  position: relative;
+}
+
+/* `<details>` is display: block in the UA stylesheet, which would put the
+ * trigger on its own line above Lobby and Reset. */
+.guide {
+  display: inline-block;
+}
+
+.guide summary {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: #4b5563;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  list-style: none;
+}
+
+.guide summary::-webkit-details-marker {
+  display: none;
+}
+
+.guide summary:hover {
+  background-color: #374151;
+}
+
+.guide-panel {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  right: 0;
+  z-index: 200;
+  width: min(26rem, calc(100vw - 2rem));
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  color: #333;
+  border: 1px solid #000;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 25%);
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.guide-panel h2 {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.guide-panel h2 + p {
+  margin-bottom: 0.5rem;
+}
+
 /* Iframe overlay */
 #gameOverlay {
   display: none;

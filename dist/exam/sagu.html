@@ -3,10 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Libre Exam</title>
+    <title>Sagu Exam - Korean Four-Ball Billiards (사구)</title>
     <meta
       name="description"
-      content="Take the online Libre billiards exam. Practise a curated carom shot list on a realistic physics simulation and get instant, machine-graded assessment."
+      content="Free online sagu exam: six Korean four-ball (사구) carom positions on a realistic physics simulation, graded instantly on the carom and on where the balls finish."
+    />
+    <meta
+      name="keywords"
+      content="sagu exam, 사구, 4구, korean four-ball, four ball carom, sagu billiards test, online carom exam, 사구 시험, 당구 시험, carom exam, billiards exam, free billiards test, 사구 배치, 당구 연습"
+    />
+    <meta name="robots" content="index,follow" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/exam/sagu"
+    />
+    <meta
+      property="og:title"
+      content="Sagu Exam - Korean Four-Ball Billiards (사구)"
+    />
+    <meta
+      property="og:description"
+      content="Free online sagu exam: six Korean four-ball (사구) carom positions on a realistic physics simulation, graded instantly on the carom and on where the balls finish."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/exam/sagu"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/images/billiards.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Sagu Exam - Korean Four-Ball Billiards (사구)"
+    />
+    <meta
+      name="twitter:description"
+      content="Free online sagu exam: six Korean four-ball (사구) carom positions on a realistic physics simulation, graded instantly on the carom and on where the balls finish."
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/billiards.png"
     />
     <link rel="stylesheet" href="../css/ball-colors.css" />
     <link rel="stylesheet" href="exam.css" />
@@ -29,7 +70,7 @@
   <body>
     <header>
       <h1>
-        <a href="https://billiards.tailuge.workers.dev/lobby">Libre Exam</a>
+        <a href="https://billiards.tailuge.workers.dev/lobby">Sagu Exam</a>
       </h1>
     </header>
 
@@ -41,6 +82,47 @@
         <span id="completionPct" class="assessment-item">—</span>
         <span id="scorePct" class="assessment-item">—</span>
         <div>
+          <details class="guide" id="guide">
+            <summary>Guide</summary>
+            <div class="guide-panel">
+              <h2>What sagu is</h2>
+              <p>
+                Sagu (사구), or four-ball, is the Korean carom game played with
+                two cue balls — white for one player, yellow for the other — and
+                two red object balls, on a pocketless table. A point is a carom:
+                the cue ball has to reach both reds. The two cue balls keep out
+                of each other's way, because touching your opponent's cue ball
+                is a foul.
+              </p>
+              <h2>How this paper is graded</h2>
+              <p>
+                Every diagram has a faint ellipse drawn on the cloth. That is
+                the position zone, and it is what the paper is really about. A
+                shot scores three points for the carom and one point for each
+                ball — the cue ball and both reds — that comes to rest inside
+                the ellipse, so six points are on offer in each position. Play
+                Shot opens the position on the table, you play it, and the
+                simulation scores it straight away. Your best attempt on a shot
+                is the one that counts.
+              </p>
+              <h2>Reading the assessment</h2>
+              <p>
+                The strip at the top shows how many shots you have completed and
+                your percentage of the points available, with an assessment band
+                that climbs from Beginner to Master as the score improves. Reset
+                clears the paper and starts you again.
+              </p>
+              <p>
+                Prefer to just play? Open a
+                <a href="../?ruletype=sagu">full game of sagu</a>, or compare
+                this paper with the
+                <a href="threecushion.html">three-cushion</a> and
+                <a href="libre.html">libre</a> exams.
+                <a href="index.html">All four papers</a> are free and need no
+                account.
+              </p>
+            </div>
+          </details>
           <a
             href="https://billiards.tailuge.workers.dev/lobby"
             class="lobby-btn"
@@ -60,10 +142,10 @@
         <div class="question-text">
           <h3>Half ball gathering</h3>
           <p>
-            To make a break in this game the objective is often to bring the
-            balls together after the shot - a gathering shot. Here its easy to
-            aim half ball but the skill is to play it as gently as possible
-            bringing the red to the same position ready for the next shot.
+            Half ball is the easiest thickness to aim here, so the shot is
+            really a test of pace. Play it as gently as the carom allows and
+            both reds gather back near where the cue ball started, ready for the
+            next point.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -90,8 +172,9 @@
         <div class="question-text">
           <h3>Long corner gathering</h3>
           <p>
-            Balancing the power to get the red back across the table and not hit
-            the white too hard is key on this one.
+            A long trip for the red, so the power has to do two jobs: bring it
+            back across the table and still leave the cue ball short enough to
+            stay in the zone.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -118,8 +201,10 @@
         <div class="question-text">
           <h3>Short angle draw</h3>
           <p>
-            Again balance power to push red around the angles and just land on
-            the yellow.
+            Small angles are sensitive here. Draw takes the red around the
+            corner while the cue ball holds on the contact, and the yellow has
+            to be played around rather than into — reaching it is a foul in
+            sagu.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -146,10 +231,10 @@
         <div class="question-text">
           <h3>Long recovery</h3>
           <p>
-            Frequently occuring position, pushing red around table to same side
-            as the cue ball is the tricky part. Not played with full draw, take
-            a tip off to allow harder hit with less motion on the white after
-            impact.
+            A position that comes up constantly: the red has to come back round
+            to the same side of the table as the cue ball. Play it with a tip
+            less than full draw, so you can hit it firmly without the cue ball
+            running away after the contact.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -176,9 +261,9 @@
         <div class="question-text">
           <h3>Full ball</h3>
           <p>
-            Often you could get a cannon with super fine cut but think about
-            taking a full ball contact with top spin or natural roll to bring
-            balls together.
+            A fine cut can reach both reds, but full-ball contact with top spin
+            or natural roll is the reliable way to hold the cue ball and gather
+            the reds together.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -207,11 +292,11 @@
         <div class="question-text">
           <h3>Masse</h3>
           <p>
-            This section I would describe as the dark arts - raising the butt of
-            the cue is the last resort in most games but in libre it is
-            frequently used. Here we want to bend the cue ball around the yellow
-            to just glance it and hit the red all at very low pace to keep the
-            balls well nursed in the corner.
+            The dark arts. Raising the butt of the cue is a last resort in most
+            games, and four-ball players reach for it far more often. Bend the
+            cue ball around the yellow — without touching it, which would be a
+            foul — to glance the red at very low pace and leave both balls
+            nursed in the corner.
           </p>
           <button class="play-btn" type="button">Play Shot</button>
         </div>
@@ -238,7 +323,7 @@
     <div id="gameOverlay">
       <button class="close-btn" id="closeGame" type="button">Quit</button>
       <div class="iframe-container">
-        <iframe id="gameIframe" title="libre exam"></iframe>
+        <iframe id="gameIframe" title="sagu exam"></iframe>
       </div>
     </div>
 
