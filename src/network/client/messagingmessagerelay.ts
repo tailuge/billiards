@@ -17,6 +17,9 @@ import { NetworkLogger } from "../../utils/network-logger"
  *  - `joined`/`table:leave` are handled internally and filtered from
  *    `onMessage`; use `onOpponentLeft`/`onOpponentRejoined` for lifecycle.
  *  - `table.bothJoined` is a one-shot promise for the two-player handshake.
+ *
+ * Envelope fields are authoritative: `type` and `senderId` already travel with
+ * every message, so payloads do not repeat them as `type`/`clientId`.
  */
 export class MessagingMessageRelay implements MessageRelay {
   private table: Table | null = null
@@ -42,7 +45,7 @@ export class MessagingMessageRelay implements MessageRelay {
     // the table; later joinTable() calls reuse the existing Table and do not
     // add or replace listeners.
     const onMessage = (msg: TableMessage) => {
-      const data = JSON.stringify(msg.data)
+      const data = JSON.stringify(MessagingMessageRelay.withEnvelopeFields(msg))
       for (const cb of this.subscribers) cb(data, msg.meta?.msgId)
     }
     const onBothJoined = () => {
@@ -82,7 +85,9 @@ export class MessagingMessageRelay implements MessageRelay {
     try {
       const parsed = JSON.parse(message)
       type = parsed.type || "unknown"
-      data = parsed
+      data = MessagingMessageRelay.isRecord(parsed)
+        ? MessagingMessageRelay.withoutEnvelopeFields(parsed)
+        : parsed
     } catch {
       // Raw string, pass as data
     }
@@ -92,5 +97,30 @@ export class MessagingMessageRelay implements MessageRelay {
     this.table.publish(type, data).catch((error) => {
       console.error("Publication error for table", _channel, error)
     })
+  }
+
+  /**
+   * Reattaches `type` and `clientId` from the envelope so downstream handling
+   * is unchanged, including for peers that still send those payload fields.
+   * The envelope wins: it is the transport's own record of who sent what.
+   */
+  private static withEnvelopeFields(msg: TableMessage): unknown {
+    if (!MessagingMessageRelay.isRecord(msg.data)) return msg.data
+    const data = { ...msg.data }
+    if (msg.type) data.type = msg.type
+    if (msg.senderId) data.clientId = msg.senderId
+    return data
+  }
+
+  /** `type` and `clientId` duplicate the envelope, so they are not sent twice. */
+  private static withoutEnvelopeFields(data: Record<string, unknown>) {
+    const payload = { ...data }
+    delete payload.type
+    delete payload.clientId
+    return payload
+  }
+
+  private static isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value)
   }
 }

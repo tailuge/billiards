@@ -60,7 +60,7 @@ describe("MessagingMessageRelay", () => {
     expect(onOpponentLeft).toHaveBeenCalled()
   })
 
-  it("should subscribe to channel and deliver unwrapped message data to callback", async () => {
+  it("should subscribe to channel and deliver payload data with envelope type and clientId", async () => {
     const relay = new MessagingMessageRelay()
     await relay.connect(mockClient, "test-table")
 
@@ -77,7 +77,11 @@ describe("MessagingMessageRelay", () => {
     registeredHandler(envelope)
 
     expect(gameCallback).toHaveBeenCalledWith(
-      JSON.stringify({ key: "value" }),
+      JSON.stringify({
+        key: "value",
+        type: "MyEvent",
+        clientId: "other-client",
+      }),
       undefined
     )
   })
@@ -98,7 +102,11 @@ describe("MessagingMessageRelay", () => {
     })
 
     expect(gameCallback).toHaveBeenCalledWith(
-      JSON.stringify({ key: "value" }),
+      JSON.stringify({
+        key: "value",
+        type: "MyEvent",
+        clientId: "other-client",
+      }),
       "msg-7"
     )
   })
@@ -118,7 +126,11 @@ describe("MessagingMessageRelay", () => {
     })
 
     expect(gameCallback).toHaveBeenCalledWith(
-      JSON.stringify({ key: "value" }),
+      JSON.stringify({
+        key: "value",
+        type: "MyEvent",
+        clientId: "other-client",
+      }),
       undefined
     )
   })
@@ -172,10 +184,7 @@ describe("MessagingMessageRelay", () => {
     // Allow microtask queue to flush
     await Promise.resolve()
 
-    expect(mockTable.publish).toHaveBeenCalledWith("MyEvent", {
-      type: "MyEvent",
-      value: 123,
-    })
+    expect(mockTable.publish).toHaveBeenCalledWith("MyEvent", { value: 123 })
   })
 
   it("should publish raw strings with 'unknown' type", async () => {
@@ -195,6 +204,62 @@ describe("MessagingMessageRelay", () => {
     await Promise.resolve()
 
     expect(mockTable.publish).not.toHaveBeenCalled()
+  })
+
+  it("derives type and clientId from the envelope so payloads need not repeat them", async () => {
+    const relay = new MessagingMessageRelay()
+    await relay.connect(mockClient, "test-table")
+    const gameCallback = jest.fn()
+    relay.subscribe("test-table", gameCallback)
+
+    const event = {
+      type: "AIM",
+      clientId: "test-client",
+      angle: 0.768,
+      power: 3.41,
+      pos: [-0.7205, 0.0021],
+    }
+    relay.publish("test-table", JSON.stringify(event))
+    await Promise.resolve()
+
+    expect(mockTable.publish).toHaveBeenCalledWith("AIM", {
+      angle: 0.768,
+      power: 3.41,
+      pos: [-0.7205, 0.0021],
+    })
+
+    const [type, data] = mockTable.publish.mock.calls[0]
+    const registeredHandler = mockClient.joinTable.mock.calls[0][2].onMessage
+    registeredHandler({
+      type,
+      senderId: "test-client",
+      data,
+      meta: { msgId: "msg-1" },
+    })
+
+    const [received, msgId] = gameCallback.mock.calls[0]
+    expect(JSON.parse(received)).toEqual(event)
+    expect(msgId).toBe("msg-1")
+  })
+
+  it("takes identity from the envelope when a peer still sends clientId", async () => {
+    const relay = new MessagingMessageRelay()
+    await relay.connect(mockClient, "test-table")
+    const gameCallback = jest.fn()
+    relay.subscribe("test-table", gameCallback)
+
+    const registeredHandler = mockClient.joinTable.mock.calls[0][2].onMessage
+    registeredHandler({
+      type: "BEGIN",
+      senderId: "actual-sender",
+      data: { type: "BEGIN", clientId: "stale-id" },
+    })
+
+    const [received] = gameCallback.mock.calls[0]
+    expect(JSON.parse(received)).toEqual({
+      type: "BEGIN",
+      clientId: "actual-sender",
+    })
   })
 
   it("should not connect a second time if already connected", async () => {
