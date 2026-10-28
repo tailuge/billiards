@@ -205,10 +205,6 @@ label {
   min-height: 30px;
 }
 
-#botDebugOverlay header span#botDebugToggle {
-  cursor: pointer;
-}
-
 #botDebugOverlay header button {
   background: transparent;
   border: 1px solid #666;
@@ -277,8 +273,10 @@ label {
   display: none;
 }
 
-/* Lobster emoji in header */
-#botDebugOverlay header > span {
+/* Lobster emoji in header. Addressed by class rather than by the #botDebugToggle
+   id so this early rule stays low in the cascade order. */
+.bot-debug-emoji {
+  cursor: pointer;
   font-size: 16px;
   line-height: 1;
   display: flex;
@@ -543,7 +541,7 @@ body.chromeless #panel .powerSliderContainer {
 }
 
 /* --- analysis results (ported from the former standalone page) --- */
-#analysisPanel h2 {
+.analysis-content h2 {
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;

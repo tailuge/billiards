@@ -300,21 +300,57 @@ main > h2 {
   stroke-dasharray: 0.06 0.03;
 }
 
+/*
+ * A flat blue rectangle does not read as something to press, so the button
+ * gets a shallow bevel: a light inset line along the top edge, a soft drop
+ * shadow underneath, and a tinted glow that lifts it off the white card. The
+ * :active state inverts the bevel and nudges the button down a pixel, so the
+ * click itself is felt.
+ */
 .play-btn {
   display: inline-block;
   margin-top: 1rem;
   padding: 0.375rem 0.75rem;
   background-color: #2563eb;
+  background-image: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 12%),
+    rgb(0 0 0 / 6%)
+  );
   color: white;
   text-decoration: none;
   border-radius: 4px;
   border: none;
   cursor: pointer;
   font-size: 1rem;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 30%),
+    0 1px 2px rgb(0 0 0 / 20%),
+    0 2px 6px rgb(37 99 235 / 25%);
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.05s ease;
 }
 
 .play-btn:hover {
   background-color: #1d4ed8;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 30%),
+    0 2px 4px rgb(0 0 0 / 22%),
+    0 4px 10px rgb(37 99 235 / 30%);
+}
+
+.play-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 25%),
+    0 1px 1px rgb(0 0 0 / 15%);
+}
+
+.play-btn:focus-visible {
+  outline: 2px solid #1e3a8a;
+  outline-offset: 2px;
 }
 
 @keyframes ring-expand-green {
