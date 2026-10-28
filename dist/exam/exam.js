@@ -34,15 +34,20 @@ const CAROM_POINTS = 3
 
 /**
  * Libre is a carom game on a pocketless table: the cue ball must contact both
- * object balls. There is no cushion requirement, so no proximity credit.
+ * object balls. There is no cushion requirement, so no proximity credit. Sagu
+ * plays the same point but with a fourth ball on the table, so its carom is
+ * judged against the object balls it is played on, not every ball in sight.
  */
-function caromPoints(outcomes, ruleType) {
-  if (ruleType !== "libre") return 0
+function caromPoints(outcomes, ruleType, objectBallIds) {
+  if (ruleType !== "libre" && ruleType !== "sagu") return 0
   const contacted = new Set()
   for (const o of outcomes) {
     if (o.type !== "Collision") continue
     if (o.ballA && o.ballA.id === 0 && o.ballB) contacted.add(o.ballB.id)
     else if (o.ballB && o.ballB.id === 0 && o.ballA) contacted.add(o.ballA.id)
+  }
+  if (ruleType === "sagu" && objectBallIds) {
+    return objectBallIds.every((id) => contacted.has(id)) ? CAROM_POINTS : 0
   }
   return contacted.size >= 2 ? CAROM_POINTS : 0
 }
@@ -79,36 +84,61 @@ function isInsideEllipse(ball, ellipseCheck) {
 /**
  * Ellipses that count towards the score. A data-id names the single ball the
  * zone is about. An ellipse without one is a whole-table position zone in the
- * libre exam, scoring every ball that finishes inside it, while on the other
- * papers it stays decoration, because there a zone is always for one ball.
+ * libre and sagu exams, scoring every ball that finishes inside it, while on
+ * the other papers it stays decoration, because there a zone is always for one
+ * ball.
  */
 function scoredEllipses(svg, ruleType) {
   return Array.from(svg.querySelectorAll("ellipse")).filter(
-    (e) => e.dataset.id !== undefined || ruleType === "libre"
+    (e) =>
+      e.dataset.id !== undefined || ruleType === "libre" || ruleType === "sagu"
   )
 }
 
-/** How many balls the shot's diagram puts on the table. */
-function diagramBallCount(svg) {
+/** The ids of the balls the shot's diagram puts on the table. */
+function diagramBallIds(svg) {
   try {
-    return parseJsonShots(svg.dataset.jsonShots || "")[0]?.balls?.length ?? 0
+    return (parseJsonShots(svg.dataset.jsonShots || "")[0]?.balls ?? []).map(
+      (b) => b.id
+    )
   } catch {
-    return 0
+    return []
   }
 }
 
 /**
+ * Sagu carries a fourth ball that the gathering zone is not about: the zone
+ * asks after the cue ball and the two object balls only, so the extra ball is
+ * ignored rather than making a full score impossible.
+ */
+const SAGU_ZONE_IGNORED_BALL_IDS = [1]
+
+/** The balls a whole-table position zone asks about. */
+function zoneBallIds(svg, ruleType) {
+  const ids = diagramBallIds(svg)
+  return ruleType === "sagu"
+    ? ids.filter((id) => !SAGU_ZONE_IGNORED_BALL_IDS.includes(id))
+    : ids
+}
+
+/** The object balls a sagu carom has to reach: the zone's balls bar the cue. */
+function saguCaromBallIds(svg, cueBallId) {
+  return zoneBallIds(svg, "sagu").filter((id) => id !== cueBallId)
+}
+
+/**
  * The scored zones of a diagram, each carrying what it can pay: a data-id zone
- * asks about its one ball, a whole-table zone asks about every ball, so one
- * point per ball is the ceiling for either.
+ * asks about its one ball, a whole-table zone asks about each of its balls, so
+ * one point per ball is the ceiling for either.
  */
 function readEllipseChecks(svg, ruleType) {
-  const ballCount = diagramBallCount(svg)
+  const zoneBalls = zoneBallIds(svg, ruleType)
   return scoredEllipses(svg, ruleType).map((e) => {
     const ballId = e.dataset.id === undefined ? null : parseInt(e.dataset.id, 10)
     return {
       ballId,
-      points: ballId === null ? ballCount : 1,
+      ballIds: ballId === null ? zoneBalls : null,
+      points: ballId === null ? zoneBalls.length : 1,
       cx: parseFloat(e.getAttribute("cx")),
       cy: parseFloat(e.getAttribute("cy")),
       rx: parseFloat(e.getAttribute("rx")),
@@ -382,6 +412,7 @@ export function updateUI() {
 let currentQuestionId = null
 let currentEllipseChecks = null
 let currentRuleType = null
+let currentCaromBallIds = null
 let currentNoPot = false
 
 export function initExam() {
@@ -531,6 +562,10 @@ export function initExam() {
 
       currentEllipseChecks = readEllipseChecks(svg, ruleType)
       if (currentEllipseChecks.length === 0) currentEllipseChecks = null
+      currentCaromBallIds =
+        ruleType === "sagu" && configs.length > 0
+          ? saguCaromBallIds(svg, configs[0].shot.cueBallId)
+          : null
       currentNoPot = svg.dataset.nopot !== undefined
 
       if (configs.length > 0) {
@@ -570,7 +605,7 @@ export function initExam() {
           // matches them all, and each ball inside pays a point.
           const candidates =
             ec.ballId === null
-              ? event.data.table.balls
+              ? event.data.table.balls.filter((b) => ec.ballIds.includes(b.id))
               : event.data.table.balls.filter((b) => b.id === ec.ballId)
           if (candidates.length === 0) continue
           const inside = candidates.filter((ball) => isInsideEllipse(ball, ec))
@@ -586,7 +621,7 @@ export function initExam() {
       // Score this attempt
       const pts =
         proximityPoints(outcomes, currentRuleType) +
-        caromPoints(outcomes, currentRuleType) +
+        caromPoints(outcomes, currentRuleType, currentCaromBallIds) +
         ellipseHits +
         potPoints(outcomes, currentRuleType, currentNoPot)
       const max = maxPoints(
