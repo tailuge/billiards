@@ -78,7 +78,7 @@ export class BrowserContainer {
     this.now = Date.now()
     this.playername = params.get("userName") ?? "Anon"
     this.tableId = params.get("tableId") ?? "default"
-    this.clientId = params.get("userId") ?? `G_${getUID()}`
+    this.clientId = params.get("userId") ?? getUID()
     this.replay = params.get("state")
     this.ruletype = params.get("ruletype") ?? "nineball"
     const lobbyUrl = params.get("lobbyUrl")
