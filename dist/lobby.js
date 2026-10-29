@@ -831,7 +831,7 @@
                     @input=${i=>i.target.style.width=Fs(i.target.value)}
                     @change=${i=>this._commit(i.target.value)}
                     @keydown=${i=>i.key==="Enter"&&i.target.blur()}>
-                ${t?o`<span class="pencil">✎</span>`:""}
+                ${t?o`<span class="pencil">🖉</span>`:""}
             </div>`}};customElements.define("user-badge",$t);var Ji=`https://${D}/api/stats`,St=class extends b{static styles=f`
         :host { display: block; font-family: inherit; }
         .loading { color: var(--text-muted, #757575); font-size: 0.85rem; }

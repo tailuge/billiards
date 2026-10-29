@@ -406,7 +406,7 @@
                     @input=${s=>s.target.style.width=Mt(s.target.value)}
                     @change=${s=>this._commit(s.target.value)}
                     @keydown=${s=>s.key==="Enter"&&s.target.blur()}>
-                ${t?m`<span class="pencil">✎</span>`:""}
+                ${t?m`<span class="pencil">🖉</span>`:""}
             </div>`}};customElements.define("user-badge",Ue);var he=null,bi=()=>(he||(he=fetch(`${te}/api/arena/winners`).then(r=>r.ok?r.json():Promise.reject(new Error(String(r.status)))).then(r=>Array.isArray(r?.winners)?r.winners.filter(e=>e&&typeof e=="object"&&typeof e.userName=="string"):[]).catch(()=>(he=null,null))),he),Ne=class extends U{static styles=f`
         :host { position: relative; display: inline-flex; width: 0; min-width: 0; }
         .trophy-stack {
