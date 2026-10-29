@@ -64,6 +64,10 @@
      text's, which is what would push the name down with it. */
   font-size: 0.8em;
   line-height: 1;
+
+  /* Optical nudge down: flex centring leaves the mark a pixel high against
+     the name. transform keeps it off the rest of the row's layout. */
+  transform: translateY(1px);
 }
 
 .lobby-count.is-hidden {

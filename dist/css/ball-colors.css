@@ -255,7 +255,9 @@
   stroke: #f00;
 }
 
-/* Libre Overrides: 3-ball carom -- yellow and red object balls */
+/* Libre Overrides: 3-ball carom -- yellow and red object balls. The lines stay
+   black like three-cushion's: this reset outranks the bare .traj-N strokes, so
+   only the cue ball's opacity difference remains. */
 .libre .ball {
   --ball-stroke: #000;
 }
@@ -268,16 +270,8 @@
   --ball-stroke: #ffd700;
 }
 
-.libre .traj-1 {
-  stroke: #ffd700;
-}
-
 .libre .ball-2 {
   --ball-stroke: #f00;
-}
-
-.libre .traj-2 {
-  stroke: #f00;
 }
 
 /* Three-Cushion Overrides: remain as it was (no colour) */

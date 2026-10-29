@@ -16,6 +16,10 @@
   width: var(--ball-size-base);
   height: var(--ball-size-base);
   padding: 0;
+
+  /* The right rim must sit inside the 140px like .ballContainer's, or this box
+     renders 1px wider than the spin input below it. */
+  box-sizing: border-box;
   border: 1px solid #2d1e16;
   border-left: none;
   border-radius: 0 12px 12px 0;
@@ -31,8 +35,8 @@
   transform: translateY(160px);
   pointer-events: none;
   transition:
-    opacity 0.5s ease,
-    transform 0.5s ease;
+    opacity 0.3s ease,
+    transform 0.3s ease;
   margin-bottom: 0;
   z-index: 19;
 }

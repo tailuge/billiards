@@ -111,6 +111,13 @@
   transform: scale(0.97);
 }
 
+/* Same subtle lightening the hit button gets from .timeout-btn:hover, so the
+   menu items and the view button answer the pointer before a press. Fill only:
+   the rim and the press scale stay as they are. */
+.menuButton:not(:disabled):hover {
+  background: #f5f5f5;
+}
+
 .menuDropdown > summary:focus-visible,
 .menuItems .menuButton:focus-visible {
   outline: 2px solid #fff;
