@@ -112,3 +112,5 @@ https://4388.fun/g/2295
 
 https://popshof.com/practice
 
+https://github.com/hlxwell/billiard-simulator
+https://pool-trainer-gamma.vercel.app/

@@ -36,7 +36,7 @@
     "indexnow:test": "node test/indexnow.mjs --test"
   },
   "dependencies": {
-    "@tailuge/messaging": "1.46.0",
+    "@tailuge/messaging": "1.47.0",
     "fflate": "^0.8.3",
     "interactjs": "1.10.28",
     "jsoncrush": "^1.1.8",
@@ -54,7 +54,7 @@
     "canvas": "3.2.3",
     "chai": "6.3.0",
     "concurrently": "10.0.6",
-    "eslint": "10.13.0",
+    "eslint": "10.14.0",
     "eslint-plugin-html": "8.2.1",
     "eslint-plugin-sonarjs": "4.2.2",
     "html-validate": "11.17.0",
@@ -71,7 +71,7 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1",
     "webpack": "5.112.2",
-    "webpack-cli": "7.2.3",
+    "webpack-cli": "7.3.0",
     "webpack-dev-server": "6.1.0"
   }
 }
