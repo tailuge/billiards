@@ -193,7 +193,7 @@ export class LobbyIndicator {
       userName: this.userName,
       ruleType: this.ruleType,
       options: {
-        tableSize: String(this.tableSize),
+        ...(this.tableSize !== 10 && { tableSize: String(this.tableSize) }),
         ...(this.freeAim && { freeaim: "true" }),
       },
       ...(this.isSpectator && { isSpectator: true }),
@@ -283,7 +283,7 @@ export class LobbyIndicator {
         tableId: tableId ?? undefined,
         ...(tournamentId && { arenaId: tournamentId }),
         options: {
-          tableSize: String(this.tableSize),
+          ...(this.tableSize !== 10 && { tableSize: String(this.tableSize) }),
           ...(this.freeAim && { freeaim: "true" }),
         },
       })
