@@ -128,6 +128,10 @@ export class End extends Controller {
           status: "complete",
           matchResult: this.result,
           replayUrl,
+          // The winning break is still on the rules object here: end of game is
+          // resolved before startTurn() clears it.
+          break: this.container.rules.currentBreak,
+          score: Session.getInstance().myScore(),
         },
         "*"
       )

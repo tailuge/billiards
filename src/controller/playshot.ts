@@ -3,6 +3,8 @@ import { ControllerBase } from "./controllerbase"
 import { Session } from "../network/client/session"
 import { Outcome } from "../model/outcome"
 
+const CAROM_RULES = ["sagu", "threecushion", "libre"]
+
 /**
  * PlayShot starts balls rolling using cue state, applies rules to outcome
  *
@@ -26,13 +28,13 @@ export class PlayShot extends ControllerBase {
 
     // Speedrun failure check must run BEFORE rules.update() mutates state
     // (snooker's update() changes targetIsRed/previousPotRed which foulReason reads)
-    let speedrunFoul: string | null = null
-    let speedrunNoPot = false
+    // The break the run ended on also has to be read here: update() calls
+    // startTurn() on a failed shot, which zeroes currentBreak.
+    let speedrunEnd: string | null = null
+    let speedrunBreak = 0
     if (Session.isSpeedrunMode()) {
-      speedrunFoul = this.container.rules.foulReason(outcome)
-      if (!speedrunFoul && Outcome.potCount(outcome) === 0) {
-        speedrunNoPot = true
-      }
+      speedrunEnd = this.speedrunEndReason(outcome)
+      speedrunBreak = this.container.rules.currentBreak
     }
 
     const nextController = this.container.rules.update(outcome)
@@ -61,19 +63,34 @@ export class PlayShot extends ControllerBase {
       )
     }
 
-    if (speedrunFoul) {
+    if (speedrunEnd) {
       globalThis.parent?.postMessage(
-        { type: "speedrun-result", status: "fail", reason: speedrunFoul },
-        "*"
-      )
-    } else if (speedrunNoPot) {
-      globalThis.parent?.postMessage(
-        { type: "speedrun-result", status: "fail", reason: "No pot" },
+        {
+          type: "speedrun-result",
+          status: "fail",
+          reason: speedrunEnd,
+          break: speedrunBreak,
+          score: Session.getInstance().myScore(),
+        },
         "*"
       )
     }
 
     return nextController
+  }
+
+  /** Why this shot ended a speedrun attempt, or null while the run continues. */
+  private speedrunEndReason(outcome: Outcome[]): string | null {
+    const foul = this.container.rules.foulReason(outcome)
+    if (foul) {
+      return foul
+    }
+    // Carom rules have no pockets, so there is nothing to pot and the run ends
+    // when the scoring break ends instead.
+    if (CAROM_RULES.includes(this.container.rules.rulename)) {
+      return this.container.rules.isPartOfBreak(outcome) ? null : "Break over"
+    }
+    return Outcome.potCount(outcome) === 0 ? "No pot" : null
   }
 
   override handleInput(input: Input): Controller {

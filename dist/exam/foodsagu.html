@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>한국 맛집 미니게임 - 스코어 시스템</title>
+    <!-- Google Fonts: Noto Sans KR -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-color: #111827;
+        --card-bg: #1f2937;
+        --inner-bg: #111827;
+        --accent-yellow: #fcd116;
+        --accent-red: #dc2626;
+        --text-main: #f9fafb;
+        --text-muted: #9ca3af;
+        --border-color: #374151;
+        --radius-lg: 16px;
+        --radius-sm: 8px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Noto Sans KR", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 600px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 50%);
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .badge {
+        display: inline-block;
+        background: linear-gradient(90deg, var(--accent-red), #1d4ed8);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 900;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        margin-bottom: 0.5rem;
+      }
+
+      .title {
+        font-size: 1.75rem;
+        font-weight: 900;
+        margin-bottom: 0.25rem;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+      }
+
+      /* Score Dashboard */
+      .dashboard {
+        background-color: var(--inner-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        gap: 1rem;
+      }
+
+      .tier-box {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .tier-icon {
+        width: 50px;
+        height: 50px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: var(--accent-yellow);
+      }
+
+      .tier-info span {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+      }
+
+      .tier-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--accent-yellow);
+      }
+
+      .score-box {
+        text-align: right;
+      }
+
+      .score-box span {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        display: block;
+      }
+
+      .score-num {
+        font-size: 2.25rem;
+        font-weight: 900;
+        color: var(--accent-red);
+        font-family: monospace;
+      }
+
+      /* Section header row */
+      .slider-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        font-weight: 700;
+      }
+
+      .notice-tag {
+        font-size: 0.7rem;
+        background-color: rgb(220 38 38 / 20%);
+        color: #fca5a5;
+        border: 1px solid rgb(220 38 38 / 40%);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+      }
+
+      /* Food Card */
+      .food-card {
+        background-color: var(--inner-bg);
+        border: 1px solid rgb(252 209 22 / 30%);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+      }
+
+      .food-emoji {
+        font-size: 3.5rem;
+        width: 80px;
+        height: 80px;
+        background-color: var(--card-bg);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 1px solid var(--border-color);
+      }
+
+      .food-details {
+        flex: 1;
+      }
+
+      .req-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        background-color: rgb(252 209 22 / 15%);
+        color: var(--accent-yellow);
+        border: 1px solid rgb(252 209 22 / 30%);
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+      }
+
+      .food-title {
+        font-size: 1.25rem;
+        font-weight: 900;
+        margin-bottom: 0.25rem;
+      }
+
+      .food-desc {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+      }
+
+      .wiki-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background-color: var(--card-bg);
+        color: var(--accent-yellow);
+        border: 1px solid var(--border-color);
+        padding: 0.4rem 0.75rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background 0.2s ease;
+      }
+
+      .wiki-btn:hover {
+        background-color: var(--border-color);
+      }
+
+      /* Gallery Grid */
+      .gallery-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.5rem;
+      }
+
+      .gallery-item {
+        aspect-ratio: 1;
+        background-color: var(--inner-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        opacity: 0.3;
+        filter: grayscale(100%);
+        transition: all 0.2s ease;
+      }
+
+      .gallery-item.unlocked {
+        opacity: 1;
+        filter: grayscale(0%);
+        border-color: rgb(252 209 22 / 40%);
+        background-color: var(--card-bg);
+      }
+
+      /* Sagu Launch */
+      .sagu-section {
+        background-color: var(--inner-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1rem;
+      }
+
+      .play-btn {
+        width: 100%;
+        background-color: var(--accent-yellow);
+        color: #111827;
+        border: 1px solid var(--accent-yellow);
+        border-radius: var(--radius-sm);
+        padding: 0.75rem;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 900;
+        cursor: pointer;
+        transition: filter 0.2s ease;
+      }
+
+      .play-btn:hover {
+        filter: brightness(1.1);
+      }
+
+      .sagu-result {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-align: center;
+        min-height: 1rem;
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgb(17 24 39 / 95%);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        z-index: 10;
+      }
+
+      .overlay.active {
+        display: flex;
+      }
+
+      .overlay-close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 2rem;
+        height: 2rem;
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        color: var(--text-main);
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      #sagu-frame {
+        width: 100%;
+        height: 100%;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        background-color: #000;
+      }
+
+      /* Pop Animation */
+      @keyframes pop {
+        0% {
+          transform: scale(0.95);
+        }
+
+        50% {
+          transform: scale(1.02);
+        }
+
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .animate-pop {
+        animation: pop 0.3s ease-out;
+      }
+
+      @media (width <= 480px) {
+        .food-card {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .gallery-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header Section -->
+      <div class="header">
+        <span class="badge">오늘 저녁 뭐 먹지?</span>
+        <h1 class="title">한국 음식 탐험 🍲</h1>
+        <p class="subtitle">
+          사구 게임으로 최고 점수를 세우면 오늘 먹을 요리가 해금됩니다!
+        </p>
+      </div>
+
+      <!-- Dashboard -->
+      <div class="dashboard">
+        <div class="tier-box">
+          <div id="tier-icon" class="tier-icon">1</div>
+          <div class="tier-info">
+            <span>현재 등급</span>
+            <div id="tier-title" class="tier-name">입문자</div>
+            <span id="unlock-count" style="font-size: 0.65rem"
+              >0 / 13 해금</span
+            >
+          </div>
+        </div>
+        <div class="score-box">
+          <span>Score</span>
+          <div>
+            <span id="score-display" class="score-num" style="display: inline"
+              >0</span
+            >
+            <span
+              style="
+                font-size: 0.875rem;
+                color: var(--text-muted);
+                display: inline;
+              "
+              >/ 25</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Unlocked Food Card -->
+      <div id="food-card" class="food-card">
+        <div id="food-emoji" class="food-emoji">🍜</div>
+        <div class="food-details">
+          <span class="req-tag"><span id="required-score">1</span>점 이상</span>
+          <h3 id="food-name-kr" class="food-title">라면 (Instant Ramyeon)</h3>
+          <p id="food-desc" class="food-desc">
+            매콤하고 간편한 대표 야식 라면입니다.
+          </p>
+          <a
+            id="wiki-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="wiki-btn"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"
+              />
+            </svg>
+            위키백과 정보 보기
+          </a>
+        </div>
+      </div>
+
+      <!-- Unlocked Gallery -->
+      <div>
+        <div class="gallery-title">달성한 요리 도감</div>
+        <div id="gallery-grid" class="gallery-grid"></div>
+      </div>
+
+      <!-- Sagu Launch -->
+      <div class="sagu-section">
+        <div class="slider-header">
+          <span>사구로 최고 점수에 도전</span>
+          <span class="notice-tag">브레이크가 끝나면 종료</span>
+        </div>
+        <button type="button" id="play-sagu" class="play-btn">
+          ▶ 사구 게임 시작
+        </button>
+        <p id="sagu-result" class="sagu-result"></p>
+      </div>
+    </div>
+
+    <div id="sagu-overlay" class="overlay">
+      <button
+        type="button"
+        id="close-sagu"
+        class="overlay-close"
+        aria-label="닫기"
+      >
+        ✕
+      </button>
+      <iframe id="sagu-frame" title="사구 게임" allow="fullscreen"></iframe>
+    </div>
+
+    <script>
+      // Food Data Array (13 items, unlocked at 1, 3, 5, ..., 25)
+      const foodItems = [
+        {
+          minScore: 1,
+          nameKr: "라면 (Instant Ramyeon)",
+          desc: "한국인이 가장 사랑하는 얼큰하고 간편한 대표 야식입니다.",
+          emoji: "🍜",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EB%9D%BC%EB%A9%B4",
+        },
+        {
+          minScore: 3,
+          nameKr: "떡볶이 (Tteokbokki)",
+          desc: "매콤달콤한 고추장 양념에 쫄깃한 떡이 어우러진 길거리 음식입니다.",
+          emoji: "🍢",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EB%96%A1%EB%B3%B6%EC%9D%B4",
+        },
+        {
+          minScore: 5,
+          nameKr: "김밥 (Kimbap)",
+          desc: "야채와 계란, 단무지를 밥과 함께 김으로 말아낸 도시락 요리입니다.",
+          emoji: "🍙",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EA%B9%80%EB%B0%A5",
+        },
+        {
+          minScore: 7,
+          nameKr: "김치찌개 (Kimchi Jjigae)",
+          desc: "잘 익은 신김치와 돼지고기를 푹 끓여낸 대표 한식 찌개입니다.",
+          emoji: "🍲",
+          wikiUrl:
+            "https://ko.wikipedia.org/wiki/%EA%B9%80%EC%B9%94%EC%AF%8C%EA%B0%9C",
+        },
+        {
+          minScore: 9,
+          nameKr: "해물파전 (Haemul Pajeon)",
+          desc: "신선한 해산물과 파를 듬뿍 넣어 바삭하게 부쳐낸 부침개입니다.",
+          emoji: "🥞",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%ED%8C%8C%EC%A0%84",
+        },
+        {
+          minScore: 11,
+          nameKr: "비빔밥 (Bibimbap)",
+          desc: "나물과 고기, 계란을 특제 고추장과 참기름에 비벼 먹는 건강식입니다.",
+          emoji: "🥗",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EB%B9%84%EB%B9%94%EB%B0%A5",
+        },
+        {
+          minScore: 13,
+          nameKr: "양념치킨 (K-Fried Chicken)",
+          desc: "바삭한 치킨에 매콤달콤한 특제 양념 소스를 버무린 인기 메뉴입니다.",
+          emoji: "🍗",
+          wikiUrl:
+            "https://ko.wikipedia.org/wiki/%EC%96%91%EB%85%90%EC%B9%98%ED%82%A8",
+        },
+        {
+          minScore: 15,
+          nameKr: "삼겹살 (Samgyeopsal)",
+          desc: "노릇노릇하게 구운 돼지 삼겹살을 상추에 싸 먹는 구이 요리입니다.",
+          emoji: "🥓",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EC%82%BC%EA%B2%A9%EC%82%B4",
+        },
+        {
+          minScore: 17,
+          nameKr: "불고기 (Bulgogi)",
+          desc: "달콤하고 짭조름한 간장 양념에 재운 부드러운 소고기 요리입니다.",
+          emoji: "🥩",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EB%B6%88%EA%B3%A0%EA%B8%B0",
+        },
+        {
+          minScore: 19,
+          nameKr: "갈비찜 (Galbi-jjim)",
+          desc: "소갈비를 야채와 함께 특제 양념장에 오랫동안 부드럽게 조려낸 명품 한식입니다.",
+          emoji: "🍖",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EA%B0%88%EB%B9%84%EC%AF%88",
+        },
+        {
+          minScore: 21,
+          nameKr: "간장게장 (Ganjang Gejang)",
+          desc: "신선한 게를 특제 간장에 숙성시켜 밥도둑이라 불리는 고급 해산물 요리입니다.",
+          emoji: "🦀",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EA%B2%8C%EC%9E%A5",
+        },
+        {
+          minScore: 23,
+          nameKr: "궁중 신선로 (Sinseollo)",
+          desc: "다양한 고급 재료와 육수를 화로 냄비에 담아 끓여 먹는 궁중 요리입니다.",
+          emoji: "🍲",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EC%8B%A0%EC%84%A0%EB%A1%9C",
+        },
+        {
+          minScore: 25,
+          nameKr: "한우 수라상 (Hanwoo Royal Feast)",
+          desc: "최고급 대한민국 한우와 왕실 메뉴로 차려진 전설의 K-푸드 만찬입니다!",
+          emoji: "👑",
+          wikiUrl: "https://ko.wikipedia.org/wiki/%EC%88%98%EB%9D%BC%EC%83%81",
+        },
+      ]
+
+      // Elements
+      const scoreDisplay = document.getElementById("score-display")
+      const foodNameKr = document.getElementById("food-name-kr")
+      const foodDesc = document.getElementById("food-desc")
+      const foodEmoji = document.getElementById("food-emoji")
+      const wikiLink = document.getElementById("wiki-link")
+      const reqScore = document.getElementById("required-score")
+      const tierTitle = document.getElementById("tier-title")
+      const tierIcon = document.getElementById("tier-icon")
+      const unlockCount = document.getElementById("unlock-count")
+      const galleryGrid = document.getElementById("gallery-grid")
+      const foodCard = document.getElementById("food-card")
+
+      let currentIndex = -1
+
+      // Build Gallery Grid
+      function initGallery() {
+        galleryGrid.innerHTML = ""
+        foodItems.forEach((item, idx) => {
+          const el = document.createElement("div")
+          el.id = `gallery-${idx}`
+          el.className = "gallery-item"
+          el.textContent = item.emoji
+          galleryGrid.appendChild(el)
+        })
+      }
+
+      // Get Tier Info
+      function getTier(score) {
+        if (score < 7) return { name: "입문자", icon: "1" }
+        if (score < 13) return { name: "미식가", icon: "2" }
+        if (score < 19) return { name: "요리 대가", icon: "3" }
+        if (score < 25) return { name: "전설의 식객", icon: "4" }
+        return { name: "K-Food 신", icon: "👑" }
+      }
+
+      // Update View
+      function update(score) {
+        scoreDisplay.textContent = score
+
+        // Score 0 means no sagu run yet: nothing is unlocked, but the card
+        // previews the food that is first up for grabs.
+        const unlocked = score >= 1
+        let activeIdx = Math.max(0, Math.floor((score - 1) / 2))
+        if (activeIdx >= foodItems.length) activeIdx = foodItems.length - 1
+
+        const food = foodItems[activeIdx]
+
+        // Card Pop Animation
+        if (currentIndex !== activeIdx) {
+          currentIndex = activeIdx
+          foodCard.classList.remove("animate-pop")
+          void foodCard.offsetWidth
+          foodCard.classList.add("animate-pop")
+        }
+
+        // Text & Link updates
+        reqScore.textContent = food.minScore
+        foodNameKr.textContent = food.nameKr
+        foodDesc.textContent = food.desc
+        foodEmoji.textContent = food.emoji
+        wikiLink.href = food.wikiUrl
+
+        // Tier update
+        const tier = getTier(score)
+        tierTitle.textContent = tier.name
+        tierIcon.textContent = tier.icon
+        const unlockedCount = unlocked ? activeIdx + 1 : 0
+        unlockCount.textContent = `${unlockedCount} / ${foodItems.length} 해금`
+
+        // Gallery update
+        foodItems.forEach((_, idx) => {
+          const itemEl = document.getElementById(`gallery-${idx}`)
+          if (itemEl) {
+            if (unlocked && idx <= activeIdx) {
+              itemEl.classList.add("unlocked")
+            } else {
+              itemEl.classList.remove("unlocked")
+            }
+          }
+        })
+      }
+
+      // Sagu runs in speedrun mode (see speedrun/index.html): the shot that
+      // ends the break posts a speedrun-result carrying the break and score.
+      // Opening position as flat x,y pairs in rack order (2 cue balls, 2 reds),
+      // plus the shot to play from it: the same `init` / `initShot` format the
+      // game parses itself (src/utils/rack.ts, src/controller/aim.ts), so no
+      // speedrun card is needed.
+      const SAGU_BALLS = [
+        [-1.171447, 0.167467],
+        [1.375163, -0.624586],
+        [-1.443794, 0.318252],
+        [-1.32848, 0.335773],
+      ]
+      const SAGU_SHOT = {
+        cueBallId: 0,
+        angle: 2.446864,
+        power: 0.524,
+        offset: { x: 0, y: 0, z: 0 },
+        elevation: 0,
+      }
+      // Physics the position was tuned with; drop this line to play the defaults.
+      const SAGU_PHYSICS =
+        "&cushionModel=mathavan&%CE%BCs=0.2&%CE%BCw=0.175&ee=0.85&mu=0.0055" +
+        "&muS=0.126&stronge_omega_ratio=1.76&stronge_e_n=0.77&stronge_%CE%BC=0.25"
+
+      const SAGU_URL =
+        "../index.html?ruletype=sagu&speedrun&practice&raceTo=25" +
+        SAGU_PHYSICS +
+        `&init=${encodeURIComponent(JSON.stringify(SAGU_BALLS.flat()))}` +
+        `&initShot=${encodeURIComponent(JSON.stringify(SAGU_SHOT))}`
+      const saguOverlay = document.getElementById("sagu-overlay")
+      const saguFrame = document.getElementById("sagu-frame")
+      const saguResult = document.getElementById("sagu-result")
+
+      function closeSagu() {
+        saguOverlay.classList.remove("active")
+        saguFrame.src = "about:blank"
+      }
+
+      // The best run is what counts: a weaker run must not take unlocked food
+      // away again.
+      let bestScore = 0
+
+      function scoreFromSagu(score) {
+        const runScore = Math.min(25, Math.max(0, Number(score) || 0))
+        bestScore = Math.max(bestScore, runScore)
+        update(bestScore)
+      }
+
+      document.getElementById("play-sagu").addEventListener("click", () => {
+        saguResult.textContent = ""
+        saguFrame.src = SAGU_URL
+        saguOverlay.classList.add("active")
+      })
+
+      document.getElementById("close-sagu").addEventListener("click", closeSagu)
+
+      window.addEventListener("message", (event) => {
+        const data = event.data
+        if (!data || data.type !== "speedrun-result") {
+          return
+        }
+        scoreFromSagu(data.score)
+        const breakScore = data.break ?? 0
+        const summary =
+          data.status === "complete"
+            ? `사구 클리어! ${data.score}점`
+            : `브레이크 종료 (${data.reason}) ${data.score}점`
+        saguResult.textContent = `${summary} · 브레이크 ${breakScore} · 최고 ${bestScore}점`
+        if (data.status === "fail") {
+          closeSagu()
+        }
+      })
+
+      window.onload = function () {
+        initGallery()
+        update(0)
+      }
+    </script>
+  </body>
+</html>
