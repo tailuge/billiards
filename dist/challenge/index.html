@@ -266,6 +266,10 @@
         font-variant-numeric: tabular-nums;
       }
 
+      a.break-score {
+        text-decoration: none;
+      }
+
       .rail-status {
         margin: 0;
         color: var(--muted);
@@ -370,10 +374,12 @@
         font-size: 0.78rem;
       }
 
-      /* Unlocked food card. */
+      /* Unlocked food card. It stretches to fill its grid row, which the rail
+         sets, and keeps its content centred within that height. */
       .food-card {
         display: flex;
         align-items: center;
+        align-self: stretch;
         gap: 1rem;
       }
 
