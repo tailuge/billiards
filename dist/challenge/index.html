@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Korean is this page's only language, so the head carries the search
+         metadata the site's other pages have (see src/client/map/index.html),
+         written in Korean: the <html lang> above, a title, description,
+         keywords, a robots line, an og block with a social card image, and the
+         matching twitter card. There is deliberately no canonical or og:url —
+         the page ships from more than one host (the Docker image,
+         ../billiards/dist), so there is no single URL for it to claim. -->
+    <title>한국 음식 탐험｜사구 챌린지</title>
+    <meta
+      name="description"
+      content="사구 게임으로 최고 점수에 도전하고 한국 음식 도감을 하나씩 해금하는 미니게임입니다. 라면부터 한우 수라상까지, 점수를 세울수록 요리가 열립니다."
+    />
+    <meta
+      name="keywords"
+      content="사구, 당구, 미니게임, 한국 음식, 맛집, 음식 도감, 라면, 떡볶이, 김치찌개, 삼겹살"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="한국 음식 탐험｜사구 챌린지" />
+    <meta
+      property="og:description"
+      content="사구 게임으로 최고 점수에 도전하고 한국 음식 도감을 하나씩 해금하는 미니게임입니다. 라면부터 한우 수라상까지, 점수를 세울수록 요리가 열립니다."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:image" content="https://billiards.tailuge.workers.dev/images/sagu.png" />
+    <meta property="og:image:alt" content="한국 음식 탐험 사구 챌린지" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="한국 음식 탐험｜사구 챌린지" />
+    <meta
+      name="twitter:description"
+      content="사구 게임으로 최고 점수에 도전하고 한국 음식 도감을 하나씩 해금하는 미니게임입니다. 라면부터 한우 수라상까지, 점수를 세울수록 요리가 열립니다."
+    />
+    <meta name="twitter:image" content="https://billiards.tailuge.workers.dev/images/sagu.png" />
+    <meta name="twitter:image:alt" content="한국 음식 탐험 사구 챌린지" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <style>
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 200;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4tM3CwM.ttf")
+          format("truetype");
+      }
+
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf")
+          format("truetype");
+      }
+
+      /* Palette, radii and spacing follow the map page (and the lobby's dark
+         theme): a #1a1a1a page, #2a2a2a surfaces outlined with a 1px #444
+         border, a 6px radius and 2px gutters between the panels. Exo carries
+         the Latin text; Hangul falls back to the system's Korean font. */
+      :root {
+        --bg: #1a1a1a;
+        --surface: #2a2a2a;
+        --border: #444;
+        --border-light: #333;
+        --hover: #444;
+        --text: #e0e0e0;
+        --muted: #aaa;
+        --accent: #6ba3f5;
+        --gold: #f5c451;
+
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        height: 100%;
+      }
+
+      body {
+        min-height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+
+        /* Gutter between the panels and the viewport, matching the map page's
+           inset content column. */
+        padding: 0 1rem 1rem;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Exo, system-ui, sans-serif;
+        font-weight: 200;
+        font-size: 15px;
+      }
+
+      /* The site header, the page title and the panels share one centred,
+         width-capped column so the layout reads like the map page rather than
+         edge-to-edge. */
+      app-topbar,
+      header,
+      main {
+        width: 100%;
+        max-width: min(40rem, 100%);
+        margin-inline: auto;
+      }
+
+      /* The top bar is a custom element, so it upgrades only when the deferred
+         challenge.js module runs — after the first paint on a slow load. Until
+         then it has no height, and when it renders it shoves the content down
+         by its own 40px (a 32px logo plus 0.25rem padding above and below).
+         Reserving that height here holds the layout still. */
+      app-topbar {
+        display: block;
+        min-height: 40px;
+      }
+
+      /* Title and tagline share one shallow row; the tagline stays quiet (and
+         wraps under the title on narrow screens) so it never crowds the
+         content. */
+      header {
+        flex: 0 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0 0.5rem;
+        padding: 0;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.72rem;
+      }
+
+      main {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 2px 0 0;
+      }
+
+      /* Every section is one of the map's rounded panels. */
+      .panel {
+        padding: 0.8rem 0.9rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+      }
+
+      /* Score dashboard: the launch control takes the free space and the score
+         stays a fixed block on the right. */
+      .dashboard {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .launch {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .launch-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .notice {
+        flex: 0 0 auto;
+        padding: 1px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 0.68rem;
+        font-weight: 200;
+        white-space: nowrap;
+      }
+
+      /* The panel's one call to action, so it takes the accent fill and the
+         panel's full width — the map's play button treatment. */
+      .play-btn {
+        width: 100%;
+        padding: 7px 10px;
+        border: none;
+        border-radius: 6px;
+        background: var(--accent);
+        color: #0f1620;
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .play-btn:hover,
+      .play-btn:focus-visible {
+        background: #8ab6f8;
+      }
+
+      .play-btn:focus-visible {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+      }
+
+      .result {
+        min-height: 1rem;
+        margin: 0.35rem 0 0;
+        color: var(--muted);
+        font-size: 0.72rem;
+        text-align: center;
+      }
+
+      .score {
+        flex-shrink: 0;
+        text-align: right;
+        line-height: 1.1;
+      }
+
+      .score-label {
+        display: block;
+        color: var(--muted);
+        font-size: 0.68rem;
+      }
+
+      .score-num {
+        color: var(--accent);
+        font-size: 2rem;
+        font-weight: 600;
+      }
+
+      .score-max {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      /* Unlocked food card. */
+      .food-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .food-emoji {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        width: 76px;
+        height: 76px;
+        border: 1px solid var(--border-light);
+        border-radius: 4px;
+        background: var(--bg);
+        font-size: 2.4rem;
+      }
+
+      .food-details {
+        flex: 1;
+        min-width: 0;
+      }
+
+      /* The hall's-goal pill from the map page, here carrying the score needed
+         to unlock the dish: gold on the page background. */
+      .req {
+        display: inline-block;
+        margin-bottom: 0.3rem;
+        padding: 1px 8px;
+        border: 1px solid var(--gold);
+        border-radius: 999px;
+        background: var(--bg);
+        color: var(--gold);
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      .food-title {
+        margin: 0 0 0.2rem;
+        color: var(--accent);
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .food-desc {
+        margin: 0 0 0.55rem;
+        color: var(--text);
+        font-size: 0.78rem;
+        line-height: 1.4;
+      }
+
+      .wiki-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 3px 8px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--bg);
+        color: var(--accent);
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .wiki-btn:hover {
+        background: var(--hover);
+      }
+
+      .gallery-title {
+        margin: 0 0 0.5rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.4rem;
+      }
+
+      .gallery-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 1;
+        border: 1px solid var(--border-light);
+        border-radius: 4px;
+        background: var(--bg);
+        font-size: 1.15rem;
+        opacity: 0.3;
+        filter: grayscale(100%);
+        transition:
+          opacity 0.2s ease,
+          border-color 0.2s ease,
+          filter 0.2s ease;
+      }
+
+      .gallery-item.unlocked {
+        border-color: var(--accent);
+        opacity: 1;
+        filter: grayscale(0%);
+      }
+
+      /* Pop animation when the unlocked card changes. */
+      @keyframes pop {
+        0% {
+          transform: scale(0.98);
+        }
+
+        50% {
+          transform: scale(1.01);
+        }
+
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .animate-pop {
+        animation: pop 0.3s ease-out;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .animate-pop {
+          animation: none;
+        }
+      }
+
+      /* Sagu game overlay. */
+      .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: rgb(26 26 26 / 95%);
+      }
+
+      .overlay.active {
+        display: flex;
+      }
+
+      .overlay-close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        background: var(--surface);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .overlay-close:hover {
+        background: var(--hover);
+      }
+
+      .overlay-close:focus-visible {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+      }
+
+      #sagu-frame {
+        width: 100%;
+        height: 100%;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: #000;
+      }
+
+      @media (width <= 700px) {
+        body {
+          padding: 0 0.5rem 0.5rem;
+        }
+
+        .dashboard {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .score {
+          text-align: center;
+        }
+
+        .food-card {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .gallery-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <app-topbar rule-type="sagu"></app-topbar>
+
+    <header>
+      <h1>한국 음식 탐험 🍲</h1>
+      <p>사구 게임으로 최고 점수를 세우면 오늘 먹을 요리가 해금됩니다</p>
+    </header>
+
+    <main>
+      <!-- Dashboard -->
+      <section class="panel dashboard" aria-label="사구 챌린지">
+        <div class="launch">
+          <div class="launch-head">
+            <span>사구로 최고 점수에 도전</span>
+            <span class="notice">브레이크가 끝나면 종료</span>
+          </div>
+          <button type="button" id="play-sagu" class="play-btn">▶ 사구 게임 시작</button>
+          <p id="sagu-result" class="result" aria-live="polite"></p>
+        </div>
+        <div class="score">
+          <span class="score-label">Score</span>
+          <span id="score-display" class="score-num">0</span>
+          <span class="score-max">/ 25</span>
+        </div>
+      </section>
+
+      <!-- Unlocked food card -->
+      <section id="food-card" class="panel food-card" aria-live="polite">
+        <div id="food-emoji" class="food-emoji">🍜</div>
+        <div class="food-details">
+          <span class="req"><span id="required-score">1</span>점 이상</span>
+          <h2 id="food-name-kr" class="food-title">라면 (Instant Ramyeon)</h2>
+          <p id="food-desc" class="food-desc">매콤하고 간편한 대표 야식 라면입니다.</p>
+          <a id="wiki-link" href="#" target="_blank" rel="noopener noreferrer" class="wiki-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z" />
+            </svg>
+            위키백과 정보 보기
+          </a>
+        </div>
+      </section>
+
+      <!-- Unlocked gallery -->
+      <section class="panel" aria-label="달성한 요리 도감">
+        <h2 class="gallery-title">달성한 요리 도감</h2>
+        <div id="gallery-grid" class="gallery-grid"></div>
+      </section>
+    </main>
+
+    <div id="sagu-overlay" class="overlay">
+      <button type="button" id="close-sagu" class="overlay-close" aria-label="닫기">✕</button>
+      <iframe id="sagu-frame" title="사구 게임" allow="fullscreen"></iframe>
+    </div>
+
+    <script type="module" src="challenge.js"></script>
+  </body>
+</html>
