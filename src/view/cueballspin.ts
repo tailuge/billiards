@@ -136,6 +136,7 @@ export class CueBallSpin {
       new Vector3(spinX, spinY, 0),
       this.container.table
     )
+    this.container.sendEvent(this.container.table.cue.aim)
     this.container.lastEventTime = performance.now()
   }
 

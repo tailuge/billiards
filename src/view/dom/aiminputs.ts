@@ -233,6 +233,7 @@ export class AimInputs {
       ),
       this.container.table
     )
+    this.container.sendEvent(this.container.table.cue.aim)
     this.container.lastEventTime = performance.now()
   }
 
@@ -302,6 +303,7 @@ export class AimInputs {
       return
     }
     this.container.table.cue.setElevation(this.cueTiltElement.elevation)
+    this.container.sendEvent(this.container.table.cue.aim)
     this.container.lastEventTime = performance.now()
   }
 
