@@ -274,6 +274,17 @@
         border-radius: 4px;
         background: var(--bg);
         font-size: 2.4rem;
+        overflow: hidden;
+      }
+
+      /* The card previews the dish's emoji, then shows its photo once the dish
+         is obtained. */
+      .food-emoji img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 3px;
+        object-fit: cover;
       }
 
       .food-details {
@@ -365,6 +376,24 @@
         filter: grayscale(0%);
       }
 
+      /* A locked dish keeps its emoji; its photo only appears once the dish
+         has been obtained. */
+      .gallery-img {
+        display: none;
+        width: 100%;
+        height: 100%;
+        border-radius: 3px;
+        object-fit: cover;
+      }
+
+      .gallery-item.unlocked .gallery-img {
+        display: block;
+      }
+
+      .gallery-item.unlocked .gallery-emoji {
+        display: none;
+      }
+
       /* Pop animation when the unlocked card changes. */
       @keyframes pop {
         0% {
@@ -441,6 +470,86 @@
         background: #000;
       }
 
+      /* Footer fold-down, carried over from the reveal page: one collapsed
+         panel at the foot of the page holding the Korean food deck with the
+         credit for each image. Nothing on this page reads it yet — the gallery
+         has its own hand-written list in challenge.js. */
+      .site-links {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        max-width: min(40rem, 100%);
+        margin-inline: auto;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.7rem;
+        line-height: 1.35;
+        text-align: center;
+      }
+
+      /* Underlined by default: a link inside a block of text must not rely on
+         colour alone to be distinguishable (WCAG 1.4.1). */
+      .site-links a {
+        color: var(--accent);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      .site-links-more {
+        width: 100%;
+        max-width: min(40rem, calc(100vw - 2rem));
+      }
+
+      .site-links-more summary {
+        cursor: pointer;
+        list-style: none;
+        color: var(--muted);
+        opacity: 0.85;
+      }
+
+      .site-links-more summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .site-links-more summary::after {
+        content: " ▾";
+      }
+
+      .site-links-more[open] summary::after {
+        content: " ▴";
+      }
+
+      .site-links-panel {
+        column-count: 2;
+        text-align: left;
+        white-space: normal;
+        padding: 0.75rem;
+      }
+
+      @media (width <= 30rem) {
+        .site-links-panel {
+          column-count: 1;
+        }
+      }
+
+      .site-links-panel h2 {
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin: 0 0 0.25rem;
+        color: var(--muted);
+        break-after: avoid;
+      }
+
+      .site-links-panel ul {
+        margin: 0;
+        padding-left: 1rem;
+        list-style: none;
+      }
+
+      .site-links-panel li {
+        margin-bottom: 0.45rem;
+        break-inside: avoid;
+      }
+
       @media (width <= 700px) {
         body {
           padding: 0 0.5rem 0.5rem;
@@ -470,7 +579,7 @@
     <app-topbar rule-type="sagu"></app-topbar>
 
     <header>
-      <h1>한국 음식 탐험 🍲</h1>
+      <h1>한국 음식 탐험 🍜</h1>
       <p>사구 게임으로 최고 점수를 세우면 오늘 먹을 요리가 해금됩니다</p>
     </header>
 
@@ -488,7 +597,7 @@
         <div class="score">
           <span class="score-label">Score</span>
           <span id="score-display" class="score-num">0</span>
-          <span class="score-max">/ 25</span>
+          <span id="score-max" class="score-max">/ 32</span>
         </div>
       </section>
 
@@ -498,7 +607,7 @@
         <div class="food-details">
           <span class="req"><span id="required-score">1</span>점 이상</span>
           <h2 id="food-name-kr" class="food-title">라면 (Instant Ramyeon)</h2>
-          <p id="food-desc" class="food-desc">매콤하고 간편한 대표 야식 라면입니다.</p>
+          <p id="food-desc" class="food-desc">한국인이 가장 사랑하는 얼큰하고 간편한 대표 야식입니다.</p>
           <a id="wiki-link" href="#" target="_blank" rel="noopener noreferrer" class="wiki-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z" />
@@ -514,6 +623,567 @@
         <div id="gallery-grid" class="gallery-grid"></div>
       </section>
     </main>
+
+    <!-- Image credits and the deck's source links, in the same collapsed
+         footer panel the reveal page uses. The list is not wired to anything
+         yet: it is here so the Korean food metadata lives on the page. -->
+    <nav class="site-links" aria-label="한국 음식 정보">
+      <details class="site-links-more">
+        <summary>
+          이미지 출처:
+          <a href="https://commons.wikimedia.org/">Wikimedia Commons</a>와
+          위키백과 문서, 개별 저작자 표시.
+        </summary>
+        <div class="site-links-panel">
+          <h2>야식 대잔치</h2>
+          <ul id="kfood-data">
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%9D%BC%EB%A9%B4"
+                data-emoji="🍜"
+                data-desc="한국인이 가장 사랑하는 얼큰하고 간편한 대표 야식입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Mama_instant_noodle_block.jpg/1280px-Mama_instant_noodle_block.jpg"
+                data-bytes="25554"
+                data-views="1959"
+                data-rating="0.0313"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 3.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/3.0"
+                data-image-author="Takeaway"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Mama_instant_noodle_block.jpg"
+                >라면 (Ramyeon)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%96%A1%EB%B3%B6%EC%9D%B4"
+                data-emoji="🍢"
+                data-desc="매콤달콤한 고추장 양념에 쫄깃한 떡이 어우러진 길거리 음식입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Tteokbokki.JPG/1280px-Tteokbokki.JPG"
+                data-bytes="13247"
+                data-views="1767"
+                data-rating="0.0625"
+                data-created="2026-11-02"
+                data-image-license="CC0"
+                data-image-license-url="http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                data-image-author="Popo le Chien"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Tteokbokki.JPG"
+                >떡볶이 (Tteokbokki)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EA%B9%80%EB%B0%A5"
+                data-emoji="🍙"
+                data-desc="야채와 계란, 단무지를 밥과 함께 김으로 말아낸 도시락 요리입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Gimbap_%28pixabay%29.jpg/1280px-Gimbap_%28pixabay%29.jpg"
+                data-bytes="23372"
+                data-views="2139"
+                data-rating="0.0938"
+                data-created="2026-11-02"
+                data-image-license="CC0"
+                data-image-license-url="http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                data-image-author="changupn"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Gimbap_(pixabay).jpg"
+                >김밥 (Gimbap)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EC%96%91%EB%85%90%EC%B9%98%ED%82%A8"
+                data-emoji="🍗"
+                data-desc="바삭한 치킨에 매콤달콤한 특제 양념 소스를 버무린 인기 메뉴입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Korean.cuisine-Yangnyeom_chicken-01.jpg/1280px-Korean.cuisine-Yangnyeom_chicken-01.jpg"
+                data-bytes="5923"
+                data-views="317"
+                data-rating="0.125"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0"
+                data-image-author="by ayustety (flickr)"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Korean.cuisine-Yangnyeom_chicken-01.jpg"
+                >양념치킨 (Yangnyeom Chicken)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EC%88%9C%EB%8C%80"
+                data-emoji="🌭"
+                data-desc="찰밥과 당면을 채워 만든 순대를 소금이나 양념에 찍어 먹습니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Korean.food-Sundae-01.jpg/1280px-Korean.food-Sundae-01.jpg"
+                data-bytes="19495"
+                data-views="1928"
+                data-rating="0.1563"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0"
+                data-image-author="ayustety (a flickr user)"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Korean.food-Sundae-01.jpg"
+                >순대 (Sundae)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EC%A7%9C%EC%9E%A5%EB%A9%B4"
+                data-emoji="🍝"
+                data-desc="춘장을 볶아 만든 검은 소스에 면을 비벼 먹는 중화풍 국수입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/78/Jajangmyeon.jpg/1280px-Jajangmyeon.jpg"
+                data-bytes="16537"
+                data-views="1952"
+                data-rating="0.1875"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0 kr"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0/kr/deed.en"
+                data-image-author="국립국어원"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Jajangmyeon.jpg"
+                >짜장면 (Jajangmyeon)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%A7%8C%EB%91%90"
+                data-emoji="🥟"
+                data-desc="고기와 채소를 반죽에 채워 찌거나 튀겨 낸 대표 분식입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/%EB%A7%8C%EB%91%90.jpg/1280px-%EB%A7%8C%EB%91%90.jpg"
+                data-bytes="26462"
+                data-views="1113"
+                data-rating="0.2188"
+                data-created="2026-11-02"
+                data-image-license="CC0"
+                data-image-license-url="http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                data-image-author="Raven9722"
+                data-image-page="https://commons.wikimedia.org/wiki/File:%EB%A7%8C%EB%91%90.jpg"
+                >만두 (Mandu)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%B6%80%EB%8C%80%EC%B0%8C%EA%B0%9C"
+                data-emoji="🍲"
+                data-desc="햄과 소시지, 라면 사리를 넣고 얼큰하게 끓인 찌개입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Budae_jjigae_%2828587380901%29.jpg/1280px-Budae_jjigae_%2828587380901%29.jpg"
+                data-bytes="26010"
+                data-views="849"
+                data-rating="0.25"
+                data-created="2026-11-02"
+                data-image-license="CC BY 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by/2.0"
+                data-image-author="T.Tseng"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Budae_jjigae_(28587380901).jpg"
+                >부대찌개 (Budae Jjigae)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%ED%8C%8C%EC%A0%84"
+                data-emoji="🥞"
+                data-desc="쪽파를 듬뿍 넣어 바삭하게 부쳐 낸 부침개입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Korean_pancake-Pajeon-06.jpg/1280px-Korean_pancake-Pajeon-06.jpg"
+                data-bytes="3862"
+                data-views="164"
+                data-rating="0.2813"
+                data-created="2026-11-02"
+                data-image-license="CC BY 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by/2.0"
+                data-image-author="Maggie"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Korean_pancake-Pajeon-06.jpg"
+                >파전 (Pajeon)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EA%B3%B1%EC%B0%BD"
+                data-emoji="🥘"
+                data-desc="소의 곱창을 매콤한 양념에 볶아 술안주로 즐기는 요리입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Korean.food-Gobchang.bokkem-01.jpg/1280px-Korean.food-Gobchang.bokkem-01.jpg"
+                data-bytes="1910"
+                data-views="1040"
+                data-rating="0.3125"
+                data-created="2026-11-02"
+                data-image-license="CC BY 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by/2.0"
+                data-image-author="keizie"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Korean.food-Gobchang.bokkem-01.jpg"
+                >곱창 (Gopchang)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%8B%AD%EB%B0%9C"
+                data-emoji="🐔"
+                data-desc="매운 양념에 졸인 닭발로, 쫄깃한 식감이 매력인 야식입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Chicken_feet_2.jpg/1280px-Chicken_feet_2.jpg"
+                data-bytes="3989"
+                data-views="182"
+                data-rating="0.3438"
+                data-created="2026-11-02"
+                data-image-license="CC0"
+                data-image-license-url="http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                data-image-author="ไทย"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Chicken_feet_2.jpg"
+                >닭발 (Dakbal)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%ED%83%95%EC%88%98%EC%9C%A1"
+                data-emoji="🍖"
+                data-desc="튀긴 돼지고기에 새콤달콤한 소스를 부어 먹는 요리입니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/4/4d/Tangsuyuk_%28Korean_Chinese_sweet_and_sour_pork%29.jpg"
+                data-bytes="8399"
+                data-views="683"
+                data-rating="0.375"
+                data-created="2026-11-02"
+                data-image-license="CC BY 4.0"
+                data-image-license-url="https://creativecommons.org/licenses/by/4.0"
+                data-image-author="용스토리"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Tangsuyuk_(Korean_Chinese_sweet_and_sour_pork).jpg"
+                >탕수육 (Tangsuyuk)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EC%A7%AC%EB%BD%95"
+                data-emoji="🦐"
+                data-desc="해물과 채소를 넣고 얼큰하게 끓인 중화풍 해물 국수입니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/4/44/Jjampong.JPG"
+                data-bytes="5138"
+                data-views="1330"
+                data-rating="0.4063"
+                data-created="2026-11-02"
+                data-image-license="Public domain"
+                data-image-author="Alfpooh"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Jjampong.JPG"
+                >짬뽕 (Jjamppong)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EA%B9%80%EC%B9%98%EC%B0%8C%EA%B0%9C"
+                data-emoji="🥬"
+                data-desc="잘 익은 신김치와 돼지고기를 푹 끓여 낸 대표 한식 찌개입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg/1280px-Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg"
+                data-bytes="3656"
+                data-views="981"
+                data-rating="0.4375"
+                data-created="2026-11-02"
+                data-image-license="KOGL Type 1"
+                data-image-license-url="http://www.kogl.or.kr/info/licenseType1.do"
+                data-image-author="한국농수산식품유통공사"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_(01).jpg"
+                >김치찌개 (Kimchi Jjigae)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EA%B0%90%EC%9E%90%ED%83%95"
+                data-emoji="🥔"
+                data-desc="돼지 등뼈와 감자를 푹 고아 낸 진한 국물 요리입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Gamja-tang_5.jpg/1280px-Gamja-tang_5.jpg"
+                data-bytes="23271"
+                data-views="1812"
+                data-rating="0.4688"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0"
+                data-image-author="travel oriented"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Gamja-tang_5.jpg"
+                >감자탕 (Gamjatang)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EC%88%9C%EB%8C%80%EA%B5%AD%EB%B0%A5"
+                data-emoji="🍚"
+                data-desc="순대와 머릿고기를 넣은 국물에 밥을 말아 먹는 국밥입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Sundae-guk.jpg/1280px-Sundae-guk.jpg"
+                data-bytes="2302"
+                data-views="272"
+                data-rating="0.5"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0 kr"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0/kr/deed.en"
+                data-image-author="국립국어원"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Sundae-guk.jpg"
+                >순대국밥 (Sundae Gukbap)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%8B%AD%EA%B0%88%EB%B9%84"
+                data-emoji="🐓"
+                data-desc="닭고기와 채소를 고추장 양념에 볶아 먹는 철판 요리입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/Korean_cuisine-Dakgalbi-01.jpg/1280px-Korean_cuisine-Dakgalbi-01.jpg"
+                data-bytes="4017"
+                data-views="487"
+                data-rating="0.5313"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0"
+                data-image-author="by shizu k (shezzz) at Flickr"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Korean_cuisine-Dakgalbi-01.jpg"
+                >닭갈비 (Dakgalbi)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%8B%AD%EA%B0%95%EC%A0%95"
+                data-emoji="🍗"
+                data-desc="닭고기를 바삭하게 튀겨 달콤한 양념에 버무린 간식입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Dak-gangjeong_3.jpg/1280px-Dak-gangjeong_3.jpg"
+                data-bytes="3399"
+                data-views="440"
+                data-rating="0.5625"
+                data-created="2026-11-02"
+                data-image-license="CC0"
+                data-image-license-url="http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                data-image-author="hyun chun kim"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Dak-gangjeong_3.jpg"
+                >닭강정 (Dakgangjeong)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EC%AB%84%EB%A9%B4"
+                data-emoji="🌶️"
+                data-desc="쫄깃한 면에 매콤새콤한 양념을 비벼 먹는 분식입니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/e/ef/Jjolmyeon_2.jpg"
+                data-bytes="2797"
+                data-views="345"
+                data-rating="0.5938"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0 kr"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0/kr/deed.en"
+                data-image-author="국립국어원"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Jjolmyeon_2.jpg"
+                >쫄면 (Jjolmyeon)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%9D%BC%EB%B3%B6%EC%9D%B4"
+                data-emoji="🥡"
+                data-desc="라면 사리와 떡을 함께 끓인 매콤한 분식입니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/5/5b/Ra-bokki.jpg"
+                data-bytes="1280"
+                data-views="173"
+                data-rating="0.625"
+                data-created="2026-11-02"
+                data-image-license="CC BY 4.0"
+                data-image-license-url="https://creativecommons.org/licenses/by/4.0"
+                data-image-author="farmtv"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Ra-bokki.jpg"
+                >라볶이 (Rabokki)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EA%B9%80%EC%B9%98%EB%B3%B6%EC%9D%8C%EB%B0%A5"
+                data-emoji="🍳"
+                data-desc="잘게 썬 김치와 밥을 볶아 계란을 올린 한 그릇 요리입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Kimchi-bokkeum-bap.jpg/1280px-Kimchi-bokkeum-bap.jpg"
+                data-bytes="5528"
+                data-views="375"
+                data-rating="0.6563"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0 kr"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0/kr/deed.en"
+                data-image-author="국립국어원"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Kimchi-bokkeum-bap.jpg"
+                >김치볶음밥 (Kimchi Bokkeumbap)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EA%B3%84%EB%9E%80%EB%A7%90%EC%9D%B4"
+                data-emoji="🥚"
+                data-desc="계란을 얇게 부쳐 돌돌 말아 도시락 반찬으로 즐깁니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Gyeran-mari.jpg/1280px-Gyeran-mari.jpg"
+                data-bytes="1526"
+                data-views="166"
+                data-rating="0.6875"
+                data-created="2026-11-02"
+                data-image-license="CC BY 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by/2.0"
+                data-image-author="Hyeon-Jeong Suk"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Gyeran-mari.jpg"
+                >계란말이 (Gyeran Mari)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%91%90%EB%B6%80%EA%B9%80%EC%B9%98"
+                data-emoji="🥢"
+                data-desc="데친 두부에 볶은 김치를 곁들여 먹는 술안주입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Korean.food-Dubukimchi-01.jpg/1280px-Korean.food-Dubukimchi-01.jpg"
+                data-bytes="974"
+                data-views="43"
+                data-rating="0.7188"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0"
+                data-image-author="stuart_spivack (a flickr user)"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Korean.food-Dubukimchi-01.jpg"
+                >두부김치 (Dubu Kimchi)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EA%B3%A8%EB%B1%85%EC%9D%B4%EB%AC%B4%EC%B9%A8"
+                data-emoji="🐚"
+                data-desc="골뱅이를 매콤새콤한 양념에 무쳐 소면과 함께 먹습니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/6/63/Golbaengi-muchim_2.jpg"
+                data-bytes="1070"
+                data-views="478"
+                data-rating="0.75"
+                data-created="2026-11-02"
+                data-image-license="CC BY 2.0 kr"
+                data-image-license-url="https://creativecommons.org/licenses/by/2.0/kr/deed.en"
+                data-image-author="맘앤쿡"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Golbaengi-muchim_2.jpg"
+                >골뱅이무침 (Golbaengi Muchim)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EC%96%B4%EB%AC%B5"
+                data-emoji="🍥"
+                data-desc="길거리 국물에 꼬치로 담아 먹는 어묵입니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/8/81/Assorted_Eomuk.jpg"
+                data-bytes="11898"
+                data-views="570"
+                data-rating="0.7813"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 4.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/4.0"
+                data-image-author="Pibiy"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Assorted_Eomuk.jpg"
+                >어묵 (Eomuk)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%B6%95%EC%96%B4%EB%B9%B5"
+                data-emoji="🐟"
+                data-desc="붕어 모양 틀에 반죽과 팥소를 넣어 구운 겨울 간식입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Boong_o_bbang.jpg/1280px-Boong_o_bbang.jpg"
+                data-bytes="10458"
+                data-views="889"
+                data-rating="0.8125"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 4.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/4.0"
+                data-image-author="Penny Richards"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Boong_o_bbang.jpg"
+                >붕어빵 (Bungeoppang)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%ED%98%B8%EB%96%A1"
+                data-emoji="🍩"
+                data-desc="설탕과 견과 소를 넣은 반죽을 노릇하게 구운 간식입니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/9/97/Hotteok.jpg"
+                data-bytes="4031"
+                data-views="536"
+                data-rating="0.8438"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0"
+                data-image-author="Korea.net / Korean Culture and Information Service"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Hotteok.jpg"
+                >호떡 (Hotteok)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EA%B3%84%EB%9E%80%EB%B9%B5"
+                data-emoji="🧁"
+                data-desc="빵 속에 통계란을 넣어 찐 달콤한 길거리 간식입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/61/Gyeranppang_by_travel_oriented.jpg/1280px-Gyeranppang_by_travel_oriented.jpg"
+                data-bytes="3607"
+                data-views="273"
+                data-rating="0.875"
+                data-created="2026-11-02"
+                data-image-license="CC BY-SA 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by-sa/2.0"
+                data-image-author="travel oriented from Seoul, South Korea"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Gyeranppang_by_travel_oriented.jpg"
+                >계란빵 (Gyeranppang)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%8B%AD%EA%BC%AC%EC%B9%98"
+                data-emoji="🍡"
+                data-desc="닭고기를 꼬치에 꿰어 구운 뒤 양념을 입힌 간식입니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/e/ee/Dak-kkochi.jpg"
+                data-bytes="4329"
+                data-views="115"
+                data-rating="0.9063"
+                data-created="2026-11-02"
+                data-image-license="CC BY 4.0"
+                data-image-license-url="https://creativecommons.org/licenses/by/4.0"
+                data-image-author="부스트 Bost"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Dak-kkochi.jpg"
+                >닭꼬치 (Dak Kkochi)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EB%96%A1%EA%BC%AC%EC%B9%98"
+                data-emoji="🍢"
+                data-desc="떡을 꼬치에 꿰어 튀긴 뒤 달콤한 양념을 바르는 간식입니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/f/fd/Tteok-kkochi.jpg"
+                data-bytes="1946"
+                data-views="58"
+                data-rating="0.9375"
+                data-created="2026-11-02"
+                data-image-license="CC BY 2.0"
+                data-image-license-url="https://creativecommons.org/licenses/by/2.0"
+                data-image-author="Chloe Lim"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Tteok-kkochi.jpg"
+                >떡꼬치 (Tteok Kkochi)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EC%86%8C%EB%96%A1%EC%86%8C%EB%96%A1"
+                data-emoji="🌭"
+                data-desc="소시지와 떡을 번갈아 꿰어 구운 길거리 간식입니다."
+                data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Sotteok-sotteok.jpg/1280px-Sotteok-sotteok.jpg"
+                data-bytes="2374"
+                data-views="296"
+                data-rating="0.9688"
+                data-created="2026-11-02"
+                data-image-license="CC0"
+                data-image-license-url="http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                data-image-author="Ajumeoni"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Sotteok-sotteok.jpg"
+                >소떡소떡 (Sotteok Sotteok)</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://ko.wikipedia.org/wiki/%EA%B9%80%EB%A7%90%EC%9D%B4"
+                data-emoji="🍤"
+                data-desc="김에 밥과 당면을 말아 튀긴 바삭한 분식입니다."
+                data-image="https://upload.wikimedia.org/wikipedia/commons/f/f9/Gim-mari-twigim_2.jpg"
+                data-bytes="1766"
+                data-views="138"
+                data-rating="1"
+                data-created="2026-11-02"
+                data-image-license="CC BY 2.0 kr"
+                data-image-license-url="https://creativecommons.org/licenses/by/2.0/kr/deed.en"
+                data-image-author="경빈마마"
+                data-image-page="https://commons.wikimedia.org/wiki/File:Gim-mari-twigim_2.jpg"
+                >김말이 (Gimmari)</a
+              >
+            </li>
+          </ul>
+        </div>
+      </details>
+    </nav>
 
     <div id="sagu-overlay" class="overlay">
       <button type="button" id="close-sagu" class="overlay-close" aria-label="닫기">✕</button>
