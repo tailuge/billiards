@@ -108,8 +108,9 @@
         gap: 0.2rem;
 
         /* Gutter between the panels and the viewport, matching the map page's
-           inset content column. */
-        padding: 0 1rem 1rem;
+           inset content column. It narrows with the viewport so the panels keep
+           their room, without any breakpoint. */
+        padding: 0 clamp(0.5rem, 2vw, 1rem) 1rem;
         background: var(--bg);
         color: var(--text);
         font-family: Exo, system-ui, sans-serif;
@@ -168,9 +169,17 @@
       main {
         flex: 1 1 auto;
         display: grid;
-        grid-template-columns: minmax(0, 40rem) 230px;
+        /* One layout at every width: the panels take the remaining space and the
+           rail keeps its slot beside them, scaling from 5.5rem up to 14.5rem, so
+           the hi-score list never drops to the foot of the page. */
+        grid-template-columns: minmax(0, 1fr) clamp(5.5rem, 26%, 14.5rem);
         column-gap: 2px;
         row-gap: 2px;
+        /* The rows hug their panels, so the only space between panels is the 2px
+           row gap. Without this the auto rows stretch to fill the viewport
+           height (`main` grows with it) and open up gaps around the card that
+           is the shortest. */
+        align-content: start;
         align-items: start;
         width: 100%;
         max-width: min(54rem, 100%);
@@ -261,19 +270,6 @@
         margin: 0;
         color: var(--muted);
         font-size: 0.68rem;
-      }
-
-      /* Narrow screens drop the rail under the panels rather than squeezing
-         them into a 230px-less column. */
-      @media (width <= 760px) {
-        main {
-          grid-template-columns: minmax(0, 1fr);
-        }
-
-        main > .rail {
-          grid-column: 1;
-          grid-row: auto;
-        }
       }
 
       /* Every section is one of the map's rounded panels. */
@@ -467,11 +463,10 @@
 
       .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        column-gap: 0.4rem;
-        /* Rows sit tighter than columns so the wall is ~32px shorter without
-           shrinking the (square) tiles. */
-        row-gap: 0.15rem;
+        /* Eight dishes per row; the wall wraps onto as many rows as the deck
+           needs. */
+        grid-template-columns: repeat(8, 1fr);
+        gap: 2px;
       }
 
       .gallery-item {
@@ -663,12 +658,6 @@
         padding: 0.75rem;
       }
 
-      @media (width <= 30rem) {
-        .site-links-panel {
-          column-count: 1;
-        }
-      }
-
       .site-links-panel h2 {
         font-size: 0.75rem;
         font-weight: 600;
@@ -686,30 +675,6 @@
       .site-links-panel li {
         margin-bottom: 0.45rem;
         break-inside: avoid;
-      }
-
-      @media (width <= 700px) {
-        body {
-          padding: 0 0.5rem 0.5rem;
-        }
-
-        .dashboard {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .score {
-          text-align: center;
-        }
-
-        .food-card {
-          flex-direction: column;
-          text-align: center;
-        }
-
-        .gallery-grid {
-          grid-template-columns: repeat(4, 1fr);
-        }
       }
     </style>
   </head>
