@@ -172,7 +172,7 @@
         /* One layout at every width: the panels take the remaining space and the
            rail keeps its slot beside them, scaling from 5.5rem up to 14.5rem, so
            the hi-score list never drops to the foot of the page. */
-        grid-template-columns: minmax(0, 1fr) clamp(5.5rem, 26%, 14.5rem);
+        grid-template-columns: minmax(0, 1fr) clamp(5.5rem, 36%, 20rem);
         column-gap: 2px;
         row-gap: 2px;
         /* The rows hug their panels, so the only space between panels is the 2px
@@ -213,6 +213,15 @@
         min-height: 12rem;
         padding: 0.6rem;
         overflow-y: auto;
+        /* Its height comes from the two panels beside it, not its content, so
+           the rows keep their natural heights and no gap opens under the
+           dashboard. The list scrolls inside it with the scrollbar hidden. */
+        contain: size;
+        scrollbar-width: none;
+      }
+
+      .rail::-webkit-scrollbar {
+        display: none;
       }
 
       .rail-title {
@@ -239,14 +248,7 @@
         grid-template-columns: 1rem minmax(0, 1fr) auto;
         align-items: baseline;
         gap: 0.3rem;
-        padding-bottom: 0.2rem;
-        border-bottom: 1px solid var(--border-light);
         font-size: 0.72rem;
-      }
-
-      .break-list li:last-child {
-        padding-bottom: 0;
-        border-bottom: none;
       }
 
       .break-rank {
