@@ -8,37 +8,87 @@
          metadata the site's other pages have (see src/client/map/index.html),
          written in Korean: the <html lang> above, a title, description,
          keywords, a robots line, an og block with a social card image, and the
-         matching twitter card. There is deliberately no canonical or og:url —
-         the page ships from more than one host (the Docker image,
-         ../billiards/dist), so there is no single URL for it to claim. -->
-    <title>한국 음식 탐험｜사구 챌린지</title>
+         matching twitter card. Canonical, og:url and the VideoGame JSON-LD
+         claim the same host the lobby and reveal pages claim, even though the
+         page also ships from the Docker image and ../billiards/dist: the
+         canonical tells a crawler which of those copies counts. -->
+    <title>한국 음식 탐험｜사구 게임 챌린지</title>
     <meta
       name="description"
-      content="사구 게임으로 최고 점수에 도전하고 한국 음식 도감을 하나씩 해금하는 미니게임입니다. 라면부터 한우 수라상까지, 점수를 세울수록 요리가 열립니다."
+      content="사구 한 브레이크로 한국 음식 메뉴를 하나씩 열어보세요. 라면부터 닭발까지 32가지, 점수를 높일수록 새로운 메뉴가 열립니다."
     />
     <meta
       name="keywords"
-      content="사구, 당구, 미니게임, 한국 음식, 맛집, 음식 도감, 라면, 떡볶이, 김치찌개, 삼겹살"
+      content="사구, 당구, 미니게임, 한국 음식, 맛집, 메뉴 도감, 라면, 떡볶이, 김치찌개, 삼겹살"
     />
     <meta name="robots" content="index, follow" />
-    <meta property="og:title" content="한국 음식 탐험｜사구 챌린지" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/challenge/"
+    />
+    <meta name="theme-color" content="#1a1a1a" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://billiards.tailuge.workers.dev/assets/sagu.png"
+    />
+    <meta property="og:title" content="한국 음식 탐험｜사구 게임 챌린지" />
     <meta
       property="og:description"
-      content="사구 게임으로 최고 점수에 도전하고 한국 음식 도감을 하나씩 해금하는 미니게임입니다. 라면부터 한우 수라상까지, 점수를 세울수록 요리가 열립니다."
+      content="사구 한 브레이크로 한국 음식 메뉴를 하나씩 열어보세요. 라면부터 닭발까지 32가지, 점수를 높일수록 새로운 메뉴가 열립니다."
     />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ko_KR" />
-    <meta property="og:image" content="https://billiards.tailuge.workers.dev/images/sagu.png" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/challenge/"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/images/sagucard.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="한국 음식 탐험 사구 챌린지" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="한국 음식 탐험｜사구 챌린지" />
+    <meta name="twitter:title" content="한국 음식 탐험｜사구 게임 챌린지" />
     <meta
       name="twitter:description"
-      content="사구 게임으로 최고 점수에 도전하고 한국 음식 도감을 하나씩 해금하는 미니게임입니다. 라면부터 한우 수라상까지, 점수를 세울수록 요리가 열립니다."
+      content="사구 한 브레이크로 한국 음식 메뉴를 하나씩 열어보세요. 라면부터 닭발까지 32가지, 점수를 높일수록 새로운 메뉴가 열립니다."
     />
-    <meta name="twitter:image" content="https://billiards.tailuge.workers.dev/images/sagu.png" />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/sagucard.jpg"
+    />
     <meta name="twitter:image:alt" content="한국 음식 탐험 사구 챌린지" />
+
+    <!-- The game, marked up for search engines the way the lobby and reveal
+         pages mark up theirs. `inLanguage` is ko alone: this page is Korean
+         only, unlike the lobby's bilingual head. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "한국 음식 탐험",
+        "alternateName": ["사구 챌린지", "한국 음식 사구 게임"],
+        "url": "https://billiards.tailuge.workers.dev/challenge/",
+        "image": "https://billiards.tailuge.workers.dev/images/sagucard.jpg",
+        "description": "사구 한 브레이크로 높은 점수를 기록하면 한국 음식 메뉴가 하나씩 열리는 무료 미니게임. 라면부터 닭발까지 32가지 메뉴를 모아보세요.",
+        "inLanguage": "ko",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "KRW"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "tailuge"
+        }
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
@@ -233,7 +283,8 @@
         text-transform: uppercase;
       }
 
-      /* One row per sagu HiScore: rank, player, points. */
+      /* One row per sagu HiScore: rank, the dish the score unlocks, player,
+         points. */
       .break-list {
         display: flex;
         flex-direction: column;
@@ -245,10 +296,16 @@
 
       .break-list li {
         display: grid;
-        grid-template-columns: 1rem minmax(0, 1fr) auto;
+        /* rank, dish emoji, player, score. The emoji column is content-sized
+           (one glyph) so it lines up down the list without taking space. */
+        grid-template-columns: 1rem auto minmax(0, 1fr) auto;
         align-items: baseline;
         gap: 0.3rem;
         font-size: 0.72rem;
+      }
+
+      .break-emoji {
+        line-height: 1;
       }
 
       .break-rank {
@@ -615,9 +672,13 @@
          panel at the foot of the page holding the Korean food deck with the
          credit for each image. Nothing on this page reads it yet — the gallery
          has its own hand-written list in challenge.js. */
+      /* Two folded lines rather than one: the Korean pages below and, under
+         them, the image credits. */
       .site-links {
         display: flex;
+        flex-direction: column;
         justify-content: center;
+        gap: 0.2rem;
         width: 100%;
         max-width: min(40rem, 100%);
         margin-inline: auto;
@@ -691,7 +752,7 @@
 
     <header>
       <h1>한국 음식 탐험 🍜</h1>
-      <p>사구 게임으로 최고 점수를 세우면 오늘 먹을 요리가 해금됩니다</p>
+      <p>사구 게임으로 높은 점수를 기록하고 한국의 다양한 음식을 만나보세요!</p>
     </header>
 
     <main>
@@ -699,14 +760,14 @@
       <section class="panel dashboard" aria-label="사구 챌린지">
         <div class="launch">
           <div class="launch-head">
-            <span>사구로 최고 점수에 도전</span>
-            <span class="notice">브레이크가 끝나면 종료</span>
+            <span>사구 최고 기록에 도전하세요</span>
+            <span class="notice">한 브레이크가 끝나면 도전도 종료됩니다.</span>
           </div>
           <button type="button" id="play-sagu" class="play-btn">▶ 사구 게임 시작</button>
           <p id="sagu-result" class="result" aria-live="polite"></p>
         </div>
         <div class="score">
-          <span class="score-label">Score</span>
+          <span class="score-label">현재 점수</span>
           <span id="score-display" class="score-num">0</span>
           <span id="score-max" class="score-max">/ 32</span>
         </div>
@@ -716,9 +777,9 @@
       <section id="food-card" class="panel food-card" aria-live="polite">
         <div id="food-emoji" class="food-emoji">🍜</div>
         <div class="food-details">
-          <span class="req"><span id="required-score">1</span>점 이상</span>
+          <span class="req"><span id="required-score">1</span>점부터</span>
           <h2 id="food-name-kr" class="food-title">라면 (Instant Ramyeon)</h2>
-          <p id="food-desc" class="food-desc">한국인이 가장 사랑하는 얼큰하고 간편한 대표 야식입니다.</p>
+          <p id="food-desc" class="food-desc">출출할 때 생각나는 얼큰하고 간편한 한 그릇.</p>
           <a id="wiki-link" href="#" target="_blank" rel="noopener noreferrer" class="wiki-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z" />
@@ -729,8 +790,8 @@
       </section>
 
       <!-- Unlocked gallery -->
-      <section class="panel gallery-panel" aria-label="달성한 요리 도감">
-        <h2 class="gallery-title">달성한 요리 도감</h2>
+      <section class="panel gallery-panel" aria-label="메뉴 도감">
+        <h2 class="gallery-title">메뉴 도감</h2>
         <div id="gallery-grid" class="gallery-grid"></div>
       </section>
 
@@ -747,6 +808,42 @@
          footer panel the reveal page uses. The list is not wired to anything
          yet: it is here so the Korean food metadata lives on the page. -->
     <nav class="site-links" aria-label="한국 음식 정보">
+      <!-- The site's other Korean pages, folded down so the foot of the page
+           stays one quiet line. Full absolute URLs rather than relative ones:
+           the page ships from more than one host. -->
+      <details class="site-links-more">
+        <summary>한국어 페이지 더 보기</summary>
+        <div class="site-links-panel">
+          <h2>함께 보기</h2>
+          <ul>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/korean.html"
+                >무료 온라인 당구 (한국어)</a
+              >
+            </li>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/exam/sagu"
+                >사구 시험 훈련</a
+              >
+            </li>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/fit/research-korean"
+                >사구 물리 연구와 샷 분석</a
+              >
+            </li>
+            <li>
+              <a href="https://news11213.tistory.com/1"
+                >인터랙티브 3쿠션 샷 분석과 연습 (티스토리)</a
+              >
+            </li>
+            <li>
+              <a href="https://blog.naver.com/jasuil/224416229214"
+                >네이버 블로그</a
+              >
+            </li>
+          </ul>
+        </div>
+      </details>
       <details class="site-links-more">
         <summary>
           이미지 출처:
@@ -760,7 +857,7 @@
               <a
                 href="https://ko.wikipedia.org/wiki/%EB%9D%BC%EB%A9%B4"
                 data-emoji="🍜"
-                data-desc="한국인이 가장 사랑하는 얼큰하고 간편한 대표 야식입니다."
+                data-desc="출출할 때 생각나는 얼큰하고 간편한 한 그릇."
                 data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Mama_instant_noodle_block.jpg/1280px-Mama_instant_noodle_block.jpg"
                 data-bytes="25554"
                 data-views="1959"
@@ -777,7 +874,7 @@
               <a
                 href="https://ko.wikipedia.org/wiki/%EB%96%A1%EB%B3%B6%EC%9D%B4"
                 data-emoji="🍢"
-                data-desc="매콤달콤한 고추장 양념에 쫄깃한 떡이 어우러진 길거리 음식입니다."
+                data-desc="매콤달콤한 양념에 쫄깃한 떡을 넣어 만든 국민 간식."
                 data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Tteokbokki.JPG/1280px-Tteokbokki.JPG"
                 data-bytes="13247"
                 data-views="1767"
@@ -794,7 +891,7 @@
               <a
                 href="https://ko.wikipedia.org/wiki/%EA%B9%80%EB%B0%A5"
                 data-emoji="🍙"
-                data-desc="야채와 계란, 단무지를 밥과 함께 김으로 말아낸 도시락 요리입니다."
+                data-desc="한입에 쏙! 밥과 다양한 재료를 김으로 감싼 든든한 간식."
                 data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Gimbap_%28pixabay%29.jpg/1280px-Gimbap_%28pixabay%29.jpg"
                 data-bytes="23372"
                 data-views="2139"
@@ -862,7 +959,7 @@
               <a
                 href="https://ko.wikipedia.org/wiki/%EB%A7%8C%EB%91%90"
                 data-emoji="🥟"
-                data-desc="고기와 채소를 반죽에 채워 찌거나 튀겨 낸 대표 분식입니다."
+                data-desc="속이 꽉 찬 만두. 찌거나 굽거나, 어떻게 먹어도 맛있죠."
                 data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/%EB%A7%8C%EB%91%90.jpg/1280px-%EB%A7%8C%EB%91%90.jpg"
                 data-bytes="26462"
                 data-views="1113"
