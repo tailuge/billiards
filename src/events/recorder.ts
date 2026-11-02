@@ -99,6 +99,17 @@ export class Recorder {
     return ReplayEncoder.crush(JSON.stringify(game))
   }
 
+  /** getWholeGameCompressed() for callers that must not throw, e.g. the
+   * speedrun-result message. Returns undefined when serialisation fails. */
+  getWholeGameCompressedSafe(): string | undefined {
+    try {
+      return this.getWholeGameCompressed()
+    } catch (e) {
+      console.error("Failed to encode replay data", e)
+      return undefined
+    }
+  }
+
   last() {
     return this.findLastIndex()
   }

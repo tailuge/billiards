@@ -2,7 +2,6 @@ import { BeginEvent, Controller } from "./controller"
 import { Init } from "./init"
 import { Container } from "../container/container"
 import { MatchResult, MatchResultHelper } from "../network/client/matchresult"
-import { ReplayEncoder } from "../utils/replay-encoder"
 import { Session } from "../network/client/session"
 import { ResumeStore } from "../utils/resumestore"
 import { BreakEvent } from "../events/breakevent"
@@ -57,6 +56,38 @@ async function submitResults(
 
 const LOBBY_LEAVE_DELAY_MS = 60 * 1000
 
+/** Tells an embedding page (the sagu challenge) that a speedrun finished. */
+function postSpeedrunResult(
+  container: Container,
+  result: MatchResult | undefined
+): void {
+  if (
+    !Session.isSpeedrunMode() ||
+    !result ||
+    !MatchResultHelper.isWinner(result)
+  ) {
+    return
+  }
+  const replayUrl = container.linkFormatter.getReplayUri(
+    container.recorder.wholeGame()
+  )
+  globalThis.parent?.postMessage(
+    {
+      type: "speedrun-result",
+      status: "complete",
+      matchResult: result,
+      replayUrl,
+      replayData:
+        result.replayData ?? container.recorder.getWholeGameCompressedSafe(),
+      // The winning break is still on the rules object here: end of game is
+      // resolved before startTurn() clears it.
+      break: container.rules.currentBreak,
+      score: Session.getInstance().myScore(),
+    },
+    "*"
+  )
+}
+
 export class End extends Controller {
   override get name(): string {
     return "End"
@@ -90,13 +121,8 @@ export class End extends Controller {
         Session.isBotMode())
     ) {
       if (!this.result.replayData) {
-        try {
-          const gameState = this.container.recorder.wholeGame()
-          const jsonState = JSON.stringify(gameState)
-          this.result.replayData = ReplayEncoder.crush(jsonState)
-        } catch (e) {
-          console.error("Failed to encode replay data", e)
-        }
+        this.result.replayData =
+          this.container.recorder.getWholeGameCompressedSafe()
       }
       void submitResults(this.container, this.result)
     }
@@ -115,27 +141,7 @@ export class End extends Controller {
     const highBreaks = MatchResultHelper.getHighBreaks(this.container)
     this.container.notification?.updateHighBreaks(highBreaks)
 
-    if (
-      Session.isSpeedrunMode() &&
-      this.result &&
-      MatchResultHelper.isWinner(this.result)
-    ) {
-      const gameState = this.container.recorder.wholeGame()
-      const replayUrl = this.container.linkFormatter.getReplayUri(gameState)
-      globalThis.parent?.postMessage(
-        {
-          type: "speedrun-result",
-          status: "complete",
-          matchResult: this.result,
-          replayUrl,
-          // The winning break is still on the rules object here: end of game is
-          // resolved before startTurn() clears it.
-          break: this.container.rules.currentBreak,
-          score: Session.getInstance().myScore(),
-        },
-        "*"
-      )
-    }
+    postSpeedrunResult(this.container, this.result)
   }
 
   override handleBegin(_: BeginEvent): Controller {

@@ -64,6 +64,9 @@ export class PlayShot extends ControllerBase {
     }
 
     if (speedrunEnd) {
+      // Every rule sends its replay with the result, so a consumer can register
+      // a hi-score for the run that just ended (a sagu break ends on a miss).
+      const replayData = this.container.recorder.getWholeGameCompressedSafe()
       globalThis.parent?.postMessage(
         {
           type: "speedrun-result",
@@ -71,6 +74,7 @@ export class PlayShot extends ControllerBase {
           reason: speedrunEnd,
           break: speedrunBreak,
           score: Session.getInstance().myScore(),
+          replayData,
         },
         "*"
       )
