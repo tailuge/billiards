@@ -87,6 +87,19 @@
         height: 100%;
       }
 
+      /* The panels plus the rail can outgrow a short viewport. Keep the
+         scrolling, drop the bar — the reveal page's treatment. */
+      html,
+      body {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none;
+      }
+
       body {
         min-height: 100%;
         margin: 0;
@@ -105,13 +118,13 @@
       }
 
       /* The site header, the page title and the panels share one centred,
-         width-capped column so the layout reads like the map page rather than
-         edge-to-edge. */
+         width-capped block so the layout reads like the map page rather than
+         edge-to-edge. The block also holds the narrow side rail, so its cap is
+         the panels plus the rail. */
       app-topbar,
-      header,
-      main {
+      header {
         width: 100%;
-        max-width: min(40rem, 100%);
+        max-width: min(54rem, 100%);
         margin-inline: auto;
       }
 
@@ -150,12 +163,117 @@
         font-size: 0.72rem;
       }
 
+      /* Panels down the first column, the narrow rail down the second — the
+         lobby's main layout, with its online list swapped for the breaks rail. */
       main {
         flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 40rem) 230px;
+        column-gap: 2px;
+        row-gap: 2px;
+        align-items: start;
+        width: 100%;
+        max-width: min(54rem, 100%);
+        margin-inline: auto;
+        padding: 2px 0 0;
+      }
+
+      main > .panel:not(.rail) {
+        grid-column: 1;
+      }
+
+      /* The collection sits below the rail, so it takes the whole width. */
+      main > .panel.gallery-panel {
+        grid-column: 1 / -1;
+      }
+
+      .gallery-panel {
+        padding-block: 0.5rem;
+      }
+
+      /* Empty for now: it is where the players' breaks will be listed. It runs
+         alongside the top two panels only, matching their combined height, so
+         the collection below can use the full width. */
+      .rail {
         display: flex;
         flex-direction: column;
-        gap: 2px;
-        padding: 2px 0 0;
+        align-self: stretch;
+        gap: 0.4rem;
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        min-height: 12rem;
+        padding: 0.6rem;
+        overflow-y: auto;
+      }
+
+      .rail-title {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      /* One row per sagu HiScore: rank, player, points. */
+      .break-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .break-list li {
+        display: grid;
+        grid-template-columns: 1rem minmax(0, 1fr) auto;
+        align-items: baseline;
+        gap: 0.3rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 1px solid var(--border-light);
+        font-size: 0.72rem;
+      }
+
+      .break-list li:last-child {
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+
+      .break-rank {
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .break-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .break-score {
+        color: var(--accent);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .rail-status {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.68rem;
+      }
+
+      /* Narrow screens drop the rail under the panels rather than squeezing
+         them into a 230px-less column. */
+      @media (width <= 760px) {
+        main {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        main > .rail {
+          grid-column: 1;
+          grid-row: auto;
+        }
       }
 
       /* Every section is one of the map's rounded panels. */
@@ -339,7 +457,7 @@
       }
 
       .gallery-title {
-        margin: 0 0 0.5rem;
+        margin: 0 0 0.15rem;
         color: var(--muted);
         font-size: 0.78rem;
         font-weight: 600;
@@ -350,7 +468,10 @@
       .gallery-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 0.4rem;
+        column-gap: 0.4rem;
+        /* Rows sit tighter than columns so the wall is ~32px shorter without
+           shrinking the (square) tiles. */
+        row-gap: 0.15rem;
       }
 
       .gallery-item {
@@ -360,8 +481,12 @@
         aspect-ratio: 1;
         border: 1px solid var(--border-light);
         border-radius: 4px;
+        padding: 0;
         background: var(--bg);
+        color: inherit;
+        font-family: inherit;
         font-size: 1.15rem;
+        cursor: pointer;
         opacity: 0.3;
         filter: grayscale(100%);
         transition:
@@ -372,6 +497,19 @@
 
       .gallery-item.unlocked {
         border-color: var(--accent);
+        opacity: 1;
+        filter: grayscale(0%);
+      }
+
+      .gallery-item:focus-visible {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+      }
+
+      /* The dish currently shown in the card above. The dimming of a locked
+         tile is lifted here, or the gold highlight would be faded with it. */
+      .gallery-item.selected {
+        border-color: var(--gold);
         opacity: 1;
         filter: grayscale(0%);
       }
@@ -618,10 +756,18 @@
       </section>
 
       <!-- Unlocked gallery -->
-      <section class="panel" aria-label="달성한 요리 도감">
+      <section class="panel gallery-panel" aria-label="달성한 요리 도감">
         <h2 class="gallery-title">달성한 요리 도감</h2>
         <div id="gallery-grid" class="gallery-grid"></div>
       </section>
+
+      <!-- Side rail, in the slot the lobby gives its online list. It will list
+           the players' breaks; for now it is an empty panel. -->
+      <aside class="panel rail" aria-label="브레이크 기록">
+        <h2 class="rail-title">브레이크 기록</h2>
+        <ol id="break-list" class="break-list"></ol>
+        <p id="break-status" class="rail-status">불러오는 중…</p>
+      </aside>
     </main>
 
     <!-- Image credits and the deck's source links, in the same collapsed
