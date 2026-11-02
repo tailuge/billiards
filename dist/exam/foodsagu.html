@@ -92,39 +92,13 @@
         gap: 1rem;
       }
 
-      .tier-box {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
-
-      .tier-icon {
-        width: 50px;
-        height: 50px;
-        background-color: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        font-weight: 900;
-        color: var(--accent-yellow);
-      }
-
-      .tier-info span {
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-      }
-
-      .tier-name {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--accent-yellow);
+      .launch-box {
+        flex: 1;
+        min-width: 0;
       }
 
       .score-box {
+        flex-shrink: 0;
         text-align: right;
       }
 
@@ -271,13 +245,6 @@
       }
 
       /* Sagu Launch */
-      .sagu-section {
-        background-color: var(--inner-bg);
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-lg);
-        padding: 1rem;
-      }
-
       .play-btn {
         width: 100%;
         background-color: var(--accent-yellow);
@@ -361,6 +328,15 @@
       }
 
       @media (width <= 480px) {
+        .dashboard {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .score-box {
+          text-align: center;
+        }
+
         .food-card {
           flex-direction: column;
           text-align: center;
@@ -385,15 +361,15 @@
 
       <!-- Dashboard -->
       <div class="dashboard">
-        <div class="tier-box">
-          <div id="tier-icon" class="tier-icon">1</div>
-          <div class="tier-info">
-            <span>현재 등급</span>
-            <div id="tier-title" class="tier-name">입문자</div>
-            <span id="unlock-count" style="font-size: 0.65rem"
-              >0 / 13 해금</span
-            >
+        <div class="launch-box">
+          <div class="slider-header">
+            <span>사구로 최고 점수에 도전</span>
+            <span class="notice-tag">브레이크가 끝나면 종료</span>
           </div>
+          <button type="button" id="play-sagu" class="play-btn">
+            ▶ 사구 게임 시작
+          </button>
+          <p id="sagu-result" class="sagu-result"></p>
         </div>
         <div class="score-box">
           <span>Score</span>
@@ -443,18 +419,6 @@
       <div>
         <div class="gallery-title">달성한 요리 도감</div>
         <div id="gallery-grid" class="gallery-grid"></div>
-      </div>
-
-      <!-- Sagu Launch -->
-      <div class="sagu-section">
-        <div class="slider-header">
-          <span>사구로 최고 점수에 도전</span>
-          <span class="notice-tag">브레이크가 끝나면 종료</span>
-        </div>
-        <button type="button" id="play-sagu" class="play-btn">
-          ▶ 사구 게임 시작
-        </button>
-        <p id="sagu-result" class="sagu-result"></p>
       </div>
     </div>
 
@@ -575,9 +539,6 @@
       const foodEmoji = document.getElementById("food-emoji")
       const wikiLink = document.getElementById("wiki-link")
       const reqScore = document.getElementById("required-score")
-      const tierTitle = document.getElementById("tier-title")
-      const tierIcon = document.getElementById("tier-icon")
-      const unlockCount = document.getElementById("unlock-count")
       const galleryGrid = document.getElementById("gallery-grid")
       const foodCard = document.getElementById("food-card")
 
@@ -593,15 +554,6 @@
           el.textContent = item.emoji
           galleryGrid.appendChild(el)
         })
-      }
-
-      // Get Tier Info
-      function getTier(score) {
-        if (score < 7) return { name: "입문자", icon: "1" }
-        if (score < 13) return { name: "미식가", icon: "2" }
-        if (score < 19) return { name: "요리 대가", icon: "3" }
-        if (score < 25) return { name: "전설의 식객", icon: "4" }
-        return { name: "K-Food 신", icon: "👑" }
       }
 
       // Update View
@@ -630,13 +582,6 @@
         foodDesc.textContent = food.desc
         foodEmoji.textContent = food.emoji
         wikiLink.href = food.wikiUrl
-
-        // Tier update
-        const tier = getTier(score)
-        tierTitle.textContent = tier.name
-        tierIcon.textContent = tier.icon
-        const unlockedCount = unlocked ? activeIdx + 1 : 0
-        unlockCount.textContent = `${unlockedCount} / ${foodItems.length} 해금`
 
         // Gallery update
         foodItems.forEach((_, idx) => {
