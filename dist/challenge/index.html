@@ -335,6 +335,34 @@
         text-decoration: underline;
       }
 
+      /* The row an upload added this session, so the player can spot their own
+         record in a list the server's cached feed has not caught up with. A soft
+         accent wash that fades out; the padding is cancelled by the matching
+         negative margin, so the tint has room without the row moving. */
+      .break-list li.is-new .break-row {
+        padding-inline: 0.25rem;
+        margin-inline: -0.25rem;
+        border-radius: 3px;
+        animation: break-new 2.4s ease-out;
+      }
+
+      @keyframes break-new {
+        from {
+          background: rgb(107 163 245 / 18%);
+        }
+
+        to {
+          background: transparent;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .break-list li.is-new .break-row {
+          animation: none;
+          background: rgb(107 163 245 / 12%);
+        }
+      }
+
       .break-emoji {
         line-height: 1;
       }
