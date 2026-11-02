@@ -291,37 +291,52 @@
         font-weight: 600;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        text-align: center;
       }
 
-      /* One row per sagu HiScore: rank, the dish the score unlocks, player,
-         points. */
+      /* One row per sagu HiScore: the dish the score unlocks, player, points. */
       .break-list {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+
+        /* The line box already separates the rows, so the gap only adds a
+           hairline instead of a visible band. */
+        gap: 0.05rem;
         margin: 0;
         padding: 0;
         list-style: none;
       }
 
       .break-list li {
+        font-size: 0.72rem;
+      }
+
+      /* The whole row is the replay link: one target the width of the rail,
+         instead of a bare two-digit score too small to tap. */
+      .break-row {
         display: grid;
 
-        /* rank, dish emoji, player, score. The emoji column is content-sized
-           (one glyph) so it lines up down the list without taking space. */
-        grid-template-columns: 1rem auto minmax(0, 1fr) auto;
+        /* dish emoji, player, score. The emoji column is content-sized (one
+           glyph) so it lines up down the list without taking space. */
+        grid-template-columns: auto minmax(0, 1fr) auto;
         align-items: baseline;
         gap: 0.3rem;
-        font-size: 0.72rem;
+        color: inherit;
+        text-decoration: none;
+
+        /* The hit area reaches past the text without moving it: the padding is
+           cancelled by an equal negative margin, so the rows stay as close as
+           the list gap makes them. */
+        padding-block: 0.15rem;
+        margin-block: -0.15rem;
+      }
+
+      .break-row:hover .break-score {
+        text-decoration: underline;
       }
 
       .break-emoji {
         line-height: 1;
-      }
-
-      .break-rank {
-        color: var(--muted);
-        font-variant-numeric: tabular-nums;
       }
 
       .break-name {
@@ -334,10 +349,6 @@
         color: var(--accent);
         font-weight: 600;
         font-variant-numeric: tabular-nums;
-      }
-
-      a.break-score {
-        text-decoration: none;
       }
 
       .rail-status {
@@ -874,8 +885,8 @@
 
       <!-- Side rail, in the slot the lobby gives its online list. It will list
            the players' breaks; for now it is an empty panel. -->
-      <aside class="panel rail" aria-label="브레이크 기록">
-        <h2 class="rail-title">브레이크 기록</h2>
+      <aside class="panel rail" aria-label="하이런 뷔페">
+        <h2 class="rail-title">하이런 뷔페</h2>
         <ol id="break-list" class="break-list"></ol>
         <p id="break-status" class="rail-status">불러오는 중…</p>
       </aside>
