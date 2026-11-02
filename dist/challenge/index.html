@@ -810,7 +810,10 @@
     </style>
   </head>
   <body>
-    <app-topbar rule-type="sagu"></app-topbar>
+    <!-- Declares the page as the food challenge, so lobby users see a 🍜 beside
+         this page's presence instead of the bare sagu ④ (see getEmoji in
+         ../utils.js). -->
+    <app-topbar rule-type="challenge"></app-topbar>
 
     <header>
       <h1>한국 음식 탐험 🍜</h1>
