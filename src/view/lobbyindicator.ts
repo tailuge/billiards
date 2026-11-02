@@ -90,7 +90,10 @@ export class LobbyIndicator {
     } else if (Session.isExamMode()) {
       this.ruleType = `${this.rules.rulename}-exam`
     } else if (Session.isSpeedrunMode()) {
-      this.ruleType = `${this.rules.rulename}-speedrun`
+      // Sagu speedruns are the k-food challenge, so the lobby shows the bowl
+      // ("-eat") rather than the running shoe for them.
+      const suffix = this.rules.rulename === "sagu" ? "-eat" : "-speedrun"
+      this.ruleType = `${this.rules.rulename}${suffix}`
     } else if (replayMode) {
       this.ruleType = "replay"
     } else if (Session.getInstance().spectator) {
