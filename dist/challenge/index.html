@@ -12,7 +12,7 @@
          claim the same host the lobby and reveal pages claim, even though the
          page also ships from the Docker image and ../billiards/dist: the
          canonical tells a crawler which of those copies counts. -->
-    <title>한국 음식 탐험｜사구 게임 챌린지</title>
+    <title>한국 음식 탐험｜사구(4구) 당구 게임 챌린지</title>
     <meta
       name="description"
       content="사구 한 브레이크로 한국 음식 메뉴를 하나씩 열어보세요. 라면부터 닭발까지 32가지, 점수를 높일수록 새로운 메뉴가 열립니다."
@@ -32,7 +32,10 @@
       type="image/png"
       href="https://billiards.tailuge.workers.dev/assets/sagu.png"
     />
-    <meta property="og:title" content="한국 음식 탐험｜사구 게임 챌린지" />
+    <meta
+      property="og:title"
+      content="한국 음식 탐험｜사구(4구) 당구 게임 챌린지"
+    />
     <meta
       property="og:description"
       content="사구 한 브레이크로 한국 음식 메뉴를 하나씩 열어보세요. 라면부터 닭발까지 32가지, 점수를 높일수록 새로운 메뉴가 열립니다."
@@ -52,7 +55,10 @@
     <meta property="og:image:alt" content="한국 음식 탐험 사구 챌린지" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="한국 음식 탐험｜사구 게임 챌린지" />
+    <meta
+      name="twitter:title"
+      content="한국 음식 탐험｜사구(4구) 당구 게임 챌린지"
+    />
     <meta
       name="twitter:description"
       content="사구 한 브레이크로 한국 음식 메뉴를 하나씩 열어보세요. 라면부터 닭발까지 32가지, 점수를 높일수록 새로운 메뉴가 열립니다."
@@ -250,8 +256,10 @@
         grid-column: 1;
       }
 
-      /* The collection sits below the rail, so it takes the whole width. */
-      main > .panel.gallery-panel {
+      /* The collection and the guide under it sit below the rail, so they take
+         the whole width. */
+      main > .panel.gallery-panel,
+      main > .panel.guide-panel {
         grid-column: 1 / -1;
       }
 
@@ -653,13 +661,27 @@
         background: var(--hover);
       }
 
-      .gallery-title {
+      .gallery-title,
+      .guide-title {
         margin: 0 0 0.15rem;
         color: var(--muted);
         font-size: 0.78rem;
         font-weight: 600;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+      }
+
+      /* The guide's prose, one paragraph per idea: what 사구 is, how this page
+         turns a break into dishes, and how to start one. */
+      .guide-text {
+        margin: 0.4rem 0 0;
+        color: var(--text);
+        font-size: 0.78rem;
+        line-height: 1.5;
+      }
+
+      .guide-text:first-of-type {
+        margin-top: 0.3rem;
       }
 
       .gallery-grid {
@@ -979,6 +1001,39 @@
         <div id="gallery-grid" class="gallery-grid"></div>
       </section>
 
+      <!-- What the game is, in the page's own words rather than folded away in
+           the footer: 사구 (4구) explained, how a run works, and how to start
+           one. A break is one turn at the table — no timer, shots taken until a
+           miss ends it — so the copy says that rather than describing a mode or
+           a time limit. -->
+      <section class="panel guide-panel" aria-labelledby="guide-title">
+        <h2 id="guide-title" class="guide-title">사구(4구) 당구 게임 안내</h2>
+        <p class="guide-text">
+          사구는 4구 당구의 우리말 이름으로, 수구 두 개와 빨간 공 두 개, 모두 네
+          개의 공으로 즐기는 당구 종목입니다. 내 수구로 두 개의 공을 연속해서
+          맞히면 득점하는 방식이라 한 번 익혀 두면 오래 즐길 수 있습니다.
+        </p>
+        <p class="guide-text">
+          한국 음식 탐험은 그 4구 당구를 한 번의 브레이크로 즐기는 무료
+          미니게임입니다. 시간 제한은 없고, 공을 맞히지 못해 차례가 끝날 때까지
+          계속해서 칠 수 있습니다. 수구를 쿠션 가까이에 붙여 두고 다음 공을
+          맞히기 좋은 자리를 만들어 가며, 실수 없이 오래 이어가는 것이 이 게임의
+          목표입니다.
+        </p>
+        <p class="guide-text">
+          브레이크가 끝나면 그동안 쌓은 점수만큼 한국 음식 메뉴가 하나씩
+          열립니다. 32점을 채우면 라면부터 떡꼬치까지 32가지가 모두 메뉴 도감에
+          모이고, 기록은 옆의 하이런 뷔페에 올라가 다른 플레이어와 견줄 수
+          있습니다.
+        </p>
+        <p class="guide-text">
+          설치나 회원 가입은 필요 없습니다. 사구 게임 시작을 누르고 수구의
+          방향과 파워를 정해 치면 되고, 브레이크가 끝난 순간 결과가 점수와 메뉴
+          도감에 바로 반영됩니다. 잠깐의 시간으로도 4구 당구게임을 한 판 즐길 수
+          있습니다.
+        </p>
+      </section>
+
       <!-- Side rail, in the slot the lobby gives its online list. It will list
            the players' breaks; for now it is an empty panel. -->
       <aside class="panel rail" aria-label="하이런 뷔페">
@@ -999,12 +1054,18 @@
           <!-- Description first: search engines read the panel top-down, and a
                reader opening the fold gets the page explained before the
                links. -->
+          <!-- The wording leans on the Korean search terms people use for the
+               game — 4구 당구 게임 (4-ball, the same game as 사구) and
+               당구게임/당구 게임 — rather than 사구 alone, since 사구 is what
+               the UI calls it and almost nobody searches for it. -->
           <p class="site-links-intro">
-            한국 음식 탐험은 사구 한 브레이크 점수로 한국 음식 32가지를 하나씩
-            여는 무료 웹 미니게임입니다. 라면과 떡볶이, 김치찌개처럼 익숙한
-            메뉴부터 닭발과 곱창 같은 야식까지 점수를 높일수록 새로운 메뉴가
-            열리고, 모은 메뉴는 메뉴 도감에 차곡차곡 쌓입니다. 설치 없이
-            브라우저에서 바로 플레이할 수 있습니다.
+            한국 음식 탐험은 4구 당구 게임(사구) 한 브레이크 점수로 한국 음식
+            32가지를 하나씩 여는 무료 웹 미니게임입니다. 라면과 떡볶이,
+            김치찌개처럼 익숙한 메뉴부터 닭발과 곱창 같은 야식까지 점수를
+            높일수록 새로운 메뉴가 열리고, 모은 메뉴는 메뉴 도감에 차곡차곡
+            쌓입니다. 설치나 회원 가입 없이 브라우저에서 바로 시작하는 무료
+            온라인 당구게임이고, 당구를 처음 접해도 한 번의 브레이크에서
+            시작하는 방식이라 금방 익힐 수 있습니다.
           </p>
           <!-- The site's other Korean pages. Full absolute URLs rather than
                relative ones: the page ships from more than one host. -->

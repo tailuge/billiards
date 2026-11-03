@@ -351,6 +351,13 @@ August 2023 (mobile)
 
 [![Billiards gameplay video from 2026](https://img.youtube.com/vi/jGNB_XLTjnU/0.jpg)](https://www.youtube.com/watch?v=jGNB_XLTjnU)
 
+![Three cushion on small table](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/minithree.png)
+
+![Sagu challenge](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/sagucard.jpg)
+
+![Three cushion](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/three630x500.png)
+
+
 Star History
 
 [![RepoStars](https://www.repostars.dev/api/og?repos=tailuge/billiards&theme=light)](https://www.repostars.dev/api/og?repos=tailuge/billiards&theme=light)
