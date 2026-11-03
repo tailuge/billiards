@@ -486,6 +486,66 @@
         text-align: center;
       }
 
+      /* Popover shown when a finished run makes the hi-score rail: a small card
+         above the foot of the page with a confirmation button. It dismisses
+         itself after a couple of seconds, so it never covers the dishes. */
+      .toast {
+        position: fixed;
+        bottom: 1.5rem;
+        left: 50%;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        max-width: calc(100vw - 2rem);
+        padding: 0.55rem 0.6rem 0.55rem 0.9rem;
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 4px 16px rgb(0 0 0 / 45%);
+        opacity: 0;
+        visibility: hidden;
+        transform: translate(-50%, 0.5rem);
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease,
+          visibility 0.2s;
+      }
+
+      .toast.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+      }
+
+      .toast-text {
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .toast-btn {
+        flex: 0 0 auto;
+        padding: 2px 10px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--bg);
+        color: var(--accent);
+        font-family: inherit;
+        font-size: 0.72rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .toast-btn:hover {
+        background: var(--hover);
+      }
+
+      .toast-btn:focus-visible {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+      }
+
       .score {
         flex-shrink: 0;
         text-align: right;
@@ -692,6 +752,10 @@
         .animate-pop {
           animation: none;
         }
+
+        .toast {
+          transition: none;
+        }
       }
 
       /* Sagu game overlay. */
@@ -852,6 +916,16 @@
       <h1>한국 음식 탐험 🍜</h1>
       <p>사구 게임으로 높은 점수를 기록하고 한국의 다양한 음식을 만나보세요!</p>
     </header>
+
+    <!-- Popover for a run that made the hi-score rail. `role="status"` reads
+         the line to a screen reader without interrupting, and the button is a
+         plain dismissal: the timer closes it anyway after two seconds. -->
+    <div id="hiscore-toast" class="toast" role="status" aria-live="polite">
+      <span class="toast-text">신기록! 잘 먹겠습니다 🍜</span>
+      <button type="button" id="hiscore-toast-ok" class="toast-btn">
+        확인
+      </button>
+    </div>
 
     <main>
       <!-- Dashboard -->
