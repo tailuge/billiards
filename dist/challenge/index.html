@@ -329,7 +329,7 @@
            smaller share of the rail and truncates with an ellipsis; the emoji
            block takes the rest, wrapping and overlapping its glyphs, and the
            points stay a fixed column. */
-        grid-template-columns: minmax(0, 0.6fr) minmax(0, 1.4fr) auto;
+        grid-template-columns: minmax(0, 0.4fr) minmax(0, 1.6fr) auto;
         align-items: baseline;
         gap: 0.3rem;
         color: inherit;
@@ -366,13 +366,13 @@
 
       /* Every dish the score unlocked, e.g. 🍜🍢. The glyphs wrap inside their
          column when the rail is narrow, which is why the line box is a little
-         looser than a single glyph's. Negative tracking pulls the emojis into
-         each other so a long run takes less width; the matching padding-inline
-         gives the last glyph its advance back, keeping it clear of the score. */
+         looser than a single glyph's. Negative tracking overlaps the emojis side
+         by side so more fit per row; the matching padding-inline gives the last
+         glyph its advance back, keeping it clear of the score. */
       .break-emoji {
         line-height: 1.25;
-        letter-spacing: -0.2em;
-        padding-inline-end: 0.2em;
+        letter-spacing: -0.35em;
+        padding-inline-end: 0.35em;
         overflow-wrap: anywhere;
       }
 
