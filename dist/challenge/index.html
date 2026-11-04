@@ -181,7 +181,7 @@
       app-topbar,
       header {
         width: 100%;
-        max-width: min(54rem, 100%);
+        max-width: min(60rem, 100%);
         margin-inline: auto;
       }
 
@@ -227,9 +227,10 @@
         display: grid;
 
         /* One layout at every width: the panels take the remaining space and the
-           rail keeps its slot beside them, scaling from 5.5rem up to 14.5rem, so
-           the hi-score list never drops to the foot of the page. */
-        grid-template-columns: minmax(0, 1fr) clamp(5.5rem, 36%, 20rem);
+           rail keeps a wide slot beside them, scaling from 8rem up to 26rem, so
+           the hi-score rows have room for their emojis and never drop to the
+           foot of the page. */
+        grid-template-columns: minmax(0, 1fr) clamp(8rem, 44%, 26rem);
         gap: 2px;
 
         /* The rows hug their panels, so the only space between panels is the 2px
@@ -239,7 +240,7 @@
         align-content: start;
         align-items: start;
         width: 100%;
-        max-width: min(54rem, 100%);
+        max-width: min(60rem, 100%);
         margin-inline: auto;
         padding: 2px 0 0;
       }
@@ -402,13 +403,7 @@
 
       .launch-head {
         display: flex;
-
-        /* Heading and pill share a line while there is room for both, and the
-           pill drops to a second line when there isn't. */
-        flex-wrap: wrap;
-        justify-content: space-between;
         align-items: center;
-        gap: 0.15rem 0.5rem;
         margin-bottom: 0.5rem;
         font-size: 0.78rem;
         font-weight: 600;
@@ -421,17 +416,6 @@
       .launch-head > span:first-child {
         flex: 1 1 auto;
         word-break: keep-all;
-      }
-
-      .notice {
-        flex: 0 0 auto;
-        padding: 1px 8px;
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        color: var(--muted);
-        font-size: 0.68rem;
-        font-weight: 200;
-        white-space: nowrap;
       }
 
       /* The panel's one call to action, so it takes the panel's full width and
@@ -954,11 +938,10 @@
       <section class="panel dashboard" aria-label="사구 챌린지">
         <div class="launch">
           <div class="launch-head">
-            <span>사구 최고 기록에 도전하세요</span>
-            <span class="notice">한 브레이크가 끝나면 도전도 종료됩니다.</span>
+            <span>사구 한 판 치고, 맛있는 한 끼 먹자!</span>
           </div>
           <button type="button" id="play-sagu" class="play-btn">
-            ▶ 사구 게임 시작
+            ▶ 사구 치고 음식 주문하기
           </button>
           <p id="sagu-result" class="result" aria-live="polite"></p>
         </div>
@@ -1027,10 +1010,10 @@
           있습니다.
         </p>
         <p class="guide-text">
-          설치나 회원 가입은 필요 없습니다. 사구 게임 시작을 누르고 수구의
-          방향과 파워를 정해 치면 되고, 브레이크가 끝난 순간 결과가 점수와 메뉴
-          도감에 바로 반영됩니다. 잠깐의 시간으로도 4구 당구게임을 한 판 즐길 수
-          있습니다.
+          설치나 회원 가입은 필요 없습니다. 사구 치고 음식 주문하기를 누르고
+          수구의 방향과 파워를 정해 치면 되고, 브레이크가 끝난 순간 결과가 점수와
+          메뉴 도감에 바로 반영됩니다. 잠깐의 시간으로도 4구 당구게임을 한 판
+          즐길 수 있습니다.
         </p>
       </section>
 
