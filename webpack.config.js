@@ -53,15 +53,16 @@ module.exports = {
     minimize: true,
     minimizer: [
       new TerserPlugin({
-        minify: TerserPlugin.swcMinify,
+//        minify: TerserPlugin.swcMinify,
         extractComments: false,
+        parallel: false,
         terserOptions: {
           compress: {
             unused: true,
             dead_code: true,
           },
           mangle: {
-            keepClassNames: true,
+            keep_classnames: true,
           },
           safari10: true,
         },
