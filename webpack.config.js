@@ -49,6 +49,10 @@ module.exports = {
   },
   performance: { hints: false },
   mode: "production",
+  // TypeScript is handled by swc-loader below. Disabling webpack's built-in
+  // TypeScript support also stops it probing `module.stripTypeScriptTypes`,
+  // which prints an ExperimentalWarning on Node >= 22.6.
+  experiments: { typescript: false },
   optimization: {
     minimize: true,
     minimizer: [
