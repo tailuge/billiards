@@ -53,9 +53,8 @@ module.exports = {
     minimize: true,
     minimizer: [
       new TerserPlugin({
-//        minify: TerserPlugin.swcMinify,
+        minify: TerserPlugin.swcMinify,
         extractComments: false,
-        parallel: false,
         terserOptions: {
           compress: {
             unused: true,
