@@ -227,10 +227,10 @@
         display: grid;
 
         /* One layout at every width: the panels take the remaining space and the
-           rail keeps a wide slot beside them, scaling from 8rem up to 26rem, so
-           the hi-score rows have room for their emojis and never drop to the
-           foot of the page. */
-        grid-template-columns: minmax(0, 1fr) clamp(8rem, 44%, 26rem);
+           rail scales from 9rem up to 22rem beside them. The emoji column is a
+           fixed eight slots and the points a fixed column, so the width past
+           those two goes to the player name. */
+        grid-template-columns: minmax(0, 1fr) clamp(9rem, 38%, 22rem);
         gap: 2px;
 
         /* The rows hug their panels, so the only space between panels is the 2px
@@ -257,9 +257,9 @@
         grid-column: 1;
       }
 
-      /* The collection and the guide under it sit below the rail, so they take
-         the whole width. */
-      main > .panel.gallery-panel,
+      /* The collection sits in the first column too, so the rail can run the
+         whole way down beside it. Only the guide under it takes the full
+         width. */
       main > .panel.guide-panel {
         grid-column: 1 / -1;
       }
@@ -268,21 +268,21 @@
         padding-block: 0.5rem;
       }
 
-      /* Empty for now: it is where the players' breaks will be listed. It runs
-         alongside the top two panels only, matching their combined height, so
-         the collection below can use the full width. */
+      /* The players' hi-scores. It runs the full length of the first column —
+         beside the dashboard, the dish card and the collection — so the list
+         gets the height of all three panels rather than just the top two. */
       .rail {
         display: flex;
         flex-direction: column;
         align-self: stretch;
         gap: 0.4rem;
         grid-column: 2;
-        grid-row: 1 / span 2;
+        grid-row: 1 / span 3;
         min-height: 12rem;
         padding: 0.6rem;
         overflow-y: auto;
 
-        /* Its height comes from the two panels beside it, not its content, so
+        /* Its height comes from the three panels beside it, not its content, so
            the rows keep their natural heights and no gap opens under the
            dashboard. The list scrolls inside it with the scrollbar hidden. */
         contain: size;
@@ -325,11 +325,11 @@
       .break-row {
         display: grid;
 
-        /* player, the dish emojis the score unlocked, points. The name keeps the
-           smaller share of the rail and truncates with an ellipsis; the emoji
-           block takes the rest, wrapping and overlapping its glyphs, and the
-           points stay a fixed column. */
-        grid-template-columns: minmax(0, 0.4fr) minmax(0, 1.6fr) auto;
+        /* player, the dish emojis the score unlocked, points. The name takes the
+           free space and truncates with an ellipsis; the emoji column is sized
+           by its content, which an invisible eight-glyph run holds at exactly
+           eight slots on every row; the points stay a fixed column. */
+        grid-template-columns: minmax(0, 1fr) max-content auto;
         align-items: baseline;
         gap: 0.3rem;
         color: inherit;
@@ -343,6 +343,8 @@
       }
 
       .break-score {
+        grid-column: 3;
+        grid-row: 1;
         color: var(--accent);
         font-weight: 600;
         font-variant-numeric: tabular-nums;
@@ -364,19 +366,33 @@
         background: rgb(107 163 245 / 18%);
       }
 
-      /* Every dish the score unlocked, e.g. 🍜🍢. The glyphs wrap inside their
-         column when the rail is narrow, which is why the line box is a little
-         looser than a single glyph's. Negative tracking overlaps the emojis side
-         by side so more fit per row; the matching padding-inline gives the last
-         glyph its advance back, keeping it clear of the score. */
-      .break-emoji {
+      /* The emoji column: the visible glyphs and the invisible eight-glyph run
+         that sets its width share one cell, so the column never shrinks below
+         eight slots — or grows past them — whatever a row shows. */
+      .break-emoji,
+      .break-emoji-slots {
+        grid-column: 2;
+        grid-row: 1;
         line-height: 1.25;
         letter-spacing: -0.35em;
         padding-inline-end: 0.35em;
+      }
+
+      /* Every dish the score unlocked, e.g. 🍜🍢. At most eight fit the column,
+         so a row never wraps onto a second line; negative tracking overlaps the
+         emojis side by side, and the matching padding-inline gives the last
+         glyph its advance back, keeping it clear of the score. */
+      .break-emoji {
         overflow-wrap: anywhere;
       }
 
+      .break-emoji-slots {
+        visibility: hidden;
+      }
+
       .break-name {
+        grid-column: 1;
+        grid-row: 1;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -671,9 +687,10 @@
       .gallery-grid {
         display: grid;
 
-        /* Eight dishes per row; the wall wraps onto as many rows as the deck
-           needs. */
-        grid-template-columns: repeat(8, 1fr);
+        /* Four dishes per row, so each tile is wide enough to read; the wall
+           wraps onto the eight rows the 32-dish deck needs, which is what makes
+           the panel (and the rail beside it) tall. */
+        grid-template-columns: repeat(4, 1fr);
         gap: 2px;
       }
 
@@ -688,7 +705,10 @@
         background: var(--bg);
         color: inherit;
         font-family: inherit;
-        font-size: 1.15rem;
+
+        /* Scaled with the four-across tiles, so a locked dish's emoji fills
+           its slot instead of floating in the middle of it. */
+        font-size: 1.8rem;
         cursor: pointer;
         opacity: 0.3;
         filter: grayscale(100%);
@@ -1017,8 +1037,9 @@
         </p>
       </section>
 
-      <!-- Side rail, in the slot the lobby gives its online list. It will list
-           the players' breaks; for now it is an empty panel. -->
+      <!-- Side rail, in the slot the lobby gives its online list: the sagu
+           hi-scores, running beside the whole first column down to the foot of
+           the collection. -->
       <aside class="panel rail" aria-label="하이런 뷔페">
         <h2 class="rail-title">하이런 뷔페</h2>
         <ol id="break-list" class="break-list"></ol>
