@@ -3205,6 +3205,7 @@ __metadata:
     jest: "npm:30.5.2"
     jest-environment-jsdom: "npm:30.5.2"
     jsoncrush: "npm:^1.1.8"
+    postcss: "npm:^8.5.32"
     postcss-html: "npm:2.0.0"
     prettier: "npm:3.9.10"
     stylelint: "npm:18.0.0"
@@ -6895,7 +6896,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.5.31":
+"postcss@npm:^8.5.31, postcss@npm:^8.5.32":
   version: 8.5.32
   resolution: "postcss@npm:8.5.32"
   dependencies:
