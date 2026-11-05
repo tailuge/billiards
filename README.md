@@ -20,6 +20,7 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * [Sagu ⬀](https://billiards.tailuge.workers.dev/?ruletype=sagu) Korean four-ball carom game. Try [sagu on a 5ft table ⬀](https://billiards.tailuge.workers.dev/?ruletype=sagu&tableSize=5).
 * [Snooker ⬀](https://billiards.tailuge.workers.dev/?ruletype=snooker&lod=4&tableSize=12) we await the first 147 submission to the leaderboard.
 * [8-Ball ⬀](https://billiards.tailuge.workers.dev/?ruletype=eightball&lod=4) try it in Hi-Res mode!
+* [Libre⬀](https://billiards.tailuge.workers.dev/challenge/) try and top the high scores.
 * Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak) and [TheFarJaw ⬀](https://billiards.tailuge.workers.dev/?bot=TheFarJaw).
 * Try [Multiplayer online](https://billiards.tailuge.workers.dev/lobby.html) pool lobby.
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on Vercel.
