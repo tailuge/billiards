@@ -335,10 +335,6 @@ July 2018
 
 ![WebGL pool table rendered in the browser, July 2018](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t1.png)
 
-July 2019
-
-![Ball shading and spin effects added to the WebGL table, July 2019](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t2.png)
-
 March 2021
 
 ![Snooker style table and refined cue rendering, March 2021](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)
