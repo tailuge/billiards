@@ -2794,12 +2794,15 @@
         window.open(url.toString(), "_blank")
       })
 
-      // The fit page solves a three-cushion shot and nothing else, so the button
-      // is only live on a three-cushion table: a libre or sagu layout would be
-      // searched as the three-ball game and come back with an aim for a shot
-      // that is not the one on the table.
+      // Each fit page solves one rule. Three cushion still goes to its own
+      // search; sagu goes to the four-ball page, which knows the second cue ball
+      // and the two reds. Other rules have no fit page to send them to.
       const solutionButton = document.getElementById("solution")
-      if (solutionButton && state.ruleType !== "threecushion") {
+      if (
+        solutionButton &&
+        state.ruleType !== "threecushion" &&
+        state.ruleType !== "sagu"
+      ) {
         solutionButton.disabled = true
       }
 
@@ -2810,9 +2813,12 @@
       // the pair every other link here hands a shot over as, and a search that
       // resumed on the wrong ball would be solving the wrong shot.
       solutionButton?.addEventListener("click", () => {
-        const url = addConstants(
-          new URL("../fit/solution.html", window.location.href)
-        )
+        const page =
+          state.ruleType === "sagu"
+            ? "../fit/positional.html"
+            : "../fit/solution.html"
+        const url = addConstants(new URL(page, window.location.href))
+        url.searchParams.set("cushionModel", state.cushionModel)
         url.searchParams.set("init", JSON.stringify(initCoords()))
         url.searchParams.set("initShot", initShot())
         window.open(url.toString(), "_blank")

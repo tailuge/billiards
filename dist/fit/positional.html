@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sagu Positional Solutions</title>
+    <link rel="icon" type="image/png" href="../favicon.png" />
+    <link rel="stylesheet" href="../css/ball-colors.css" />
+    <style>
+      body {
+        font-family: sans-serif;
+        font-size: 0.8rem;
+        margin: 0;
+        padding: 4px;
+      }
+
+      h1 {
+        font-size: 1.1rem;
+        margin: 0 0 2px;
+      }
+
+      h2 {
+        font-size: 0.9rem;
+        margin: 2px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .res-btn {
+        font-size: 0.7rem;
+        padding: 1px 4px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        background: #f8f9fa;
+        color: #333;
+        font-weight: normal;
+      }
+
+      .res-btn:hover {
+        background: #e2e6ea;
+      }
+
+      .res-btn.active {
+        font-weight: bold;
+        border-color: #007bff;
+        color: #007bff;
+        background: #e7f1ff;
+      }
+
+      #status-area {
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 4px;
+        font-size: 0.75rem;
+      }
+
+      th,
+      td {
+        padding: 1px 3px;
+        text-align: left;
+        border: 1px solid #ccc;
+      }
+
+      th {
+        font-weight: bold;
+      }
+
+      .rank-col {
+        text-align: right;
+        width: 28px;
+      }
+
+      .rating-col {
+        text-align: right;
+        width: 96px;
+      }
+
+      .res-controls {
+        display: flex;
+        gap: 4px;
+      }
+
+      .empty-msg {
+        text-align: center;
+        color: #999;
+      }
+
+      .sol-link {
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .sol-link.active {
+        font-weight: bold;
+      }
+
+      .main-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .tables-col {
+        flex: 0 0 25%;
+        min-width: 200px;
+      }
+
+      .diagram-col {
+        flex: 1 1 300px;
+        min-width: 250px;
+        position: relative;
+      }
+
+      .diagram-wrapper {
+        position: relative;
+        width: 100%;
+      }
+
+      svg.billiards-table {
+        width: 100%;
+        height: auto;
+        border: 1px solid #ccc;
+        display: block;
+      }
+
+      #progress-bar {
+        width: 100%;
+      }
+
+      .diagram-btn {
+        position: absolute;
+        bottom: 4%;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0.6;
+        filter: grayscale(1);
+        background: none;
+        border: none;
+        padding: 0;
+        text-decoration: none;
+      }
+
+      #play-btn {
+        right: calc(5% + 1.4rem);
+      }
+
+      #setup-btn {
+        right: 5%;
+      }
+
+      @media (width <= 600px) {
+        .main-grid {
+          flex-direction: column-reverse;
+        }
+
+        .tables-col {
+          flex: auto;
+          width: 100%;
+        }
+
+        .diagram-col {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          min-width: unset;
+          flex: none;
+          width: 100%;
+        }
+
+        .diagram-wrapper {
+          width: 100%;
+          flex-shrink: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sagu Positional Solutions</h1>
+
+    <div id="status-area">
+      <div><progress id="progress-bar" value="0" max="100"></progress></div>
+      <div id="stats">
+        <span id="stat-progress">Progress: 0 / 0</span>
+        <span id="stat-found">Solutions: 0</span>
+        <span id="stat-time">Time: 0s</span>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="tables-col">
+        <h2>
+          <span>Results</span>
+          <span class="res-controls">
+            <button
+              id="res-angle-btn"
+              class="res-btn"
+              type="button"
+              hidden
+              title="General angle search resolution (click to change)"
+            >
+              angle 1x
+            </button>
+            <button
+              id="res-ball-btn"
+              class="res-btn"
+              type="button"
+              title="Red aim search resolution (click to change)"
+            >
+              red 1x
+            </button>
+          </span>
+        </h2>
+        <h2><span>Regular</span></h2>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="rank-col">#</th>
+              <th scope="col">View</th>
+              <th
+                scope="col"
+                class="rating-col"
+                title="Positional rating: sum of the pairwise distances between the cue ball and the two reds at rest; lower is closer"
+              >
+                Positional Rating
+              </th>
+            </tr>
+          </thead>
+          <tbody id="results-body-regular">
+            <tr>
+              <td colspan="3" class="empty-msg">
+                Waiting for search to start...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2><span>Masse</span></h2>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="rank-col">#</th>
+              <th scope="col">View</th>
+              <th
+                scope="col"
+                class="rating-col"
+                title="Positional rating: sum of the pairwise distances between the cue ball and the two reds at rest; lower is closer"
+              >
+                Positional Rating
+              </th>
+            </tr>
+          </thead>
+          <tbody id="results-body-masse">
+            <tr>
+              <td colspan="3" class="empty-msg">
+                Waiting for search to start...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="diagram-col">
+        <div class="diagram-wrapper">
+          <svg class="billiards-table"></svg>
+          <button
+            id="play-btn"
+            class="diagram-btn"
+            type="button"
+            title="Play this shot in game"
+            aria-label="Play in game"
+          >
+            👁️
+          </button>
+          <button
+            id="setup-btn"
+            class="diagram-btn"
+            type="button"
+            title="Open in sagu research view"
+          >
+            🔧
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initDiagrams } from "../diagrams/svg.js"
+
+      const R = 0.03275
+      const maxPower = 160 * R
+      // The general 360 search is off for now; only red-aim cones are searched.
+      const SEARCH_GENERAL_ANGLES = false
+      // Cue elevation is in radians; 0.5 rad is about 28.6 degrees.
+      const ELEVATIONS = [0, 0.9]
+
+      const clock = (h) => ({
+        h,
+        ox: -0.45 * Math.sin((h * Math.PI) / 6),
+        oy: 0.45 * Math.cos((h * Math.PI) / 6),
+      })
+      const OFFSETS = [12, 1, 3, 4, 6, 8, 9, 11].map(clock)
+      // A raised cue is the masse search; top-of-ball clocks do not curve.
+      const MASSE_EXCLUDED_CLOCKS = new Set([11, 12, 1])
+
+      const progressBar = document.getElementById("progress-bar")
+      const statProgress = document.getElementById("stat-progress")
+      const statFound = document.getElementById("stat-found")
+      const statTime = document.getElementById("stat-time")
+      const resultsBodyRegular = document.getElementById("results-body-regular")
+      const resultsBodyMasse = document.getElementById("results-body-masse")
+      const diagramSvg = document.querySelector(".billiards-table")
+      const setupBtn = document.getElementById("setup-btn")
+      let currentConfig = null
+      let currentActiveLink = null
+      let diagramLoading = false
+
+      async function showDiagram(task) {
+        if (diagramLoading) return
+        diagramLoading = true
+        try {
+          const balls = []
+          for (let i = 0; i < ballPositions.length; i += 2) {
+            balls.push({
+              id: i / 2,
+              pos: { x: ballPositions[i], y: ballPositions[i + 1], z: 0 },
+            })
+          }
+          const tasks = Array.isArray(task) ? task : [task]
+          const config = tasks.map((t) => ({
+            balls,
+            cushionModel,
+            ruleType: "sagu",
+            params: { tableSize },
+            shot: {
+              cueBallId: cueBallId,
+              angle: +t.angle.toFixed(6),
+              power: +t.power.toFixed(6),
+              offset: {
+                x: +t.ox.toFixed(6),
+                y: +t.oy.toFixed(6),
+                z: 0,
+              },
+              elevation: +t.elevation.toFixed(6),
+            },
+          }))
+          diagramSvg.dataset.jsonShots = JSON.stringify(config)
+          currentConfig = config
+          diagramSvg
+            .querySelectorAll(
+              ".table-group, .trajectories-group, .balls-group, .inset-group"
+            )
+            .forEach((g) => g.remove())
+          await initDiagrams()
+        } finally {
+          diagramLoading = false
+        }
+      }
+
+      function renderShots(tbody, sortedSolutions) {
+        tbody.innerHTML = ""
+        if (sortedSolutions.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="3" class="empty-msg">None</td></tr>'
+          return
+        }
+        sortedSolutions.forEach((sol, i) => {
+          const encoded = encodeURIComponent(JSON.stringify(sol))
+          const rating = Number.isFinite(sol.rating)
+            ? sol.rating.toFixed(3)
+            : "—"
+          const tr = document.createElement("tr")
+          tr.innerHTML = `
+                        <td class="rank-col">${i + 1}</td>
+                        <td><a class="sol-link" data-task="${encoded}" title="#${i + 1}: a=${sol.angle.toFixed(3)} p=${sol.power.toFixed(3)} el=${sol.elevation.toFixed(3)} ox=${sol.ox.toFixed(2)} oy=${sol.oy.toFixed(2)}, rating=${rating}">⇗</a></td>
+                        <td class="rating-col">${rating}</td>
+                    `
+          tbody.appendChild(tr)
+        })
+      }
+
+      // Delegated click handler for inline diagram links
+      document.addEventListener("click", async (e) => {
+        const link = e.target.closest(".sol-link")
+        if (link && link.dataset.task) {
+          e.preventDefault()
+          e.stopPropagation()
+
+          // Update active state
+          if (currentActiveLink) currentActiveLink.classList.remove("active")
+          link.classList.add("active")
+          currentActiveLink = link
+
+          const task = JSON.parse(decodeURIComponent(link.dataset.task))
+          await showDiagram(task)
+          return
+        }
+      })
+
+      document.getElementById("play-btn")?.addEventListener("click", () => {
+        if (!currentConfig) return
+        const cfg = currentConfig[0]
+        const ballsPos = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
+        const p = new URLSearchParams()
+        p.set("ruletype", "sagu")
+        p.set("practice", "true")
+        p.set("cushionModel", cushionModel)
+        p.set("init", JSON.stringify(ballsPos))
+        p.set(
+          "initShot",
+          JSON.stringify({
+            cueBallId: cfg.shot.cueBallId,
+            angle: cfg.shot.angle,
+            power: cfg.shot.power,
+            offset: cfg.shot.offset,
+            elevation: cfg.shot.elevation ?? 0,
+          })
+        )
+        if (tableSize !== 10) p.set("tableSize", String(tableSize))
+        window.open("../index.html?" + p.toString(), "_blank")
+      })
+
+      setupBtn.addEventListener("click", () => {
+        if (!currentConfig) return
+        const cfg = currentConfig[0]
+        const cueBall = cfg.balls[cfg.shot.cueBallId]
+        const ballsPos = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
+        const state = {
+          diagram: true,
+          ruleType: "sagu",
+          cushionModel,
+          init: ballsPos,
+          shots: [
+            {
+              type: "AIM",
+              angle: cfg.shot.angle,
+              power: cfg.shot.power,
+              offset: cfg.shot.offset,
+              elevation: cfg.shot.elevation,
+              pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
+              i: cfg.shot.cueBallId,
+            },
+          ],
+        }
+        const p = new URLSearchParams()
+        p.set("s", JSON.stringify(state))
+        window.open(`../diagrams/three.html?${p}`, "_blank")
+      })
+
+      const urlParams = new URLSearchParams(window.location.search)
+      const initParam = urlParams.get("init")
+      const cushionModel = urlParams.get("cushionModel") || "mathavan"
+      const tableSize = parseFloat(urlParams.get("tableSize") || "10") || 10
+      const lastPoint = ["1", "true", "yes"].includes(
+        (urlParams.get("lastPoint") || "").toLowerCase()
+      )
+
+      const resBallParam = urlParams.get("resBall") || urlParams.get("ballRes")
+      const resBall = Math.max(1, parseInt(resBallParam || "1", 10) || 1)
+
+      const resAngleParam =
+        urlParams.get("resAngle") ||
+        urlParams.get("angleRes") ||
+        urlParams.get("resGen")
+      const resAngle = Math.max(1, parseInt(resAngleParam || "1", 10) || 1)
+
+      const resBallBtn = document.getElementById("res-ball-btn")
+      const resAngleBtn = document.getElementById("res-angle-btn")
+
+      if (resBallBtn) {
+        resBallBtn.textContent = `red ${resBall}x`
+        if (resBall > 1) resBallBtn.classList.add("active")
+        resBallBtn.addEventListener("click", () => {
+          const params = new URLSearchParams(window.location.search)
+          const nextRes = resBall >= 3 ? 1 : resBall + 1
+          if (nextRes === 1) {
+            params.delete("resBall")
+            params.delete("ballRes")
+          } else {
+            params.set("resBall", nextRes.toString())
+          }
+          window.location.search = params.toString()
+        })
+      }
+
+      if (resAngleBtn) {
+        resAngleBtn.hidden = !SEARCH_GENERAL_ANGLES
+        resAngleBtn.textContent = `angle ${resAngle}x`
+        if (resAngle > 1) resAngleBtn.classList.add("active")
+        resAngleBtn.addEventListener("click", () => {
+          const params = new URLSearchParams(window.location.search)
+          const nextRes = resAngle >= 3 ? 1 : resAngle + 1
+          if (nextRes === 1) {
+            params.delete("resAngle")
+            params.delete("angleRes")
+            params.delete("resGen")
+          } else {
+            params.set("resAngle", nextRes.toString())
+          }
+          window.location.search = params.toString()
+        })
+      }
+
+      let ballPositions = []
+      if (initParam) {
+        try {
+          ballPositions = JSON.parse(initParam)
+        } catch (e) {
+          ballPositions = initParam.split(",").map(Number)
+        }
+      }
+
+      // Which ball the search is played from: an index into the layout, the
+      // same one the exporter, the editor and the live game carry. It rides in
+      // `initShot` -- the pair `init` and `initShot` are what every launch link
+      // hands a shot over as -- of which this page reads only the ball, because
+      // the aim is the thing the search is solving for. A link that names no
+      // cue ball searches from ball 0.
+      function readCueBallId() {
+        let index = null
+        try {
+          index = JSON.parse(urlParams.get("initShot") ?? "{}")?.cueBallId
+        } catch (e) {
+          index = null
+        }
+        // Sagu has two cue balls; ball 0 is the white one and ball 1 the
+        // yellow one. Any other value cannot be the shooter.
+        return index === 0 || index === 1 ? index : 0
+      }
+
+      const cueBallId = readCueBallId()
+
+      if (
+        initParam &&
+        ballPositions.length === 8 &&
+        !ballPositions.some(isNaN)
+      ) {
+        await showDiagram({ angle: 0, power: 0.01, elevation: 0, ox: 0, oy: 0 })
+        startSearch()
+      } else {
+        // Init empty diagram
+        initDiagrams()
+      }
+
+      async function startSearch() {
+        const balls = []
+        for (let i = 0; i < ballPositions.length; i += 2) {
+          balls.push({
+            id: i / 2,
+            pos: { x: ballPositions[i], y: ballPositions[i + 1], z: 0 },
+          })
+        }
+
+        const angles = []
+        if (SEARCH_GENERAL_ANGLES) {
+          const numGeneralAngles = 180 * resAngle
+          for (let i = 0; i < numGeneralAngles; i++) {
+            angles.push((i * Math.PI) / (90 * resAngle))
+          }
+        }
+
+        // Inject collision-window angles aimed at each non-cueball ball.
+        // Triangle: base = distance between centers, opposite = 2R → halfAngle = asin(2R/d).
+        // Generate (10 * resBall) angles spanning the collision cone around the direct aim line.
+        function generateBallAimAngles(cueBall, targetBalls, mult = 1) {
+          const extra = []
+          const count = 10 * mult
+          const denom = count > 1 ? count - 1 : 1
+          for (const target of targetBalls) {
+            const dx = target.pos.x - cueBall.pos.x
+            const dy = target.pos.y - cueBall.pos.y
+            const dist = Math.sqrt(dx * dx + dy * dy)
+            if (dist <= 2 * R) continue
+            const aimAngle = Math.atan2(dy, dx)
+            const halfAngle = Math.asin((2 * R) / dist)
+            for (let k = 0; k < count; k++) {
+              const offset = -halfAngle + (k * (2 * halfAngle)) / denom
+              extra.push(aimAngle + offset)
+            }
+          }
+          return extra
+        }
+        // Sagu is played on the two reds; the other cue ball is a foul, so it
+        // is not a target the search should be seeding aims at.
+        const opponentCueId = cueBallId === 0 ? 1 : 0
+        const extraAngles = generateBallAimAngles(
+          balls[cueBallId],
+          balls.filter(
+            (ball) => ball.id !== cueBallId && ball.id !== opponentCueId
+          ),
+          resBall
+        )
+        for (const a of extraAngles) angles.push(a)
+
+        const powerPercents = [0.05, 0.1, 0.3]
+
+        const tasks = []
+        for (const angle of angles) {
+          for (const pPct of powerPercents) {
+            const power = pPct * maxPower
+            for (const elevation of ELEVATIONS) {
+              for (const { h, ox, oy } of OFFSETS) {
+                if (elevation !== 0 && MASSE_EXCLUDED_CLOCKS.has(h)) continue
+                tasks.push({ angle, power, elevation, ox, oy })
+              }
+            }
+          }
+        }
+
+        const physicsParams = {}
+        const CONSTANTS = [
+          "R",
+          "m",
+          "e",
+          "mu",
+          "muS",
+          "muC",
+          "rho",
+          "μs",
+          "μw",
+          "ee",
+          "stronge_omega_ratio",
+          "stronge_e_n",
+          "stronge_μ",
+        ]
+        CONSTANTS.forEach((key) => {
+          const val = urlParams.get(key)
+          if (val !== null) physicsParams[key] = val
+        })
+        physicsParams.tableSize = tableSize
+
+        const totalTasks = tasks.length
+        statProgress.textContent = `Progress: 0 / ${totalTasks}`
+        progressBar.max = totalTasks
+
+        let completed = 0
+        let foundCount = 0
+        let searchFinished = false
+        let resultsRendered = false
+        const solutions = []
+        let nextTaskIndex = 0
+        const startTime = performance.now()
+
+        const concurrency = Math.min(navigator.hardwareConcurrency || 4, 8)
+        const workers = Array.from(
+          { length: concurrency },
+          () => new Worker("../worker.js")
+        )
+
+        const updateUI = () => {
+          progressBar.value = completed
+          statProgress.textContent = `Progress: ${completed} / ${totalTasks}`
+          statFound.textContent = `Solutions: ${foundCount}`
+          statTime.textContent = `Time: ${Math.round((performance.now() - startTime) / 1000)}s`
+        }
+
+        const runNext = (worker) => {
+          if (nextTaskIndex >= totalTasks) {
+            worker.terminate()
+            if (completed === totalTasks && !searchFinished) {
+              searchFinished = true
+              finishSearch()
+            }
+            return
+          }
+
+          const taskIndex = nextTaskIndex++
+          const task = tasks[taskIndex]
+
+          worker.onmessage = (e) => {
+            if (e.data.type === "COMPLETE") {
+              processResult(task, e.data)
+              completed++
+              if (completed % 100 === 0 || completed === totalTasks) {
+                updateUI()
+              }
+              runNext(worker)
+            } else if (e.data.type === "ERROR") {
+              console.error("Worker error:", e.data.error)
+              completed++
+              runNext(worker)
+            }
+          }
+
+          worker.postMessage({
+            id: taskIndex,
+            ruleType: "sagu",
+            cushionModel: cushionModel,
+            balls: balls,
+            shot: {
+              cueBallId: cueBallId,
+              angle: task.angle,
+              power: task.power,
+              offset: { x: task.ox, y: task.oy },
+              elevation: task.elevation,
+            },
+            recordTrajectory: false,
+            params: physicsParams,
+          })
+        }
+
+        // A sagu point is the cue ball reaching both reds. Unlike three
+        // cushion there is no cushion requirement -- except for the final
+        // point, where the rules ask for a three-cushion carom instead. The
+        // opponent's cue is a foul anywhere in the shot, not just before the
+        // point, so the whole outcome list is checked for it first.
+        function getSaguCutoff(outcomes, cueBallId) {
+          const opponentCueId = cueBallId === 0 ? 1 : 0
+          const fouled = outcomes.some(
+            (o) =>
+              o.type === "Collision" &&
+              ((o.ballA === cueBallId && o.ballB === opponentCueId) ||
+                (o.ballB === cueBallId && o.ballA === opponentCueId))
+          )
+          if (fouled) return -1
+
+          let cushions = 0
+          const reds = new Set()
+          for (let i = 0; i < outcomes.length; i++) {
+            const o = outcomes[i]
+            if (o.type === "Cushion" && o.ballA === cueBallId) {
+              cushions++
+            }
+            if (
+              o.type === "Collision" &&
+              (o.ballA === cueBallId || o.ballB === cueBallId)
+            ) {
+              const otherId = o.ballA === cueBallId ? o.ballB : o.ballA
+              if (otherId === 2 || otherId === 3) reds.add(otherId)
+              if (reds.size === 2) {
+                return !lastPoint || cushions >= 3 ? i : -1
+              }
+            }
+          }
+          return -1
+        }
+
+        function processResult(task, data) {
+          if (getSaguCutoff(data.outcomes, cueBallId) < 0) return
+
+          foundCount++
+          solutions.push({
+            angle: task.angle,
+            power: task.power,
+            elevation: task.elevation,
+            ox: task.ox,
+            oy: task.oy,
+            rating: null,
+          })
+        }
+
+        // How tightly the three relevant balls finish: the sum of the three
+        // pairwise distances. Lower is a better gathering shot. It is only a
+        // ranking, so it is measured after the search, on the shots that
+        // already score.
+        function positionalRatingOf(frameBalls) {
+          const relevant = [cueBallId, 2, 3].map((id) =>
+            frameBalls.find((ball) => ball.id === id)
+          )
+          if (relevant.some((ball) => !ball)) return Infinity
+          const dist = (a, b) =>
+            Math.hypot(a.pos[0] - b.pos[0], a.pos[1] - b.pos[1])
+          return (
+            dist(relevant[0], relevant[1]) +
+            dist(relevant[0], relevant[2]) +
+            dist(relevant[1], relevant[2])
+          )
+        }
+
+        function renderResults() {
+          if (resultsRendered) return
+          resultsRendered = true
+
+          statProgress.textContent = `Progress: ${totalTasks} / ${totalTasks}`
+          statFound.textContent = `Solutions: ${foundCount}`
+          progressBar.value = totalTasks
+
+          const sortedSolutions = [...solutions].sort((a, b) => {
+            const aRating = Number.isFinite(a.rating) ? a.rating : Infinity
+            const bRating = Number.isFinite(b.rating) ? b.rating : Infinity
+            if (aRating === bRating) return 0
+            return aRating - bRating
+          })
+          const regular = sortedSolutions
+            .filter((solution) => solution.elevation === 0)
+            .slice(0, 10)
+          const masse = sortedSolutions
+            .filter((solution) => solution.elevation !== 0)
+            .slice(0, 10)
+          renderShots(resultsBodyRegular, regular)
+          renderShots(resultsBodyMasse, masse)
+
+          // Open the best regular shot, as if its link was clicked.
+          resultsBodyRegular.querySelector(".sol-link")?.click()
+        }
+
+        function finishSearch() {
+          const allSolutions = solutions
+          if (allSolutions.length === 0) {
+            renderResults()
+            return
+          }
+
+          statProgress.textContent = `Ranking 0 / ${allSolutions.length}`
+          let rankCompleted = 0
+          let rankNextIndex = 0
+          const rankWorkers = Array.from(
+            { length: concurrency },
+            () => new Worker("../worker.js")
+          )
+
+          const rankNext = (worker) => {
+            if (rankNextIndex >= allSolutions.length) {
+              worker.terminate()
+              if (rankCompleted === allSolutions.length) renderResults()
+              return
+            }
+
+            const solution = allSolutions[rankNextIndex++]
+            worker.onmessage = (e) => {
+              if (e.data.type === "COMPLETE") {
+                const frame = e.data.frames?.[e.data.frames.length - 1]
+                solution.rating = frame
+                  ? positionalRatingOf(frame.balls)
+                  : Infinity
+              } else if (e.data.type === "ERROR") {
+                console.error("Ranking worker error:", e.data.error)
+                solution.rating = Infinity
+              } else {
+                return
+              }
+              rankCompleted++
+              statProgress.textContent = `Ranking ${rankCompleted} / ${allSolutions.length}`
+              rankNext(worker)
+            }
+
+            worker.postMessage({
+              id: -1,
+              ruleType: "sagu",
+              cushionModel: cushionModel,
+              balls: balls,
+              shot: {
+                cueBallId: cueBallId,
+                angle: solution.angle,
+                power: solution.power,
+                offset: { x: solution.ox, y: solution.oy },
+                elevation: solution.elevation,
+              },
+              recordTrajectory: true,
+              params: physicsParams,
+            })
+          }
+
+          rankWorkers.forEach((worker) => rankNext(worker))
+        }
+
+        workers.forEach((w) => runNext(w))
+      }
+    </script>
+  </body>
+</html>
