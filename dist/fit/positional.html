@@ -228,7 +228,7 @@
               <th
                 scope="col"
                 class="rating-col"
-                title="Positional rating: sum of the pairwise distances between the cue ball and the two reds at rest; lower is closer"
+                title="Positional rating: distance between the two reds at rest; lower is closer"
               >
                 Positional Rating
               </th>
@@ -252,7 +252,7 @@
               <th
                 scope="col"
                 class="rating-col"
-                title="Positional rating: sum of the pairwise distances between the cue ball and the two reds at rest; lower is closer"
+                title="Positional rating: distance between the two reds at rest; lower is closer"
               >
                 Positional Rating
               </th>
@@ -569,10 +569,13 @@
 
         // Inject collision-window angles aimed at each non-cueball ball.
         // Triangle: base = distance between centers, opposite = 2R → halfAngle = asin(2R/d).
-        // Generate (10 * resBall) angles spanning the collision cone around the direct aim line.
+        // The window is widened past the tangent points by AIM_CONE_SPREAD so
+        // the sampled aims also cover grazes that miss the target.
+        // Generate (20 * resBall) angles spanning the collision cone around the direct aim line.
+        const AIM_CONE_SPREAD = 1.2
         function generateBallAimAngles(cueBall, targetBalls, mult = 1) {
           const extra = []
-          const count = 10 * mult
+          const count = 20 * mult
           const denom = count > 1 ? count - 1 : 1
           for (const target of targetBalls) {
             const dx = target.pos.x - cueBall.pos.x
@@ -580,7 +583,7 @@
             const dist = Math.sqrt(dx * dx + dy * dy)
             if (dist <= 2 * R) continue
             const aimAngle = Math.atan2(dy, dx)
-            const halfAngle = Math.asin((2 * R) / dist)
+            const halfAngle = Math.asin((2 * R) / dist) * AIM_CONE_SPREAD
             for (let k = 0; k < count; k++) {
               const offset = -halfAngle + (k * (2 * halfAngle)) / denom
               extra.push(aimAngle + offset)
@@ -757,21 +760,17 @@
           })
         }
 
-        // How tightly the three relevant balls finish: the sum of the three
-        // pairwise distances. Lower is a better gathering shot. It is only a
-        // ranking, so it is measured after the search, on the shots that
-        // already score.
+        // How tightly the two reds finish: just the distance between them,
+        // where the cue ball ends up is ignored. Lower is a better gathering
+        // shot. It is only a ranking, so it is measured after the search, on
+        // the shots that already score.
         function positionalRatingOf(frameBalls) {
-          const relevant = [cueBallId, 2, 3].map((id) =>
-            frameBalls.find((ball) => ball.id === id)
-          )
-          if (relevant.some((ball) => !ball)) return Infinity
-          const dist = (a, b) =>
-            Math.hypot(a.pos[0] - b.pos[0], a.pos[1] - b.pos[1])
-          return (
-            dist(relevant[0], relevant[1]) +
-            dist(relevant[0], relevant[2]) +
-            dist(relevant[1], relevant[2])
+          const redA = frameBalls.find((ball) => ball.id === 2)
+          const redB = frameBalls.find((ball) => ball.id === 3)
+          if (!redA || !redB) return Infinity
+          return Math.hypot(
+            redA.pos[0] - redB.pos[0],
+            redA.pos[1] - redB.pos[1]
           )
         }
 
