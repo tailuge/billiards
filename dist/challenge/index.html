@@ -272,6 +272,13 @@
          beside the dashboard, the dish card and the collection — so the list
          gets the height of all three panels rather than just the top two. */
       .rail {
+        /* Glyph slots in the emoji column. The row's name column takes whatever
+           the emoji and points columns leave, so a narrow rail gets fewer slots
+           (see the media queries below) and the player keeps their name.
+           challenge.js reads the same variable, so a row shows as many dishes
+           as the column has room for. */
+        --emoji-slots: 8;
+
         display: flex;
         flex-direction: column;
         align-self: stretch;
@@ -303,6 +310,21 @@
         text-align: center;
       }
 
+      /* The rail narrows with the viewport, and eight glyph slots would leave
+         the player name a couple of characters wide, so narrow screens give the
+         emoji column two (then four) slots back to the name. */
+      @media (width <= 30rem) {
+        .rail {
+          --emoji-slots: 6;
+        }
+      }
+
+      @media (width <= 24rem) {
+        .rail {
+          --emoji-slots: 4;
+        }
+      }
+
       /* One row per sagu HiScore: player, every dish the score unlocked, points. */
       .break-list {
         display: flex;
@@ -327,8 +349,8 @@
 
         /* player, the dish emojis the score unlocked, points. The name takes the
            free space and truncates with an ellipsis; the emoji column is sized
-           by its content, which an invisible eight-glyph run holds at exactly
-           eight slots on every row; the points stay a fixed column. */
+           by its content, which an invisible run holds at exactly
+           `--emoji-slots` glyphs on every row; the points stay a fixed column. */
         grid-template-columns: minmax(0, 1fr) max-content auto;
         align-items: baseline;
         gap: 0.3rem;
@@ -366,9 +388,9 @@
         background: rgb(107 163 245 / 18%);
       }
 
-      /* The emoji column: the visible glyphs and the invisible eight-glyph run
-         that sets its width share one cell, so the column never shrinks below
-         eight slots — or grows past them — whatever a row shows. */
+      /* The emoji column: the visible glyphs and the invisible run that sets its
+         width share one cell, so the column never shrinks below its slot count —
+         or grows past it — whatever a row shows. */
       .break-emoji,
       .break-emoji-slots {
         grid-column: 2;
@@ -378,10 +400,10 @@
         padding-inline-end: 0.35em;
       }
 
-      /* Every dish the score unlocked, e.g. 🍜🍢. At most eight fit the column,
-         so a row never wraps onto a second line; negative tracking overlaps the
-         emojis side by side, and the matching padding-inline gives the last
-         glyph its advance back, keeping it clear of the score. */
+      /* Every dish the score unlocked, e.g. 🍜🍢. At most the column's slot
+         count fit, so a row never wraps onto a second line; negative tracking
+         overlaps the emojis side by side, and the matching padding-inline gives
+         the last glyph its advance back, keeping it clear of the score. */
       .break-emoji {
         overflow-wrap: anywhere;
       }
@@ -958,10 +980,7 @@
       <section class="panel dashboard" aria-label="사구 챌린지">
         <div class="launch">
           <div class="launch-head">
-            <span
-              >한 번의 브레이크에서 최대한 높은 점수를 올려보세요. 점수만큼
-              맛있는 음식이 하나씩 해금됩니다!</span
-            >
+            <span>한 번의 브레이크에서 최대한 높은 점수를 올려보세요. 점수만큼 맛있는 음식이 하나씩 해금됩니다!</span>
           </div>
           <button type="button" id="play-sagu" class="play-btn">
             ▶ 사구 치고 음식 주문하기
@@ -1034,9 +1053,9 @@
         </p>
         <p class="guide-text">
           설치나 회원 가입은 필요 없습니다. 사구 치고 음식 주문하기를 누르고
-          수구의 방향과 파워를 정해 치면 되고, 브레이크가 끝난 순간 결과가
-          점수와 메뉴 도감에 바로 반영됩니다. 잠깐의 시간으로도 4구 당구게임을
-          한 판 즐길 수 있습니다.
+          수구의 방향과 파워를 정해 치면 되고, 브레이크가 끝난 순간 결과가 점수와
+          메뉴 도감에 바로 반영됩니다. 잠깐의 시간으로도 4구 당구게임을 한 판
+          즐길 수 있습니다.
         </p>
       </section>
 
