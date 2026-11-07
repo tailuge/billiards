@@ -3194,12 +3194,12 @@ __metadata:
     "@types/three": "npm:0.187.0"
     canvas: "npm:3.2.3"
     chai: "npm:6.3.0"
-    concurrently: "npm:10.0.6"
+    concurrently: "npm:10.0.7"
     eslint: "npm:10.14.0"
     eslint-plugin-html: "npm:8.2.1"
     eslint-plugin-sonarjs: "npm:4.2.2"
     fflate: "npm:^0.8.3"
-    html-validate: "npm:11.18.0"
+    html-validate: "npm:11.19.0"
     http-server: "npm:^14.1.1"
     interactjs: "npm:1.10.28"
     jest: "npm:30.5.2"
@@ -3622,9 +3622,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:10.0.6":
-  version: 10.0.6
-  resolution: "concurrently@npm:10.0.6"
+"concurrently@npm:10.0.7":
+  version: 10.0.7
+  resolution: "concurrently@npm:10.0.7"
   dependencies:
     chalk: "npm:5.6.2"
     rxjs: "npm:7.8.2"
@@ -3635,7 +3635,7 @@ __metadata:
   bin:
     conc: dist/bin/index.js
     concurrently: dist/bin/index.js
-  checksum: 10c0/08b03d53f81c0e159ac92f80005a04ed9c970b6ed4875e99fbf27f4a2f3ae142b83a76cc30580c8c9f4d75942b501cba2c6f8ae433709e045efbaa5f8faeb743
+  checksum: 10c0/f6656fb26c8ee3c4b924c5a62ca9d762220bd3c9c3b43fc75a7014a6c97cc994ed88371a7075d80a0b1b06daf1719a4d7ddd61e4df7fc2f4dabe16e2ace284e4
   languageName: node
   linkType: hard
 
@@ -4842,9 +4842,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-validate@npm:11.18.0":
-  version: 11.18.0
-  resolution: "html-validate@npm:11.18.0"
+"html-validate@npm:11.19.0":
+  version: 11.19.0
+  resolution: "html-validate@npm:11.19.0"
   dependencies:
     "@html-validate/stylish": "npm:^6.0.0"
     "@sidvind/better-ajv-errors": "npm:7.0.0"
@@ -4871,7 +4871,7 @@ __metadata:
       optional: true
   bin:
     html-validate: bin/html-validate.mjs
-  checksum: 10c0/02486ca3f92798013fbfa2a43c24e18a3d73c7c92f21a83b76ce41f84d1a749c49e945aa1fe63b6ca613772930bad85f3e6f91da1f58bbdf6ccf261a65d1b07d
+  checksum: 10c0/ccb1e79e5072e72be80647c84b0b1b6950518a5126d3675ccb0dfa926362bbf82e8603da153beb11e60aaf53581b8163114accee141ea53d6b04e3081da8492c
   languageName: node
   linkType: hard
 

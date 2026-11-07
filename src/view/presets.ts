@@ -1,6 +1,7 @@
 import {
   CanvasTexture,
   LinearFilter,
+  SRGBColorSpace,
   Scene,
   Sprite,
   SpriteMaterial,
@@ -91,7 +92,7 @@ function textTexture(text: string): CanvasTexture {
   const ctx = canvas.getContext("2d")!
   ctx.font = font
   ctx.beginPath()
-  ctx.roundRect(0, 0, size, size, 20)
+  ctx.roundRect(0, 0, size, size, 10)
   ctx.fillStyle = "rgba(0,0,0,0.6)"
   ctx.fill()
   ctx.fillStyle = "white"
@@ -100,6 +101,7 @@ function textTexture(text: string): CanvasTexture {
   ctx.fillText(text, size / 2, size / 2 + 2)
 
   const texture = new CanvasTexture(canvas)
+  texture.colorSpace = SRGBColorSpace
   texture.minFilter = LinearFilter
   textures.set(text, texture)
   return texture
