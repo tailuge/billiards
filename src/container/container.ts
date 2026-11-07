@@ -86,6 +86,7 @@ export class Container {
   fastForwardActive: boolean = false
   examMode: boolean = false
   freeAim: boolean = false
+  readonly collaborationMode: boolean
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
   frame: (timestamp: number) => void
@@ -127,15 +128,25 @@ export class Container {
       isSinglePlayer = true,
       portraitMode,
       freeAim = false,
+      collaborationMode = false,
     } = config
     this.log = log
     this.replayMode = replayMode
     this.examMode = config.examMode ?? false
     this.isSinglePlayer = isSinglePlayer
     this.freeAim = freeAim
+    this.collaborationMode = collaborationMode
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
     this.view = new View(element, this.table, assets, portraitMode)
+    // Presets are free in every solo mode; only a networked two-player game
+    // gates them behind the collaboration flag.
+    const isTwoPlayer =
+      !this.isSinglePlayer &&
+      !this.replayMode &&
+      !Session.isBotMode() &&
+      !Session.isSpectator()
+    this.view.presetsEnabled = !isTwoPlayer || this.collaborationMode
     if (this.rules.rulename === "reveal" && this.view.reveal) {
       this.revealTracker = new RevealTracker(
         this.view.reveal,
@@ -147,6 +158,11 @@ export class Container {
       this.keyboard = keyboard
       keyboard.mousetouchGuard = () =>
         this.cueHit?.active || this.cueBallSpin?.active || false
+      keyboard.onKeyDown = (code) => {
+        if (code === "KeyT") {
+          this.view.cyclePreset()
+        }
+      }
     }
     this.sound = assets.sound
     this.chat = new Chat(this.sendChat)

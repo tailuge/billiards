@@ -72,6 +72,7 @@ export class BrowserContainer {
   speedrun: boolean = false
   localMesh: boolean = false
   freeAim: boolean = false
+  collaborationMode: boolean = false
   raceTo: number | null = null
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
@@ -100,6 +101,7 @@ export class BrowserContainer {
     this.speedrun = params.has("speedrun")
     this.localMesh = params.has("localmesh")
     this.freeAim = params.get("freeaim") === "true"
+    this.collaborationMode = params.get("collaboration") === "true"
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
       Number.parseInt(params.get("raceTo") ?? "7") || 7
@@ -168,6 +170,7 @@ export class BrowserContainer {
         replay: !!this.replay,
       },
       freeAim: this.freeAim,
+      collaborationMode: this.collaborationMode,
     }
     return new Container(config)
   }

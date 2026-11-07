@@ -19,4 +19,5 @@ export interface ContainerConfig {
   examMode?: boolean
   portraitMode?: PortraitMode
   freeAim?: boolean
+  collaborationMode?: boolean
 }

@@ -11,6 +11,7 @@ import { Snooker } from "../controller/rules/snooker"
 import { Minimap } from "./minimap"
 import { RevealTexture } from "./revealtexture"
 import { Portraits, PortraitMode } from "./portraits"
+import { PresetOverlay } from "./presets"
 
 export class View {
   readonly scene = new Scene()
@@ -28,6 +29,8 @@ export class View {
   drawing: Drawing
   minimap: Minimap
   portraits: Portraits
+  readonly presets: PresetOverlay
+  presetsEnabled = false
   /** ?image= source, loading in the background; not displayed yet. */
   readonly reveal: RevealTexture | null
 
@@ -73,6 +76,7 @@ export class View {
       () => this.camera.camera
     )
     this.minimap = new Minimap(this.scene, this.renderer)
+    this.presets = new PresetOverlay(this.scene)
     this.reveal = RevealTexture.fromLocation(this.renderer)
     this.initialiseScene()
     this.camera.tableMesh = this.table.mesh
@@ -84,6 +88,12 @@ export class View {
 
   clearLines() {
     this.drawing.clear()
+  }
+
+  cyclePreset() {
+    if (this.presetsEnabled) {
+      this.presets.cycle()
+    }
   }
 
   undoLine() {

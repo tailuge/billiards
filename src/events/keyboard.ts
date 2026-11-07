@@ -13,6 +13,8 @@ export class Keyboard {
   /** Early-return guard for mousetouch; set by Container to suppress
    * aim-rotate / camera-height drags while the CueHit gesture is active. */
   mousetouchGuard: (() => boolean) | null = null
+  /** Called once per physical key press, before the held-key bookkeeping. */
+  onKeyDown?: (code: string) => void
 
   getEvents() {
     const keys = Object.keys(this.pressed)
@@ -54,6 +56,9 @@ export class Keyboard {
 
   keydown = (e) => {
     if (this.disabled || this.chatFocused()) return
+    if (!e.repeat) {
+      this.onKeyDown?.(e.code)
+    }
     this.pressed[e.code] ??= performance.now()
     e.stopImmediatePropagation()
     if (e.key !== "F12") {
