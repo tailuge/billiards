@@ -150,10 +150,24 @@ export class LobbyIndicator {
     })
 
     id("challengeAccept")?.addEventListener("click", () => {
-      if (typeof globalThis.open === "function") {
-        globalThis.open(this.getLobbyUrl(true), "_self")
+      if (typeof globalThis.open !== "function") return
+      const url = this.getLobbyUrl(true)
+      // An embedded game must not steer the host page or vanish from under it,
+      // so in an iframe the lobby gets its own tab. That leaves this game
+      // running, so it also drops its presence: otherwise the lobby still lists
+      // it at the old table and the accepted game has two clients on one table.
+      if (this.isEmbedded()) {
+        globalThis.open(url, "_blank")
+        void this.lobby?.leave()
+        return
       }
+      globalThis.open(url, "_self")
     })
+  }
+
+  /** Whether this page is framed, where navigating it would steer the host. */
+  private isEmbedded(): boolean {
+    return globalThis.self !== globalThis.top
   }
 
   async init(): Promise<void> {

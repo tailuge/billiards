@@ -183,6 +183,61 @@ describe("LobbyIndicator", () => {
     await indicator.stop()
   })
 
+  describe("accepting a challenge", () => {
+    const acceptChallenge = async (embedded = false) => {
+      const mockRules = { rulename: "snooker" } as any
+      const indicator = new LobbyIndicator(false, false, mockRules)
+      // jsdom's `top` is the page itself, so framing is stubbed instead.
+      if (embedded) {
+        jest.spyOn(indicator as any, "isEmbedded").mockReturnValue(true)
+      }
+      await indicator.init()
+
+      const mockLobby = (indicator as any).lobby
+      mockLobby.onChallenge.mock.calls[0][0]({
+        type: "offer",
+        challengerId: "u2",
+        challengerName: "Bob",
+        ruleType: "snooker",
+        tableId: "table-9",
+      })
+
+      const opened: [string, string | undefined][] = []
+      const originalOpen = globalThis.open
+      globalThis.open = ((url: string, target?: string) => {
+        opened.push([url, target])
+        return {}
+      }) as any
+
+      try {
+        ;(document.getElementById("challengeAccept") as HTMLElement).click()
+      } finally {
+        globalThis.open = originalOpen
+      }
+
+      return { opened, mockLobby }
+    }
+
+    it("navigates in place when not embedded", async () => {
+      const { opened, mockLobby } = await acceptChallenge()
+
+      expect(opened).toHaveLength(1)
+      expect(opened[0][1]).toBe("_self")
+      expect(opened[0][0]).toContain("acceptTableId=table-9")
+      expect(mockLobby.leave).not.toHaveBeenCalled()
+    })
+
+    it("opens a new tab and drops the presence when embedded", async () => {
+      const { opened, mockLobby } = await acceptChallenge(true)
+
+      expect(opened).toHaveLength(1)
+      expect(opened[0][1]).toBe("_blank")
+      expect(opened[0][0]).toContain("acceptTableId=table-9")
+      // The old page keeps running, so it must not linger at the table.
+      expect(mockLobby.leave).toHaveBeenCalled()
+    })
+  })
+
   it("handles non-anchor elements and click events", async () => {
     // Create a div instead of a link
     const div = document.createElement("div")
