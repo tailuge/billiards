@@ -256,16 +256,13 @@
         outline-offset: 1px;
       }
 
-      /* The rule type, at the right end of the input panel's title bar: the bar
-         is the one piece of chrome above the table with room in it, so choosing
-         a game type costs the table no height. The bar is a flex row for it, so
-         the label and the select share a baseline without absolute placement.
-         A select rather than a row of buttons: three options out of a set that
-         only grows, and one click to see them all. */
-      .panel-input > h2 {
+      /* The rule type selector sits beside the "simulation output" title text.
+         The bar is flex with items centered so text and selector share a baseline
+         without disturbing the title bar height or vertical layout. */
+      .panel-output > h2 {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        gap: 0.4rem;
       }
 
       .ruletype-select {
@@ -323,25 +320,23 @@
         outline-offset: 1px;
       }
 
-      /* The research text the summary folds out. Absolutely laid over the
-         panels above the footer rather than in the flow: every word of it is
-         in the DOM whether open or closed -- that is the point of it -- but
-         the page is exactly one window tall and cannot grow to hold it. Above
-         the dialogs' z-index, so opening it covers the tool instead of being
+      /* The research text the summary folds out. Fixed over the page so on mobile
+         and desktop it is always visible on screen and never positioned above the top.
+         Above the dialogs' z-index, so opening it covers the tool instead of being
          buried under a button column. */
       .research-body {
-        position: absolute;
-        bottom: calc(100% + 2px);
+        position: fixed;
+        top: 50%;
         left: 50%;
+        transform: translate(-50%, -50%);
         z-index: 20;
         box-sizing: border-box;
-        width: min(46rem, 100%);
-        max-height: calc(
-          var(--vh) - var(--header-height) - var(--footer-height) - 4px
-        );
+        width: min(46rem, 90vw);
+        max-width: 90vw;
+        max-height: 90vh;
+        max-height: 90dvh;
         padding: 0.6rem 0.8rem;
         overflow-y: auto;
-        transform: translateX(-50%);
         background: #fff;
         border: var(--bw) solid #ddd;
         border-radius: 0.25rem;
@@ -1229,6 +1224,16 @@
              header's, so it stays with the panel on a wide screen. -->
         <h2>
           simulation output
+          <!-- The game type is read from the URL and fixed for the page load:
+               the rule decides the rack, the ball colours and the physics the
+               game and the exporter run, and the diagram bundle builds its
+               rules once, at construction. Picking another one reloads the
+               page on it, carrying the shot across as a share link. -->
+          <select id="ruletype" class="ruletype-select" aria-label="Game type">
+            <option value="threecushion">three cushion</option>
+            <option value="libre">libre</option>
+            <option value="sagu">sagu</option>
+          </select>
           <a
             class="lobby-button"
             href="https://billiards.tailuge.workers.dev/lobby"
@@ -1248,16 +1253,6 @@
       <section class="panel panel-input" aria-label="Shot input">
         <h2>
           shot input
-          <!-- The game type is read from the URL and fixed for the page load:
-               the rule decides the rack, the ball colours and the physics the
-               game and the exporter run, and the diagram bundle builds its
-               rules once, at construction. Picking another one reloads the
-               page on it, carrying the shot across as a share link. -->
-          <select id="ruletype" class="ruletype-select" aria-label="Game type">
-            <option value="threecushion">three cushion</option>
-            <option value="libre">libre</option>
-            <option value="sagu">sagu</option>
-          </select>
         </h2>
         <div class="panel-body">
           <div class="table-panel">
