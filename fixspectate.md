@@ -10,13 +10,18 @@ and knows nothing about the real game's `raceTo` / `handicap_*` settings.
 Spectators therefore see a bogus end-of-game banner (and an `End` controller)
 mid-game, with no way back except reload.
 
-Meanwhile the authoritative signal — the winner's `GameOver` notification,
-sent exactly once at the true end — already arrives on the spectator's socket
-and is thrown away one layer up.
+Meanwhile the authoritative signal — the pair of `GameOver` notifications
+broadcast at the true end (the winner sends `YOU LOST`, the loser sends
+`YOU WON`, both with `share: true`) — already arrives on the spectator's
+socket and is thrown away one layer up. Observed traffic at end of game:
+two `NOTIFICATION` messages, one `YOU LOST` and one `YOU WON`, each with
+player-specific rematch buttons.
 
 Proposal: stop spectators from self-declaring game-over on score, and instead
-end the spectated game only when the broadcast `GameOver` notification arrives,
-rendered with the spectator treatment (`GAME OVER` + lobby button).
+end the spectated game only when the first broadcast `GameOver` arrives.
+Either notification is a valid end signal — no winner declaration is needed —
+and it is rendered with the generic spectator treatment (`GAME OVER` +
+Back to Lobby button). The second notification is then harmless.
 
 ## How it works today
 
@@ -26,11 +31,14 @@ rendered with the spectator treatment (`GAME OVER` + lobby button).
    but only queues `Hit`/`Aim`/`Score`/`PlaceBall`/`Break`/`Rerack` into the
    event queue. `NotificationEvent` (and `ConcedeEvent`) are parsed and then
    dropped.
-3. The winner's client ends the real game via
-   `MatchResultHelper.presentGameEnd` (`matchresult.ts`), which calls
-   `sendWinNotification`/`sendLossNotification`: a final `ScoreEvent` followed
-   by a `NotificationEvent` with `type: "GameOver"`. Both reach the spectator's
-   socket; only the `ScoreEvent` survives the filter in (2).
+3. Each player's client ends the real game via
+   `MatchResultHelper.presentGameEnd` (`matchresult.ts:notifyEndState`): the
+   winner shows `YOU WON` locally and broadcasts `YOU LOST`
+   (`sendLossNotification`: `sendScoreUpdate` + `GameOver` `NotificationEvent`),
+   while the loser shows `YOU LOST` locally and broadcasts `YOU WON`
+   (`sendWinNotification`: `ScoreEvent` + `GameOver` `NotificationEvent`).
+   Both broadcasts have `share: true`, so both reach the spectator's socket;
+   only the score updates survive the filter in (2).
 4. That `ScoreEvent` runs `ControllerBase.handleScore` (`controllerbase.ts`),
    which for `threecushion`/`sagu`/`libre` checks `rules.isEndOfGame([])` — a
    pure local score-vs-target comparison via
@@ -44,10 +52,10 @@ rendered with the spectator treatment (`GAME OVER` + lobby button).
    game's race settings, so the check fires at 7 (or a 5/7 mix) regardless of
    the actual race.
 
-There is also an ordering hazard confirming the diagnosis: the winner sends
-the final `ScoreEvent` **before** the `GameOver` notification
-(`matchresult.ts:sendWinNotification`/`sendLossNotification`), so the bogus
-local declaration always wins the race against the true signal.
+There is also an ordering hazard confirming the diagnosis: each sender emits
+its final score (`sendScoreUpdate`/`ScoreEvent`) **before** its `GameOver`
+notification (`matchresult.ts:sendWinNotification`/`sendLossNotification`), so
+the bogus local declaration always wins the race against the true signal.
 
 ## Proposed change
 
@@ -73,17 +81,12 @@ if (
 }
 ```
 
-`ControllerBase.handleNotification` already renders it (and backfills
-`highBreaks`), so no further plumbing is needed. `ConcedeEvent` deliberately
-stays dropped: the conceder's opponent runs `handleConcede` → `handleGameEnd`
-locally, which emits the same `GameOver` notification, so concedes are covered
-indirectly with no extra handling.
+No further plumbing is needed. `ConcedeEvent` stays dropped.
 
 ### 2. Never self-declare game-over as a spectator
 
 In `controllerbase.ts` `handleScore`, skip the auto-end blocks for
-spectators — both the carom block and the snooker block (the latter reads the
-spectator's possibly-stale local table, same class of mirage):
+spectators:
 
 ```ts
 if (!Session.isSpectator() && !this.container.replayMode && this.name !== "End") {
@@ -93,13 +96,10 @@ if (!Session.isSpectator() && !this.container.replayMode && this.name !== "End")
 
 One condition; the player, bot and replay paths are untouched.
 
-### 3. Render the incoming `GameOver` as a spectator
+### 3. Show the banner on any incoming `GameOver`
 
-The broadcast payload carries the players' remote buttons (a rematch URL
-addressed to the opponent via `getRemoteGameOverButtons`), which is wrong for
-a spectator to display. Override `handleNotification` in `Spectate` to map an
-incoming `GameOver` onto the existing spectator treatment instead of showing
-it verbatim:
+Spot any `GameOver` and show the spectator banner: `GAME OVER` + Back to
+Lobby button. Ignore the broadcast's title/buttons — no winner declaration.
 
 ```ts
 override handleNotification(event: NotificationEvent): Controller {
@@ -110,7 +110,6 @@ override handleNotification(event: NotificationEvent): Controller {
         {
           type: "GameOver",
           title: t("GAME OVER"),
-          subtext: typeof data.subtext === "string" ? data.subtext : undefined,
           icon: "🏆",
           extra: gameOverButtons.lobby,
           share: true,
@@ -124,10 +123,8 @@ override handleNotification(event: NotificationEvent): Controller {
 }
 ```
 
-This mirrors `MatchResultHelper.notifySpectator` (`matchresult.ts:154`),
-which is currently dead code for networked spectators — the local
-score-threshold path in (2) always fires first. After this change it becomes
-the single way a spectated game ends, reusing its exact copy and buttons.
+This reuses the `notifySpectator` copy (`matchresult.ts:154`): `GAME OVER` +
+lobby button.
 
 ## Tests
 
@@ -162,19 +159,6 @@ lint plus the two specs above are the meaningful gates.
 
 ## Out of scope
 
-- **Stale-spectator table state** (spectator physics diverging, `WATCHAIM`
-  payloads being dropped — see `fixwatchaim.md`). This change only fixes
-  *when* the spectated game is declared over, not how faithfully it is
-  rendered.
-- **Presence-based end detection** (`onOpponentLeft`, lobby status dots,
-  `End`'s 60s lobby-leave timer). Available as a fallback hint that players
-  left, but not game-end-specific, so not a trigger.
-- **Polling the scoreboard** for `submitMatchResult` posts. Heavier than
-  watching the relay message that already arrives.
-- **Snooker spectator end-of-game.** The snooker block is disabled for
-  spectators by the same guard in (2), so a cleared table also ends only via
-  the broadcast `GameOver`. If snooker's sender path ever skips the
-  notification, that is a separate sender-side gap.
-- **Rematch for spectators.** The spectator banner offers "Back to Lobby"
-  only, matching `notifySpectator` today. Letting a spectator challenge one of
-  the players from the end banner is a product decision, not taken here.
+- **Table rendering fidelity** (see `fixwatchaim.md`). This change only fixes
+  *when* the spectated game is declared over.
+- **Rematch for spectators.** Banner is Back to Lobby only.
