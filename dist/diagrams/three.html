@@ -258,8 +258,10 @@
 
       /* The rule type selector sits beside the "simulation output" title text.
          The bar is flex with items centered so text and selector share a baseline
-         without disturbing the title bar height or vertical layout. */
+         without disturbing the title bar height or vertical layout.
+         Also the positioning context for the lobby button in its title bar. */
       .panel-output > h2 {
+        position: relative;
         display: flex;
         align-items: center;
         gap: 0.4rem;
@@ -407,11 +409,6 @@
       .panel-output,
       .panel-input {
         width: min(100%, var(--panel-w));
-      }
-
-      /* The positioning context for the lobby button in its title bar. */
-      .panel-output > h2 {
-        position: relative;
       }
 
       .panel > h2 {
