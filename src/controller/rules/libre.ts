@@ -83,7 +83,7 @@ export class Libre implements Rules {
   update(outcomes: Outcome[]): Controller {
     if (Outcome.isCaromPoint(this.cueball, outcomes)) {
       this.container.sound.playSuccess(outcomes.length / 3)
-      this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
+      this.container.sendEvent(new WatchEvent({}))
       const scored = this.getAmountScored(outcomes)
       this.currentBreak += scored
       Session.getInstance().addMyScore(scored)

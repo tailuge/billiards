@@ -164,7 +164,7 @@ export class Sagu extends ThreeCushion {
   override update(outcomes: Outcome[]): Controller {
     if (this.isSuccessfulShot(outcomes)) {
       this.container.sound.playSuccess(outcomes.length / 3)
-      this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
+      this.container.sendEvent(new WatchEvent({}))
       const scored = this.getAmountScored(outcomes)
       this.currentBreak += scored
 

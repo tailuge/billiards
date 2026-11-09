@@ -439,9 +439,7 @@ export class BotEventHandler {
       0,
       this.container.inferActivePlayer()
     )
-    this.publishSequenceToPlayer([
-      new WatchEvent(this.container.table.serialise()),
-    ])
+    this.publishSequenceToPlayer([new WatchEvent({})])
     this.queuedOwnStartAim = true
     this.enqueueMessage(EventUtil.serialise(new StartAimEvent()))
   }

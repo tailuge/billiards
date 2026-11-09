@@ -309,7 +309,7 @@ export class EightBall implements Rules {
       }
     }
 
-    this.container.sendEvent(new WatchEvent(table.serialise()))
+    this.container.sendEvent(new WatchEvent({}))
     return new Aim(this.container)
   }
 
@@ -326,10 +326,9 @@ export class EightBall implements Rules {
   }
 
   private handleMiss(): Controller {
-    const table = this.container.table
     this.container.sendEvent(new StartAimEvent())
     if (this.container.isSinglePlayer) {
-      this.container.sendEvent(new WatchEvent(table.serialise()))
+      this.container.sendEvent(new WatchEvent({}))
       this.startTurn()
       return new Aim(this.container)
     }

@@ -97,6 +97,16 @@ describe("WATCHAIM packed event", () => {
     const received = EventUtil.fromSerialised(serialised) as WatchEvent
     expect(received.json.balls[0].pos.z).to.equal(table.balls[0].pos.z)
   })
+
+  it("round-trips an empty payload without balls or aim", () => {
+    const serialised = EventUtil.serialise(new WatchEvent({}))
+    expect(JSON.parse(serialised).json).to.deep.equal({})
+
+    const received = EventUtil.fromSerialised(serialised) as WatchEvent
+    expect(received).to.be.an.instanceof(WatchEvent)
+    expect(received.json).to.not.have.property("balls")
+    expect(received.json).to.not.have.property("aim")
+  })
 })
 
 describe("Ball.updateFromSerialised z rule", () => {

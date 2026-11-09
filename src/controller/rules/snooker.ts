@@ -278,10 +278,9 @@ export class Snooker implements Rules {
   }
 
   private switchPlayer(): Controller {
-    const table = this.container.table
     this.container.sendEvent(new StartAimEvent())
     if (this.container.isSinglePlayer) {
-      this.container.sendEvent(new WatchEvent(table.serialise()))
+      this.container.sendEvent(new WatchEvent({}))
       this.startTurn()
       return new Aim(this.container)
     }
@@ -295,7 +294,7 @@ export class Snooker implements Rules {
     if (Outcome.isClearTable(table)) {
       return this.handleGameEnd(true)
     }
-    this.container.sendEvent(new WatchEvent(table.serialise()))
+    this.container.sendEvent(new WatchEvent({}))
     return new Aim(this.container)
   }
 

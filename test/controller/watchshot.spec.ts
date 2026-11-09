@@ -1,6 +1,7 @@
 import { expect } from "chai"
 import { Container } from "../../src/container/container"
 import { Ball, State } from "../../src/model/ball"
+import { WatchAim } from "../../src/controller/watchaim"
 import { WatchShot } from "../../src/controller/watchshot"
 import { PlaceBallEvent } from "../../src/events/placeballevent"
 import { WatchEvent } from "../../src/events/watchevent"
@@ -97,5 +98,11 @@ describe("WatchShot Controller", () => {
 
     expect(container.ballTray.entries).to.have.lengthOf(1)
     expect(container.ballTray.entries[0].icon).to.equal("⊙")
+  })
+
+  it("transitions to WatchAim on an empty WatchEvent without throwing", () => {
+    const watchShot = new WatchShot(container)
+    const next = watchShot.handleWatch(new WatchEvent({}))
+    expect(next).to.be.an.instanceof(WatchAim)
   })
 })

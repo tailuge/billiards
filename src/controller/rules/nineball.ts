@@ -136,7 +136,7 @@ export class NineBall implements Rules {
       return this.handleGameEnd(true)
     }
 
-    this.container.sendEvent(new WatchEvent(table.serialise()))
+    this.container.sendEvent(new WatchEvent({}))
     return new Aim(this.container)
   }
 
@@ -150,11 +150,10 @@ export class NineBall implements Rules {
   }
 
   private handleMiss(): Controller {
-    const table = this.container.table
     // if no pot and no foul switch to other player
     this.container.sendEvent(new StartAimEvent())
     if (this.container.isSinglePlayer) {
-      this.container.sendEvent(new WatchEvent(table.serialise()))
+      this.container.sendEvent(new WatchEvent({}))
       this.startTurn()
       return new Aim(this.container)
     }
