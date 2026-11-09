@@ -186,7 +186,7 @@ export class LobbyIndicator {
     this.messagingClient = new MessagingClient({
       baseUrl: this.messagingUrl,
     })
-    this.messagingClient.setVersion(VERSION + `-${Session.getInstance().lod}`)
+    this.messagingClient.setVersion(VERSION.slice(2))
     this.messagingClient.start()
 
     const params = new URLSearchParams(globalThis.location?.search ?? "")
