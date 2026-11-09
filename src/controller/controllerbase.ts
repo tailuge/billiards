@@ -58,7 +58,11 @@ export abstract class ControllerBase extends Controller {
     this.container.updateScoreHud(event.p1, event.p2, event.b, event.active)
 
     const rulename = this.container.rules.rulename
-    if (!this.container.replayMode && this.name !== "End") {
+    if (
+      !Session.isSpectator() &&
+      !this.container.replayMode &&
+      this.name !== "End"
+    ) {
       if (
         (rulename === "threecushion" ||
           rulename === "sagu" ||

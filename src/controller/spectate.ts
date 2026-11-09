@@ -7,8 +7,11 @@ import { ScoreEvent } from "../events/scoreevent"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { RerackEvent } from "../events/rerackevent"
 import { BreakEvent } from "../events/breakevent"
+import { NotificationEvent } from "../events/notificationevent"
 import { Session } from "../network/client/session"
 import { EventType } from "../events/eventtype"
+import { gameOverButtons } from "../utils/gameover"
+import { t } from "../utils/i18n"
 
 export class Spectate extends ControllerBase {
   override get name() {
@@ -18,6 +21,7 @@ export class Spectate extends ControllerBase {
   tableId: string
   messages: GameEvent[] = []
   private activePlayer: 0 | 1 | 2 = 0
+  private gameOverShown = false
   constructor(container, messageRelay, tableId) {
     super(container)
     this.messageRelay = messageRelay
@@ -36,7 +40,8 @@ export class Spectate extends ControllerBase {
         event instanceof ScoreEvent ||
         event instanceof PlaceBallEvent ||
         event instanceof BreakEvent ||
-        event instanceof RerackEvent
+        event instanceof RerackEvent ||
+        event instanceof NotificationEvent
       ) {
         this.container.eventQueue.push(event)
       }
@@ -48,6 +53,30 @@ export class Spectate extends ControllerBase {
   private suggestRandomWatchCamera() {
     const camera = this.container.view.camera
     camera.suggestMode(Math.random() < 0.5 ? camera.topView : camera.aimzView)
+  }
+
+  override handleNotification(event: NotificationEvent): Controller {
+    const data = event.data
+    if (typeof data !== "string" && data.type === "GameOver") {
+      if (this.gameOverShown) {
+        return this
+      }
+      this.gameOverShown = true
+      return super.handleNotification(
+        new NotificationEvent(
+          {
+            type: "GameOver",
+            title: t("GAME OVER"),
+            icon: "🏆",
+            extra: gameOverButtons.lobby,
+            share: true,
+            duration: 0,
+          },
+          event.duration
+        )
+      )
+    }
+    return super.handleNotification(event)
   }
 
   override handleScore(event: ScoreEvent): Controller {
