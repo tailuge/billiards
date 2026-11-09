@@ -220,6 +220,15 @@
         color: #999;
       }
 
+      /* Entry heading carries the link: inherit the surrounding type so the
+         Korean entry matches its siblings visually while keeping heading
+         semantics for crawlers. */
+      .site-links-panel h3 {
+        font-size: inherit;
+        font-weight: inherit;
+        margin: 0;
+      }
+
       .site-links-panel ul {
         margin: 0 0 0.75rem;
         padding-left: 1rem;
@@ -622,70 +631,83 @@
 
           <h2>Other languages</h2>
           <ul>
-            <li>
-              <a href="./korean.html" lang="ko">무료 온라인 당구</a>
+            <li lang="ko">
+              <h3>
+                <a href="./korean.html">무료 온라인 당구 게임</a>
+              </h3>
               <span class="site-links-desc">
-                설치나 가입 없이 브라우저에서 바로 즐기는 무료 온라인 당구게임 —
-                3쿠션과 사구(4구), 온라인 대전까지.
+                설치나 회원가입 없이 브라우저에서 바로 시작하는 무료 온라인
+                당구 게임입니다. 3쿠션과 사구(4구), 포켓볼, 스누커를 실제
+                물리를 적용한 시뮬레이터로 친구들과 함께 즐기거나 혼자
+                연습하고, 온라인 대전에 도전하세요.
                 <a
                   href="https://blog.naver.com/jasuil/224416229214"
                   target="_blank"
+                  rel="noopener"
                   >Naver</a
                 >
                 ,
-                <a href="https://news11213.tistory.com/1">티스토리 블로그</a> ,
-                <a href="https://news11213.tistory.com/2"
+                <a
+                  href="https://news11213.tistory.com/1"
+                  target="_blank"
+                  rel="noopener"
+                  >티스토리 블로그</a
+                >
+                ,
+                <a
+                  href="https://news11213.tistory.com/2"
+                  target="_blank"
+                  rel="noopener"
                   >사구 한 판, 밥값은 해야지!</a
                 >
               </span>
             </li>
-            <li>
-              <a href="./japanese.html" lang="ja">無料オンラインビリヤード</a>
+            <li lang="ja">
+              <a href="./japanese.html">無料オンラインビリヤード</a>
               <span class="site-links-desc">
                 3クッションと9ボールを登録不要で。無料オンラインビリヤード、スマホ対応、ブラウザで今すぐ。
                 <a
                   href="https://ameblo.jp/tailuge/entry-12981511558.html"
-                  lang="ja"
                   >日本でのビリヤードの思い出</a
                 >
               </span>
             </li>
-            <li>
-              <a href="./chinese.html" lang="zh">免費線上斯諾克</a>
+            <li lang="zh">
+              <a href="./chinese.html">免費線上斯諾克</a>
               <span class="site-links-desc">
                 免安裝、免註冊的免費線上斯諾克：標準12呎賽桌與6呎模式，手機可玩，還能線上真人對戰。
               </span>
             </li>
-            <li>
-              <a href="./turkish.html" lang="tr">Ücretsiz online bilardo</a>
+            <li lang="tr">
+              <a href="./turkish.html">Ücretsiz online bilardo</a>
               <span class="site-links-desc">
                 Kurulum ve üyelik gerektirmeyen ücretsiz online bilardo:
                 gerçekçi fizikle 3 bant, PC ve mobilde.
               </span>
             </li>
-            <li>
-              <a href="./german.html" lang="de">Kostenloses 3-Band-Billard</a>
+            <li lang="de">
+              <a href="./german.html">Kostenloses 3-Band-Billard</a>
               <span class="site-links-desc">
                 Kostenloses 3-Band-Billard ohne Download und Anmeldung —
                 realistische Physik für PC und Handy.
               </span>
             </li>
-            <li>
-              <a href="./spanish.html" lang="es">Billar a tres bandas gratis</a>
+            <li lang="es">
+              <a href="./spanish.html">Billar a tres bandas gratis</a>
               <span class="site-links-desc">
                 Billar a tres bandas y carambola gratis en el navegador, sin
                 descargas ni registro, también en el móvil.
               </span>
             </li>
-            <li>
-              <a href="./dutch.html" lang="nl">Online driebanden spelen</a>
+            <li lang="nl">
+              <a href="./dutch.html">Online driebanden spelen</a>
               <span class="site-links-desc">
                 Gratis online driebanden en carambole spelen, zonder download of
                 registratie — met oefenpartijen.
               </span>
             </li>
-            <li>
-              <a href="./vietnamese.html" lang="vi">Game bi-a 3 băng</a>
+            <li lang="vi">
+              <a href="./vietnamese.html">Game bi-a 3 băng</a>
               <span class="site-links-desc">
                 Chơi bi-a 3 băng miễn phí trên trình duyệt, không cần cài đặt
                 hay đăng ký; hỗ trợ cả PC và điện thoại.
