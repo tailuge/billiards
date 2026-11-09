@@ -88,12 +88,14 @@
         --widget-size: 5.6rem;
 
         /* The panel's buttons stack down the column, so the column is as tall
-           as the buttons in it plus the gaps between. The count is a variable
-           because --action-height is its sum, so a sixth button is a change
-           here and nowhere else. */
+           as the rows in it plus the gaps between. The count is a variable
+           because --action-height is its sum, so another row is a change here
+           and nowhere else. Eight rows: the replay and the trace clear share
+           one, and constants, the four launch links, presets and the share
+           glyph take one each. */
         --action-button-h: 1.25rem;
         --action-gap: 1px;
-        --action-count: 6;
+        --action-count: 8;
         --action-height: calc(
           var(--action-count) * var(--action-button-h) +
             (var(--action-count) - 1) * var(--action-gap)
@@ -114,8 +116,10 @@
            finds more room for it, and part of that box's own minimum: the
            column, this gap and this much text is the least it can hold, so a
            short window grows the box past the panel rather than spilling the
-           text out of its own border. */
-        --share-h: 3rem;
+           text out of its own border. Small, because the launch links take the
+           height the box used to: three of them are in the column now instead
+           of behind a dialog, and the link is the thing that can give it up. */
+        --share-h: 1rem;
 
         /* The controls box's own frame, and the minimum that has to hold the
            column and the link text inside it -- padding and border included,
@@ -506,6 +510,19 @@
         height: var(--action-height);
         position: relative;
         z-index: 11;
+      }
+
+      /* Two buttons in one row at half the column's width each: the replay and
+         the trace clear are both a single symbol, so neither needs a row of its
+         own. */
+      .action-row {
+        display: flex;
+        flex: none;
+        gap: var(--action-gap);
+      }
+
+      .action-row > button {
+        flex: 1 1 0;
       }
 
       /* A plain button, as the diagram pages use. */
@@ -1312,14 +1329,33 @@
               </svg>
               <!-- Under the elevation widget, down the bottom of the controls
                    column: one button above the next. Replay is first, as the
-                   thing the panel exists to do, before the three dialogs and
-                   the tidy-up. -->
+                   thing the panel exists to do, before the two dialogs, the
+                   launch links and the tidy-up. -->
               <div class="action-panel">
-                <!-- The diagram bundle relabels this and binds the re-run once
-                   its assets are in, so it is the editor's only way to replay. -->
-                <button id="replay" class="action-button" type="button">
-                  replay
-                </button>
+                <!-- Playing a shot and wiping the trails the last one left are
+                     the same gesture -- a symbol each, and the two the panel
+                     exists for -- so they share the first row, half width. -->
+                <div class="action-row">
+                  <!-- The diagram bundle relabels this and binds the re-run once
+                     its assets are in, so it is the editor's only way to
+                     replay. -->
+                  <button id="replay" class="action-button" type="button">
+                    replay
+                  </button>
+                  <!-- Also bound by the bundle, which looks the button up by
+                     this id and clears the ghost trails the replay leaves
+                     behind. The glyph is the erase key's; the label stays in
+                     the accessible name, which the symbol cannot carry. -->
+                  <button
+                    id="cleartraces"
+                    class="action-button icon-only"
+                    type="button"
+                    title="Clear traces"
+                    aria-label="Clear traces"
+                  >
+                    ⌫
+                  </button>
+                </div>
                 <!-- Named open-constants rather than constants: the constants
                    panel below is id="constants", which the diagram bundle's
                    Sliders looks the panel up by, so the id is not free. -->
@@ -1333,15 +1369,44 @@
                 >
                   constants
                 </button>
+                <!-- Where the shot goes next, in the column itself rather than
+                     behind an "action" button: each one builds a link out of the
+                     table as it stands, so they are the last step of setting a
+                     shot up and belong beside the controls that set it up. One
+                     word each, as the buttons above them are, because the
+                     column is narrower than the dialog was; the longer name
+                     rides in the tooltip. -->
                 <button
-                  id="action"
+                  id="play"
                   class="action-button"
                   type="button"
-                  aria-haspopup="dialog"
-                  aria-expanded="false"
-                  aria-controls="action-modal"
+                  title="Play the shot in the game"
                 >
-                  action
+                  play
+                </button>
+                <button
+                  id="solution"
+                  class="action-button"
+                  type="button"
+                  title="Computer search solutions"
+                >
+                  solution
+                </button>
+                <button
+                  id="svg"
+                  class="action-button"
+                  type="button"
+                  title="SVG diagram"
+                >
+                  svg
+                </button>
+                <button
+                  id="analysis"
+                  class="action-button"
+                  type="button"
+                  title="Analysis tool"
+                >
+                  analysis
                 </button>
                 <button
                   id="open-presets"
@@ -1352,11 +1417,6 @@
                   aria-controls="presets-modal"
                 >
                   presets
-                </button>
-                <!-- Also bound by the bundle, which looks the button up by this id
-                   and clears the ghost trails the replay leaves behind. -->
-                <button id="cleartraces" class="action-button" type="button">
-                  clear traces
                 </button>
                 <!-- Bound here, not by the bundle: it hands the shot on the table
                    to someone else as a link, rather than playing it anywhere.
@@ -1544,47 +1604,6 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-backdrop" id="action-modal" hidden>
-          <div
-            class="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Actions"
-          >
-            <div class="modal-header">
-              <h2 class="modal-title">actions</h2>
-              <button
-                class="modal-close"
-                type="button"
-                data-close
-                aria-label="Close actions"
-              >
-                &times;
-              </button>
-            </div>
-            <!-- Where the shot goes next. Each one builds a link out of the
-                 table as it stands now: the ball positions, the aim, the spin,
-                 the power and the elevation, plus the constants the sliders
-                 are holding. Same targets as export.html's, so a shot set up
-                 here opens the same way there. -->
-            <div class="modal-panel">
-              <div class="action-list">
-                <button id="play" class="action-button" type="button">
-                  play in game
-                </button>
-                <button id="solution" class="action-button" type="button">
-                  computer search solutions
-                </button>
-                <button id="svg" class="action-button" type="button">
-                  svg diagram
-                </button>
-                <button id="analysis" class="action-button" type="button">
-                  analysis tool
-                </button>
               </div>
             </div>
           </div>
@@ -2698,10 +2717,6 @@
           modal: document.getElementById("constants-modal"),
         },
         {
-          button: document.getElementById("action"),
-          modal: document.getElementById("action-modal"),
-        },
-        {
           button: document.getElementById("open-presets"),
           modal: document.getElementById("presets-modal"),
         },
@@ -2744,8 +2759,8 @@
       })
 
       // --- the launch links ---
-      // The buttons the actions dialog carries, each opening a page that
-      // takes this shot as its starting point. They are built the way three.html
+      // The buttons in the controls column, each opening a page that takes this
+      // shot as its starting point. They are built the way three.html
       // builds its own: the flat `init` list of ball positions, the `initShot`
       // aim, and the constants. A shot has to survive the round trip through a
       // URL, so everything is rounded to six decimals as three.html rounds it.
