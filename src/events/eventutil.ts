@@ -75,7 +75,7 @@ export class EventUtil {
   private static fromJson(parsed) {
     switch (parsed.type) {
       case EventType.BEGIN:
-        return new BeginEvent()
+        return BeginEvent.fromJson(parsed)
       case EventType.STATIONARY:
         return new StationaryEvent()
       case EventType.AIM:

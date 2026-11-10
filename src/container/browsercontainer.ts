@@ -29,6 +29,7 @@ import { applyPhysicsParams } from "../utils/physicsparams"
 import { ResumeStore } from "../utils/resumestore"
 import { ResumeHandler } from "./resumehandler"
 import { t } from "../utils/i18n"
+import { TableConfig } from "../view/tableconfig"
 
 /**
  * Integrate game container into HTML page
@@ -327,7 +328,12 @@ export class BrowserContainer {
         await this.messageRelay.awaitBothJoined()
       }
       if (!this.first) {
-        this.broadcast(new BeginEvent())
+        this.broadcast(
+          new BeginEvent({
+            ruletype: this.ruletype,
+            tableSize: TableConfig.tableSizeFromUrl(),
+          })
+        )
       }
     }
 
