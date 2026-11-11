@@ -2,14 +2,18 @@
 <html lang="ja">
   <head>
     <title>
-      無料オンライン3クッションビリヤード | 登録不要・ブラウザで今すぐプレイ
+      無料ビリヤードゲーム・オンライン対戦｜登録不要・ブラウザですぐプレイ
     </title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta
       name="description"
-      content="インストールや会員登録は一切不要！Webブラウザで今すぐ遊べる無料オンライン3クッションビリヤードゲーム。リアルな物理演算エンジンで本格的なキャロムビリヤードの挙動を再現し、PC・スマホのどちらからでも快適にプレイできます。マルチ対戦や練習用ボット、ショット分析ツール、東京のビリヤード場ガイドも充実！"
+      content="インストールも会員登録も不要。ブラウザですぐ遊べる無料オンラインビリヤードゲーム。3クッション・9ボール・8ボール・四つ玉・スヌーカーを本格的な物理エンジンで再現。PC・スマホのどちらでも、オンライン対戦もボットとの練習も無料で楽しめます。"
+    />
+    <meta
+      name="keywords"
+      content="無料ビリヤードゲーム, オンラインビリヤード, ビリヤードゲーム, 無料プールゲーム, 9ボール, ナインボール, 8ボール, エイトボール, 3クッション, スリークッション, キャロムビリヤード, 四つ玉, スヌーカー, ブラウザゲーム, billiards, carom"
     />
     <meta name="robots" content="index,follow" />
     <link
@@ -69,11 +73,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       property="og:title"
-      content="無料オンライン3クッションビリヤード | ブラウザで今すぐプレイ"
+      content="無料ビリヤードゲーム・オンライン対戦｜登録不要・ブラウザですぐプレイ"
     />
     <meta
       property="og:description"
-      content="インストール不要でブラウザからすぐ遊べる無料のビリヤードゲーム。リアルな物理演算で3クッションを、PC・スマホ対応、オンライン対戦まで。"
+      content="インストール不要でブラウザからすぐ遊べる無料のビリヤードゲーム。3クッション・9ボール・8ボール・四つ玉・スヌーカーをリアルな物理演算で、PC・スマホ・オンライン対戦に対応。"
     />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ja_JP" />
@@ -90,11 +94,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="無料オンライン3クッションビリヤード | ブラウザで今すぐプレイ"
+      content="無料ビリヤードゲーム・オンライン対戦｜登録不要・ブラウザですぐプレイ"
     />
     <meta
       name="twitter:description"
-      content="インストール不要でブラウザからすぐ遊べる無料のビリヤードゲーム。3クッションを今すぐプレイ。"
+      content="3クッション・9ボール・8ボール・四つ玉・スヌーカーが遊べる無料オンラインビリヤード。登録不要で今すぐプレイ。"
     />
     <meta
       name="twitter:image"
@@ -104,20 +108,27 @@
       {
         "@context": "https://schema.org",
         "@type": "VideoGame",
-        "name": "無料オンライン3クッションビリヤード",
+        "name": "無料オンラインビリヤードゲーム",
         "alternateName": [
-          "オンラインビリヤード",
           "無料ビリヤードゲーム",
+          "オンラインビリヤード",
+          "ビリヤードゲーム",
+          "無料プールゲーム",
           "3クッションゲーム",
-          "3クッションビリヤード",
-          "オンライン3クッション",
+          "スリークッション",
           "キャロムビリヤード",
+          "9ボール",
+          "ナインボール",
+          "8ボール",
+          "エイトボール",
+          "四つ玉",
+          "スヌーカー",
           "ブラウザビリヤードゲーム",
           "ビリヤードオンライン対戦"
         ],
         "url": "https://billiards.tailuge.workers.dev/japanese",
         "image": "https://billiards.tailuge.workers.dev/images/three630x500.png",
-        "description": "インストールも会員登録も不要、ブラウザで今すぐ遊べる無料オンラインビリヤードゲーム。3クッションをリアルな物理演算でプレイでき、PC・スマホのどちらからでもオンライン対戦が可能です。",
+        "description": "インストールも会員登録も不要、ブラウザで今すぐ遊べる無料オンラインビリヤードゲーム。3クッション・9ボール・8ボール・四つ玉・スヌーカーをリアルな物理演算でプレイでき、PC・スマホのどちらからでもオンライン対戦が可能です。",
         "inLanguage": ["ja"],
         "genre": ["Sports Game", "Simulation Game"],
         "applicationCategory": "GameApplication",
@@ -488,6 +499,12 @@
         font-size: 0.95rem;
       }
 
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
       /* ── Games ───────────────────────────── */
 
       .games-section {
@@ -649,13 +666,6 @@
         margin: 0;
         color: var(--text-soft);
         font-size: 0.88rem;
-      }
-
-      .other-modes {
-        max-width: 780px;
-        margin: 24px 0 0;
-        color: var(--text-dim);
-        font-size: 0.86rem;
       }
 
       /* ── Shot analysis ───────────────────── */
@@ -865,6 +875,10 @@
           padding: 72px 0 80px;
         }
 
+        .mode-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .multiplayer-panel {
           grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
           align-items: center;
@@ -929,8 +943,8 @@
     <header class="site">
       <a
         class="brand"
-        href="./japanese"
-        aria-label="オンラインビリヤード ホーム"
+        href="https://github.com/tailuge/billiards"
+        aria-label="GitHubプロジェクトページを開く"
       >
         <span class="brand-mark" aria-hidden="true">
           <img src="assets/icon48.png" alt="" width="36" height="36" />
@@ -938,6 +952,7 @@
         <span>TAILUGE BILLIARDS</span>
       </a>
       <nav class="site-nav" aria-label="メインメニュー">
+        <a href="#games">ゲーム</a>
         <a href="#threecushion">3クッション</a>
         <a href="#multiplayer">オンライン対戦</a>
         <a href="#features">特徴</a>
@@ -953,25 +968,35 @@
         <div>
           <p class="hero-tag">無料 · 登録不要 · ブラウザで即プレイ</p>
           <h1 id="hero-title">
-            インストール不要ですぐ遊べる<em
-              >無料オンライン3クッションビリヤード</em
-            >
+            <em>無料オンラインビリヤードゲーム</em> —
+            3クッション・9ボール・8ボール
           </h1>
           <p class="hero-desc">
-            会員登録もダウンロードも不要です。PCでもスマホでも、ページを開くだけで
-            すぐにビリヤード台へ。本格的な物理エンジンで、3クッションを無料でお楽しみ
-            いただけます。
+            インストールも会員登録も不要。ブラウザを開くだけで、すぐにビリヤード台へ。
+            本格的な物理エンジンによる3クッション、9ボール、8ボールなど、さまざまな
+            ビリヤードゲームを無料でプレイできます。オンラインで世界中のプレイヤーと
+            対戦したり、コンピューターを相手に練習したりできます。
           </p>
           <div class="hero-actions">
             <a
               class="btn btn-primary"
               href="./?ruletype=threecushion&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4&raceTo=7"
-              >3クッションをプレイする</a
+              >3クッションをプレイ</a
+            >
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=nineball&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
+              >9ボールをプレイ</a
+            >
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=eightball&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
+              >8ボールをプレイ</a
             >
             <a class="btn btn-secondary" href="./lobby">オンラインロビー</a>
           </div>
           <p class="hero-note">
-            <span>PC・スマホ対応</span>
+            <span>PC・スマートフォン対応</span>
             <span>マウス・タッチ操作</span>
             <span>オンライン対戦</span>
           </p>
@@ -980,7 +1005,7 @@
         <figure class="hero-visual">
           <img
             src="images/three630x500.png"
-            alt="3クッション オンラインビリヤードの実際のプレイ画面"
+            alt="オンラインビリヤードゲームの実際のプレイ画面（3クッション）"
             width="630"
             height="500"
             fetchpriority="high"
@@ -989,44 +1014,130 @@
         </figure>
       </section>
 
-      <!-- ── 3-cushion ──────────────────────────── -->
+      <!-- ── Games ──────────────────────────────── -->
       <section
         class="section games-section"
-        id="threecushion"
-        aria-labelledby="threecushion-title"
+        id="games"
+        aria-labelledby="games-title"
       >
-        <p class="section-label">3クッション</p>
-        <h2 id="threecushion-title">
-          本物の台と同じ感覚で挑む、3クッションシミュレーション
-        </h2>
+        <p class="section-label">ゲームを選ぶ</p>
+        <h2 id="games-title">ビリヤードゲームを選んでプレイ</h2>
         <p class="section-lede">
-          スピンの掛かり方、薄い角での当たり、クッションの反発——実際のビリヤード台と
-          同じ挙動を再現した物理エンジンで、キャロムビリヤードの頂点をブラウザから
-          体感できます。
+          3クッションも、ポケットビリヤードも、同じビリヤード台の上で。遊びたい
+          種目を選んで、そのままゲームを始められます。すべて無料・登録不要です。
         </p>
 
         <div class="mode-grid">
           <article class="mode-card mode-card-three">
             <div>
-              <h3>3クッション <small>スリークッション</small></h3>
+              <h3>3クッション <small>スリークッション・キャロム</small></h3>
               <p>
-                送り出しや引き球、サイドスピンの効いたショットまで繊細に反映される
-                物理エンジンの上で、あなたの技術を出し切ってください。
+                キャロムビリヤードの頂点。手玉を3回以上クッションに当ててから
+                2つの的球に当てれば得点です。送り出しや引き球、サイドスピンの
+                効いたショットまで繊細に反映されます。
               </p>
             </div>
             <a
               class="btn btn-primary"
               href="./?ruletype=threecushion&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4&raceTo=7"
-              >3クッションをプレイする</a
+              >3クッションをプレイ</a
+            >
+          </article>
+
+          <article class="mode-card">
+            <div>
+              <h3>9ボール <small>ナインボール</small></h3>
+              <p>
+                1番から順番に、最後は9番を落とせば勝ち。ポケットビリヤードの
+                定番種目を、本物の3Dテーブルとリアルな転がりで楽しめます。
+              </p>
+            </div>
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=nineball&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
+              >9ボールをプレイ</a
+            >
+          </article>
+
+          <article class="mode-card">
+            <div>
+              <h3>8ボール <small>エイトボール</small></h3>
+              <p>
+                ソリッドとストライプに分かれて、自分の組をすべて落としたら
+                最後に8番をポケットへ。先に組を決める読み合いも含めて楽しめる
+                定番のルールです。
+              </p>
+            </div>
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=eightball&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
+              >8ボールをプレイ</a
+            >
+          </article>
+
+          <article class="mode-card">
+            <div>
+              <h3>四つ玉 <small>よつだま</small></h3>
+              <p>
+                手玉と的球3つを使う四つ玉（よつだま）。日本のビリヤード場でも
+                親しまれてきた、当てた球の組み合わせで得点が決まるゲームです。
+              </p>
+            </div>
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=sagu&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
+              >四つ玉をプレイ</a
+            >
+          </article>
+
+          <article class="mode-card">
+            <div>
+              <h3>スヌーカー <small>Snooker</small></h3>
+              <p>
+                12フィートの大きな台と15個の赤球。赤球とカラーボールを交互に
+                落として得点を重ねる、繊細さがものを言うゲームです。
+              </p>
+            </div>
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=snooker&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4&tableSize=12&reds=15"
+              >スヌーカーをプレイ</a
             >
           </article>
         </div>
+      </section>
 
-        <p class="practice-line">
-          初めての方は、小さめテーブルの<a
+      <!-- ── 3-cushion ──────────────────────────── -->
+      <section
+        class="section"
+        id="threecushion"
+        aria-labelledby="threecushion-title"
+      >
+        <p class="section-label">3クッション・キャロムビリヤード</p>
+        <h2 id="threecushion-title">
+          本物の台と同じ感覚で挑む、3クッションシミュレーション
+        </h2>
+        <p class="section-lede">
+          スピンの掛かり方、薄い角での当たり、クッションの反発——実際のビリヤード台と
+          同じ挙動を再現した物理エンジンで、スリークッションの繊細さをブラウザから
+          体感できます。
+        </p>
+        <div class="cta-row">
+          <a
+            class="btn btn-primary"
+            href="./?ruletype=threecushion&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4&raceTo=7"
+            >3クッションをプレイする</a
+          >
+          <a
+            class="btn btn-secondary"
             href="./?ruletype=threecushion&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4&raceTo=7&tableSize=5"
-            >練習モード</a
-          >で感覚をつかんでから、正規サイズの台へどうぞ。
+            >練習モード（小さい台）</a
+          >
+        </div>
+        <p class="practice-line">
+          初めての方は、小さめテーブルの練習モードで感覚をつかんでから、正規サイズの
+          台へどうぞ。狙い・撞点・力加減の分析は
+          <a href="fit/research-japanese.html">ショット分析</a> で確認できます。
         </p>
       </section>
 
@@ -1037,22 +1148,19 @@
         aria-labelledby="multiplayer-title"
       >
         <p class="section-label">オンライン対戦</p>
-        <h2 id="multiplayer-title">
-          一人練習はもう十分。強敵はロビーの中にいます
-        </h2>
+        <h2 id="multiplayer-title">世界中のプレイヤーとオンライン対戦</h2>
         <p class="section-lede">
-          オンラインビリヤードの本当の面白さは対戦にあります。ロビーに入れば今まさに
-          プレイ中の人たちが見えて、相手を選んだ瞬間に対戦が始まります。
+          オンラインロビーで対戦相手を探して、すぐにゲームを始めましょう。プレイヤーが
+          少ない時間帯でも、コンピューターとの練習対戦が楽しめます。
         </p>
 
         <div class="multiplayer-panel">
           <div>
             <p>
               <a href="./lobby">オンラインロビー</a
-              >で接続中のプレイヤー一覧を確認し、
-              気になる相手にチャレンジしましょう。1試合が終われば、別の相手とそのまま
-              続けて対戦できます。接続者が少ない時間帯は、実戦さながらのボットと
-              いつでも練習対戦が可能です。
+              >で接続中のプレイヤー一覧を確認し、気になる相手にチャレンジしましょう。
+              1試合が終われば、別の相手とそのまま続けて対戦できます。3クッションでも
+              9ボールでも、同じロビーから対戦を始められます。
             </p>
             <a class="btn btn-primary" href="./lobby">オンラインロビーに入る</a>
           </div>
@@ -1101,8 +1209,8 @@
             <div>
               <strong>完全無料・登録不要</strong>
               <p>
-                3クッションもオンライン対戦も、すべてのモードを無料で利用できます。
-                会員登録の手間もありません。
+                3クッション、9ボール、8ボール、四つ玉、スヌーカー、オンライン対戦まで、
+                すべてのモードを無料で利用できます。会員登録の手間もありません。
               </p>
             </div>
           </li>
@@ -1116,13 +1224,6 @@
             </div>
           </li>
         </ul>
-
-        <p class="other-modes">
-          その他のモードとして、四球を使う<a
-            href="./?ruletype=sagu&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
-            >サグ（四球）</a
-          >でもプレイできます。
-        </p>
       </section>
 
       <!-- ── Shot analysis ──────────────────────── -->
@@ -1169,6 +1270,12 @@
               このゲームが生まれた背景には、作者が日本で過ごした大切な思い出があります。
               東京で働きながらスリークッションビリヤードの魅力に出会い、仕事帰りに
               山手線沿線などのビリヤード場へ通い詰めて撞き方を学びました。
+            </p>
+            <p>
+              原宿のビリヤード相馬に通った日々や、米山先生と撞けたことは、
+              <a href="https://ameblo.jp/tailuge/entry-12981511558.html"
+                >日本でのビリヤードの思い出</a
+              >に綴っています。
             </p>
             <p>
               イギリスへ帰国後、本物のキャロム台で撞ける場所が近くになく、
@@ -1218,7 +1325,12 @@
           <a
             class="btn btn-primary"
             href="./?ruletype=threecushion&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4&raceTo=7"
-            >3クッションをプレイする</a
+            >3クッションをプレイ</a
+          >
+          <a
+            class="btn btn-secondary"
+            href="./?ruletype=nineball&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
+            >9ボールをプレイ</a
           >
           <a class="btn btn-secondary" href="./lobby">オンラインロビー</a>
         </div>
@@ -1228,7 +1340,31 @@
     <footer class="site">
       <p>
         学術論文の球力学モデルをもとに独自実装したWebGL物理エンジンによって作られた、
-        オープンソースのビリヤードゲームです。
+        オープンソースのビリヤードゲームです。3クッション・9ボール・8ボール・四つ玉・
+        スヌーカーを、PC・スマートフォンのブラウザから無料でプレイできます。
+      </p>
+      <p>
+        各ゲームは
+        <a
+          href="./?ruletype=threecushion&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4&raceTo=7"
+          >3クッション</a
+        >、
+        <a
+          href="./?ruletype=nineball&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
+          >9ボール</a
+        >、
+        <a
+          href="./?ruletype=eightball&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
+          >8ボール</a
+        >、
+        <a
+          href="./?ruletype=sagu&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4"
+          >四つ玉</a
+        >、
+        <a
+          href="./?ruletype=snooker&userName=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A5%BD%E3%81%8D&lod=4&tableSize=12&reds=15"
+          >スヌーカー</a
+        >から直接プレイできます。
       </p>
       <p>
         ソースコードは
