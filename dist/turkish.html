@@ -9,6 +9,10 @@
       name="description"
       content="Kurulum ve üyelik gerektirmeden tarayıcıda hemen oynanan ücretsiz online bilardo oyunu. 3 bantı gerçekçi fizik motoruyla, PC ve mobilde oynayın. Gerçek rakiplere karşı çevrimiçi bilardo."
     />
+    <meta
+      name="keywords"
+      content="3 bant bilardo, üç bant bilardo, 3 bant bilardo online, ücretsiz 3 bant bilardo, bilardo oyna, online bilardo, bilardo oyunu, karambol bilardo, tuzul sistemi, elmas sistemi, 3 bant bilardo sistemleri, serbest bilardo, dört top, sagu, snooker online, bilardo tarayıcıda, bilardo indirmeden oyna, bilardo pc mobil"
+    />
     <meta name="robots" content="index,follow" />
     <link
       rel="canonical"
@@ -791,6 +795,7 @@
       </a>
       <nav class="site-nav" aria-label="Ana menü">
         <a href="#ucbant">3 Bant</a>
+        <a href="#tuzul">Tuzul Sistemi</a>
         <a href="#multiplayer">Online Maç</a>
         <a href="#features">Özellikler</a>
         <a class="nav-lobby" href="./lobby">Online Lobi</a>
@@ -813,8 +818,23 @@
           <div class="hero-actions">
             <a
               class="btn btn-primary"
-              href="./?ruletype=threecushion&userName=BilarTK&lod=4&raceTo=7"
+              href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
               >3 Bant Oyna</a
+            >
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=sagu&userName=BilarTK"
+              >Dört Top (Sagu) Oyna</a
+            >
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=libre&userName=BilarTK"
+              >Serbest Bilardo Oyna</a
+            >
+            <a
+              class="btn btn-secondary"
+              href="https://billiards.tailuge.workers.dev/exam/threecushion"
+              >3 Bant Sınavı</a
             >
             <a class="btn btn-secondary" href="./lobby">Online Lobi</a>
           </div>
@@ -869,7 +889,7 @@
             </div>
             <a
               class="btn btn-primary"
-              href="./?ruletype=threecushion&userName=BilarTK&lod=4&raceTo=7"
+              href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
               >3 Bant Oyna</a
             >
           </article>
@@ -878,9 +898,87 @@
         <p class="practice-line">
           Yeni mi başladınız? Küçük masalı
           <a
-            href="./?ruletype=threecushion&userName=BilarTK&lod=4&raceTo=7&tableSize=5"
+            href="./?ruletype=threecushion&userName=BilarTK&raceTo=7&tableSize=5"
             >pratik modu</a
           >nda elinizi alıştırın, sonra tam ölçü masaya geçin.
+        </p>
+      </section>
+
+      <!-- ── Tuzul diamond system ───────────────── -->
+      <section class="section" id="tuzul" aria-labelledby="tuzul-title">
+        <p class="section-label">Sistem</p>
+        <h2 id="tuzul-title">
+          Tuzul elmas sistemi: 3 bantta sayıyı önceden hesaplayın
+        </h2>
+        <p class="section-lede">
+          Tuzul sistemi, Türk 3 bant oyuncusu Murat Tüzül'ün geliştirdiği elmas
+          (diamond) sistemleri ailesinden. En bilinen hâli, uzun bant boyunca
+          falsosuz oynanan ve varış noktasından geriye doğru hesaplanan
+          versiyonudur.
+        </p>
+
+        <p>
+          Mantık basit: üçüncü bantta topun gelmesini istediğiniz elmas değerini
+          tahmin edin, bu değeri 1,5 ile çarpın ve çıkış değerinden çıkarın.
+          Kalan sayı, karşı kısa bantta nişan alacağınız elması verir:
+          <strong>Nişan = Çıkış − (Varış × 1,5)</strong>. Örneğin varış 14 ise
+          14 × 1,5 = 21 olur; çıkış 36 ise 36 − 21 = 15 elmasına nişan
+          alırsınız. Varış 10 ve çıkış 25 olduğunda ise 25 − 15 = 10 elması
+          hedeftir.
+        </p>
+
+        <p>
+          Sistem falsosuz oynanır: isteka olabildiğince yatay, vuruş uzun ve
+          topu içeri iten (penetre) bir vuruş olmalı; topa hafifçe merkezin
+          üzerinden vurulur. İkinci topa temas varsa hesap, ikinci topa teğet
+          çizgisi üzerinden yapılır.
+        </p>
+
+        <p>Bu oyunda Tuzul sistemini şöyle çalışabilirsiniz:</p>
+
+        <ul class="feature-list">
+          <li>
+            <div>
+              <strong>Pratik modunu açın</strong>
+              <p>
+                Botsuz, tek başınıza bir masada çalışın:
+                <a href="./?ruletype=threecushion&userName=BilarTK&practice"
+                  >3 bant pratik modu</a
+                >
+                her vuruşta yakınlık puanı verir; böylece elmas hesabınızın ne
+                kadar tuttuğunu sayı üzerinden görürsünüz.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Elmas değerlerini çizgiyle işaretleyin</strong>
+              <p>
+                Farenin sağ tuşuyla masaya basıp sürükleyerek çizgi çekin;
+                çıkış, varış ve nişan elmaslarını işaretlemek hesabı gözle
+                kontrol etmeyi kolaylaştırır.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Tam ölçü masada kalın</strong>
+              <p>
+                Elmas numaraları standart masa ölçüsüne göre anlam kazandığı
+                için sistemi
+                <a href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
+                  >tam ölçü masada</a
+                >
+                çalışın; küçük masa daha çok vuruş tekrarı içindir.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <p class="practice-line">
+          Tuzul'un çift bant, çeyrek masa ve “dead ball” (ölü top) versiyonları
+          da vardır; hepsi aynı mantığın farklı başlangıç koşullarına uyarlanmış
+          hâlidir.
         </p>
       </section>
 
@@ -903,10 +1001,19 @@
           <div>
             <p>
               <a href="./lobby">Online lobide</a> bağlı oyuncuları görüp
-              dilediğinize meydan okuyun. Bir maç bitince başka bir rakiple
-              kaldığınız yerden devam edin. Bağlantının az olduğu saatlerde,
-              gerçekçi botlarla istediğiniz zaman antrenman maçı
-              oynayabilirsiniz.
+              dilediğinize meydan okuyun: gerçek bir rakiple ücretsiz 3 bant
+              bilardo oynamak tek tık uzağınızda. Bir maç bitince başka bir
+              rakiple kaldığınız yerden devam edin. Bağlantının az olduğu
+              saatlerde, gerçekçi botlarla istediğiniz zaman antrenman maçı
+              oynayabilirsiniz — bir karambol denemek ya da seri yakalamak için
+              ideal. Oyun türünü değiştirmek isterseniz aynı hızla
+              <a href="./?ruletype=sagu&userName=BilarTK">dört top (Sagu)</a>,
+              <a href="./?ruletype=libre&userName=BilarTK">serbest bilardo</a>
+              veya
+              <a href="./?ruletype=snooker&userName=BilarTK&tableSize=12"
+                >12 ft snooker</a
+              >
+              masası açabilirsiniz.
             </p>
             <a class="btn btn-primary" href="./lobby">Online Lobiye Gir</a>
           </div>
@@ -976,7 +1083,7 @@
 
         <p class="other-modes">
           Diğer bir mod olarak, dört topla oynanan
-          <a href="./?ruletype=sagu&userName=BilarTK&lod=4">Dört Top (Sagu)</a>
+          <a href="./?ruletype=sagu&userName=BilarTK">Dört Top (Sagu)</a>
           ile de oynayabilirsiniz.
         </p>
       </section>
@@ -990,7 +1097,7 @@
         <div class="hero-actions">
           <a
             class="btn btn-primary"
-            href="./?ruletype=threecushion&userName=BilarTK&lod=4&raceTo=7"
+            href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
             >3 Bant Oyna</a
           >
           <a class="btn btn-secondary" href="./lobby">Online Lobi</a>
