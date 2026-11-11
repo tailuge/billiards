@@ -1,0 +1,1867 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      Free Online Three-Cushion Billiards — Play 3-Cushion in a Browser
+    </title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta
+      name="description"
+      content="Play free three-cushion billiards online: realistic carom physics, diamond-system practice, a scored exam and free multiplayer. No download, no sign-up."
+    />
+    <meta
+      name="keywords"
+      content="free online three cushion billiards, three cushion billiards online, 3 cushion billiards game, 3 cushion online, play three cushion online, carom billiards online, three cushion carom, three cushion rules, diamond system billiards, three cushion practice, online carom game, three cushion with friends, browser billiards, 3ball.app alternative, korean three cushion, sagu four ball"
+    />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b1611" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/threecushion"
+    />
+
+    <link
+      rel="alternate"
+      hreflang="en"
+      href="https://billiards.tailuge.workers.dev/threecushion"
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href="https://billiards.tailuge.workers.dev/threecushion"
+    />
+    <link
+      rel="alternate"
+      hreflang="zh-Hant"
+      href="https://billiards.tailuge.workers.dev/chinese"
+    />
+    <link
+      rel="alternate"
+      hreflang="es"
+      href="https://billiards.tailuge.workers.dev/spanish"
+    />
+    <link
+      rel="alternate"
+      hreflang="nl"
+      href="https://billiards.tailuge.workers.dev/dutch"
+    />
+    <link
+      rel="alternate"
+      hreflang="ko"
+      href="https://billiards.tailuge.workers.dev/korean"
+    />
+    <link
+      rel="alternate"
+      hreflang="ja"
+      href="https://billiards.tailuge.workers.dev/japanese"
+    />
+    <link
+      rel="alternate"
+      hreflang="tr"
+      href="https://billiards.tailuge.workers.dev/turkish"
+    />
+    <link
+      rel="alternate"
+      hreflang="de"
+      href="https://billiards.tailuge.workers.dev/german"
+    />
+    <link
+      rel="alternate"
+      hreflang="vi"
+      href="https://billiards.tailuge.workers.dev/vietnamese"
+    />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:title"
+      content="Free Online Three-Cushion Billiards — Play 3-Cushion in a Browser"
+    />
+    <meta
+      property="og:description"
+      content="Free three-cushion carom with realistic spin and cushion physics. Practise the diamond system, take the three-cushion exam or play a friend online — no download, no registration."
+    />
+    <meta property="og:site_name" content="Tailuge Billiards" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/threecushion"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/images/three630x500.png"
+    />
+    <meta property="og:image:width" content="630" />
+    <meta property="og:image:height" content="500" />
+    <meta
+      property="og:image:alt"
+      content="Free online three-cushion billiards game in a browser — a carom shot on a pocketless billiards table"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Free Online Three-Cushion Billiards — Play 3-Cushion in a Browser"
+    />
+    <meta
+      name="twitter:description"
+      content="Play free three-cushion billiards online. Realistic carom physics, diamond-system practice, a scored exam and free multiplayer. No download, no sign-up."
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/three630x500.png"
+    />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "VideoGame",
+            "@id": "https://billiards.tailuge.workers.dev/threecushion#game",
+            "name": "Free Online Three-Cushion Billiards",
+            "alternateName": [
+              "Three-Cushion Billiards Online",
+              "3-Cushion Billiards",
+              "Three-Cushion Carom",
+              "Play Three-Cushion Online",
+              "Free Carom Billiards Game",
+              "Browser Three-Cushion Billiards",
+              "Three-Cushion Billiards Practice"
+            ],
+            "url": "https://billiards.tailuge.workers.dev/threecushion",
+            "image": "https://billiards.tailuge.workers.dev/images/three630x500.png",
+            "description": "Play free three-cushion billiards (3-cushion carom) in a browser. A WebGL carom simulator with realistic spin and cushion physics, a 10ft match table and 5ft practice table, diamond-system practice, a scored three-cushion exam and free online multiplayer — no download and no registration.",
+            "inLanguage": "en",
+            "genre": ["Sports Game", "Simulation Game", "Carom Billiards"],
+            "applicationCategory": "GameApplication",
+            "applicationSubCategory": "Three-Cushion Billiards",
+            "operatingSystem": "Web Browser",
+            "gamePlatform": [
+              "Web Browser",
+              "Windows PC",
+              "Mac",
+              "Linux",
+              "Android",
+              "iOS"
+            ],
+            "playMode": ["SinglePlayer", "MultiPlayer"],
+            "isAccessibleForFree": true,
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "creator": {
+              "@type": "Person",
+              "name": "tailuge"
+            },
+            "sameAs": "https://github.com/tailuge/billiards"
+          },
+          {
+            "@type": "Course",
+            "@id": "https://billiards.tailuge.workers.dev/exam/threecushion#course",
+            "name": "Free Three-Cushion Exam and Practice Course",
+            "url": "https://billiards.tailuge.workers.dev/exam/threecushion",
+            "inLanguage": "en",
+            "isAccessibleForFree": true,
+            "description": "A free online three-cushion assessment that runs in the browser. Work through a graded series of carom positions, from basic cue-ball control to cushion routes and diamond-system shots, and get an automatic score and level.",
+            "teaches": [
+              "Basic caroms and cue-ball control",
+              "Cushion-first and ball-first routes",
+              "The diamond system for three-cushion paths",
+              "Five-and-half system and advanced position play"
+            ],
+            "provider": {
+              "@type": "Organization",
+              "name": "Tailuge Billiards",
+              "url": "https://billiards.tailuge.workers.dev/threecushion"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD",
+              "category": "Free"
+            },
+            "hasCourseInstance": {
+              "@type": "CourseInstance",
+              "courseMode": "online",
+              "courseWorkload": "PT20M"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://billiards.tailuge.workers.dev/threecushion#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is there a free alternative to 3ball.app for three-cushion billiards?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. This site is a free, open source three-cushion carom simulator that runs in a browser, which makes it a free alternative to 3ball.app and other online carom games. Nothing needs installing, there is no account, and the whole project is open source. You get a full-size match table, a smaller practice table, the diamond-system guide, a scored three-cushion exam and free multiplayer."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What are the rules of three-cushion billiards?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Three-cushion is a carom game played with three balls on a pocketless table. To score a point, the cue ball must contact both object balls, and it must touch the cushions at least three times before it reaches the second object ball. The order of ball and cushion contacts is otherwise free, so a shot can start with an object ball, a cushion, or a mix of both. A successful carom scores one point and the player continues until a shot misses, then the opponent plays the table as it lies."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do I need to download or register to play three-cushion online?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. There is no download, no app and no registration. The game runs in your browser on desktop and mobile, and you can choose a name in the lobby if you want one to appear on the leaderboard. Nothing is installed and no email address is required."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I play three-cushion billiards with friends online?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Open the lobby, see who is connected, send a challenge and the match opens on both screens. There is no charge and no account. When nobody else is around, two practice bots, ClawBreak and TheFarJaw, are always available for a game."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do I practise the diamond system for three-cushion?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Use the interactive diamond system guide, which shows the cushion contacts and cue-ball paths for three-cushion routes from above, and then take the free three-cushion exam. The exam grades a series of carom positions covering cue-ball control, cushion routes, the five-and-half system and diamond-system shots, so you can see which part of your game needs work."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What is the difference between three-cushion, pool and snooker?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Pool and snooker are played on tables with pockets and potted balls are the objective. Three-cushion is carom billiards: the table has no pockets, only three balls are used, and the aim is to make the cue ball contact both object balls after at least three cushion contacts. That makes spin, cushion rebound and positional routes far more important than potting accuracy."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does the three-cushion game work on a phone?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Aiming works with touch, there is a top-down camera for planning position and a close aim view along the cue, and the 5ft table is designed for small screens. The whole game is responsive, so the same match plays on a phone, tablet, laptop or desktop without installing anything."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+
+    <style>
+      :root {
+        --bg: #0b1611;
+        --bg-deep: #08110d;
+        --panel: #10231a;
+        --green: #1a6b44;
+        --line: rgb(255 255 255 / 8%);
+        --line-strong: rgb(255 255 255 / 16%);
+        --accent: #d9a441;
+        --accent-bright: #eec368;
+        --text: #f1eee4;
+        --text-soft: #bac3b8;
+        --text-dim: #828d83;
+
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+        font-size: 16px;
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: #1a1206;
+      }
+
+      a {
+        color: var(--accent-bright);
+        text-underline-offset: 3px;
+      }
+
+      a:hover {
+        color: #f7dda2;
+      }
+
+      a:focus-visible,
+      button:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 16px;
+        z-index: 10;
+        padding: 8px 14px;
+        background: var(--accent);
+        color: #1a1206;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .skip-link:focus {
+        top: 16px;
+      }
+
+      /* Inline links inside body copy read a little stronger */
+      .section p a {
+        font-weight: 600;
+      }
+
+      header.site,
+      main,
+      footer.site {
+        width: calc(100% - 40px);
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+        line-break: strict;
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      /* ── Buttons ─────────────────────────── */
+
+      .btn {
+        display: inline-flex;
+        min-height: 50px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 26px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 0.98rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
+        text-align: center;
+        text-decoration: none;
+        transition:
+          transform 140ms ease,
+          background-color 140ms ease,
+          border-color 140ms ease,
+          color 140ms ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #1a1206;
+        box-shadow: 0 6px 22px rgb(217 164 65 / 25%);
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-bright);
+        color: #1a1206;
+      }
+
+      .btn-secondary {
+        border-color: var(--line-strong);
+        background: rgb(255 255 255 / 5%);
+        color: var(--text);
+      }
+
+      .btn-secondary:hover {
+        border-color: rgb(255 255 255 / 34%);
+        background: rgb(255 255 255 / 10%);
+        color: #fff;
+      }
+
+      /* ── Header ──────────────────────────── */
+
+      header.site {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 64px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 0.88rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border-radius: 7px;
+        background: var(--green);
+        color: #fff;
+        font-size: 0.76rem;
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      .site-nav a:not(.nav-lobby) {
+        display: none;
+        color: var(--text-soft);
+        text-decoration: none;
+      }
+
+      .site-nav a:not(.nav-lobby):hover {
+        color: var(--text);
+      }
+
+      .nav-lobby {
+        padding: 8px 16px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #1a1206 !important;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .nav-lobby:hover {
+        background: var(--accent-bright);
+        color: #1a1206 !important;
+      }
+
+      main {
+        overflow: hidden;
+      }
+
+      /* ── Hero ────────────────────────────── */
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: center;
+        gap: 40px;
+        padding: 52px 0 64px;
+      }
+
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgb(26 107 68 / 28%);
+        color: #7fd39f;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .hero-tag::before {
+        display: block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #7fd39f;
+        content: "";
+      }
+
+      .hero h1 {
+        margin-bottom: 16px;
+        font-size: clamp(1.65rem, 4.5vw, 2.55rem);
+        font-weight: 900;
+        letter-spacing: -0.01em;
+        line-height: 1.35;
+      }
+
+      .hero h1 em {
+        color: var(--accent-bright);
+        font-style: normal;
+      }
+
+      .hero-desc {
+        max-width: 480px;
+        margin-bottom: 30px;
+        color: var(--text-soft);
+        font-size: 1rem;
+      }
+
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .hero-actions .btn {
+        min-height: 56px;
+        font-size: 1.05rem;
+      }
+
+      .hero-note {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        margin: 22px 0 0;
+        padding: 0;
+        color: var(--text-dim);
+        font-size: 0.82rem;
+        font-weight: 600;
+        list-style: none;
+      }
+
+      .hero-visual {
+        position: relative;
+        margin: 0;
+      }
+
+      .hero-visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+        box-shadow: 0 20px 60px rgb(0 0 0 / 50%);
+      }
+
+      .hero-visual figcaption {
+        margin-top: 10px;
+        color: var(--text-dim);
+        font-size: 0.78rem;
+        text-align: right;
+      }
+
+      /* ── Sections ────────────────────────── */
+
+      .section {
+        padding: 64px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-label {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .section h2 {
+        max-width: 680px;
+        margin-bottom: 16px;
+        font-size: clamp(1.35rem, 3vw, 2rem);
+        font-weight: 900;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+      }
+
+      .section-lede {
+        max-width: 620px;
+        margin-bottom: 36px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .prose {
+        max-width: 680px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      /* ── Table modes ─────────────────────── */
+
+      .tables-section {
+        background: linear-gradient(180deg, var(--bg) 0%, #0e1e17 100%);
+      }
+
+      .mode-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .mode-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 30px 26px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .mode-card-twelve {
+        grid-column: 1 / -1;
+        border-color: rgb(33 150 83 / 30%);
+        background: linear-gradient(135deg, #123324 0%, #1a4a31 100%);
+      }
+
+      .mode-card h3 {
+        margin-bottom: 8px;
+        font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+        font-weight: 900;
+        letter-spacing: -0.01em;
+      }
+
+      .mode-card h3 small {
+        color: var(--text-dim);
+        font-size: 0.62em;
+        font-weight: 700;
+      }
+
+      .mode-card p {
+        max-width: 460px;
+        margin-bottom: 0;
+        color: rgb(255 255 255 / 70%);
+        font-size: 0.92rem;
+      }
+
+      .mode-card .btn {
+        width: fit-content;
+      }
+
+      /* ── Multiplayer ─────────────────────── */
+
+      .multiplayer-panel {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 32px 26px;
+        border-radius: 14px;
+        border: 1px solid var(--line-strong);
+        background:
+          radial-gradient(
+            120% 160% at 100% 0%,
+            rgb(26 107 68 / 30%) 0%,
+            transparent 60%
+          ),
+          var(--panel);
+      }
+
+      .multiplayer-panel p {
+        max-width: 520px;
+        margin-bottom: 24px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .bot-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 26px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .bot-list li {
+        padding: 5px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgb(255 255 255 / 4%);
+        color: var(--accent-bright);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .bot-list-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-dim);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .multiplayer-panel .btn {
+        width: fit-content;
+      }
+
+      /* ── Comparison table ────────────────── */
+
+      .compare-section {
+        background: linear-gradient(180deg, var(--bg) 0%, #0e1e17 100%);
+      }
+
+      .table-scroll {
+        overflow-x: auto;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      table.compare {
+        width: 100%;
+        min-width: 560px;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+
+      table.compare th,
+      table.compare td {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      table.compare thead th {
+        color: var(--text);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        background: rgb(255 255 255 / 4%);
+      }
+
+      table.compare tbody th {
+        color: var(--text-soft);
+        font-weight: 700;
+      }
+
+      table.compare thead th:last-child {
+        color: var(--accent-bright);
+      }
+
+      table.compare tbody tr:last-child th,
+      table.compare tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      /* ── Course ──────────────────────────── */
+
+      .course-panel {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 28px;
+        align-items: center;
+        padding: 34px 26px;
+        border-radius: 14px;
+        border: 1px solid rgb(217 164 65 / 35%);
+        background:
+          radial-gradient(
+            130% 160% at 0% 0%,
+            rgb(217 164 65 / 16%) 0%,
+            transparent 62%
+          ),
+          var(--panel);
+      }
+
+      .course-panel h3 {
+        margin-bottom: 10px;
+        font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+        font-weight: 900;
+      }
+
+      .course-panel p {
+        max-width: 560px;
+        margin-bottom: 22px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .course-list {
+        margin: 0 0 26px;
+        padding-left: 20px;
+        color: var(--text-soft);
+        font-size: 0.9rem;
+      }
+
+      .course-list li {
+        margin-bottom: 4px;
+      }
+
+      /* ── Screenshots ─────────────────────── */
+
+      .shots {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .shots figure {
+        margin: 0;
+      }
+
+      .shots img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+        background: var(--bg-deep);
+      }
+
+      .shots figcaption {
+        margin-top: 8px;
+        color: var(--text-dim);
+        font-size: 0.8rem;
+      }
+
+      /* ── Features ────────────────────────── */
+
+      .features-section {
+        background: linear-gradient(180deg, var(--bg) 0%, #0e1e17 100%);
+      }
+
+      .feature-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+        max-width: 780px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid var(--line);
+      }
+
+      .feature-list li {
+        display: grid;
+        grid-template-columns: 22px 1fr;
+        gap: 14px;
+        padding: 20px 4px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .feature-list li::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        margin-top: 9px;
+        border-radius: 2px;
+        background: var(--accent);
+        transform: rotate(45deg);
+      }
+
+      .feature-list strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 1rem;
+        letter-spacing: -0.01em;
+      }
+
+      .feature-list p {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 0.88rem;
+      }
+
+      /* ── FAQ ─────────────────────────────── */
+
+      .faq-list {
+        max-width: 780px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid var(--line);
+      }
+
+      .faq-list details {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .faq-list summary {
+        padding: 18px 4px;
+        color: var(--text);
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .faq-list summary::marker {
+        color: var(--accent);
+      }
+
+      .faq-list details[open] summary {
+        color: var(--accent-bright);
+      }
+
+      .faq-list .faq-answer {
+        margin: 0 0 18px;
+        padding-right: 8px;
+        color: var(--text-soft);
+        font-size: 0.9rem;
+      }
+
+      /* ── Final CTA ───────────────────────── */
+
+      .final-cta {
+        padding: 88px 0 96px;
+        border-top: 1px solid var(--line);
+        background:
+          radial-gradient(
+            90% 130% at 50% 115%,
+            rgb(26 107 68 / 38%) 0%,
+            transparent 70%
+          ),
+          var(--bg-deep);
+        text-align: center;
+      }
+
+      .final-cta h2 {
+        max-width: none;
+        margin: 0 auto 14px;
+        font-size: clamp(1.5rem, 3.6vw, 2.2rem);
+      }
+
+      .final-cta p {
+        max-width: 520px;
+        margin: 0 auto 32px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .final-cta .hero-actions {
+        justify-content: center;
+        grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+
+      /* ── Footer ──────────────────────────── */
+
+      footer.site {
+        padding: 32px 0 48px;
+        border-top: 1px solid var(--line);
+        color: var(--text-dim);
+        font-size: 0.8rem;
+      }
+
+      footer.site p {
+        max-width: 760px;
+        margin-bottom: 12px;
+      }
+
+      footer.site p:last-child {
+        margin-bottom: 0;
+      }
+
+      .lang-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      /* ── Responsive ──────────────────────── */
+
+      @media (width >= 640px) {
+        .hero-actions,
+        .final-cta .hero-actions {
+          grid-template-columns: auto auto;
+          justify-content: start;
+        }
+
+        .final-cta .hero-actions {
+          justify-content: center;
+        }
+      }
+
+      @media (width >= 900px) {
+        .site-nav a:not(.nav-lobby) {
+          display: inline-block;
+        }
+
+        .hero {
+          grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+          gap: 56px;
+          padding: 72px 0 80px;
+        }
+
+        .mode-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .multiplayer-panel {
+          grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+          align-items: center;
+          padding: 40px;
+        }
+
+        .multiplayer-side {
+          justify-self: end;
+          text-align: left;
+        }
+
+        .course-panel {
+          grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+          padding: 42px 40px;
+        }
+
+        .course-panel .btn {
+          justify-self: end;
+        }
+
+        .feature-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          column-gap: 40px;
+        }
+
+        .feature-list li:nth-last-child(-n + 2) {
+          border-bottom: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .btn {
+          transition: none;
+        }
+      }
+
+      /* Page-specific: the small aside lines used under tables and the
+         diamond guide, matching the other landing pages. */
+      .practice-line {
+        margin: 20px 0 0;
+        color: var(--text-dim);
+        font-size: 0.86rem;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to main content</a>
+
+    <header class="site">
+      <a
+        class="brand"
+        href="./threecushion"
+        aria-label="Free online three-cushion billiards home"
+      >
+        <span class="brand-mark">B</span>
+        <span>TAILUGE BILLIARDS</span>
+      </a>
+      <nav class="site-nav" aria-label="Main menu">
+        <a href="#formats">Tables</a>
+        <a href="#rules">Rules</a>
+        <a href="#diamond-system">Diamond system</a>
+        <a href="#champions">The sport</a>
+        <a href="#practice">Exam</a>
+        <a class="nav-lobby" href="./lobby">Lobby</a>
+      </nav>
+    </header>
+
+    <main id="content">
+      <!-- ── Hero ───────────────────────────────── -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="hero-tag">Free · No download · No registration</p>
+          <h1 id="hero-title">
+            Free online <em>three-cushion billiards</em>, played in your browser
+          </h1>
+          <p class="hero-desc">
+            Carom billiards with three balls, no pockets and a physics model
+            built for the real game. Spin, cushion rebound and the diamond
+            system behave the way they do on cloth — on a 10ft match table or a
+            small screen.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="./?ruletype=threecushion&lod=4"
+              >Play 3-cushion now</a
+            >
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=threecushion&lod=4&tableSize=5"
+              >Small table (5ft)</a
+            >
+          </div>
+          <ul class="hero-note">
+            <li>PC · Mac · phone · tablet</li>
+            <li>Mouse or touch</li>
+            <li>Free multiplayer</li>
+          </ul>
+        </div>
+
+        <figure class="hero-visual">
+          <img
+            src="images/three630x500.png"
+            alt="Free online three-cushion billiards game in a browser — carom shot on a pocketless 3-cushion table"
+            width="630"
+            height="500"
+            fetchpriority="high"
+          />
+          <figcaption>
+            Three balls, no pockets, three cushions before the second ball
+          </figcaption>
+        </figure>
+      </section>
+
+      <!-- ── Intro ──────────────────────────────── -->
+      <section class="section" aria-labelledby="about-title">
+        <p class="section-label">Start here</p>
+        <h2 id="about-title">
+          Free three-cushion billiards, ready in one click
+        </h2>
+        <div class="prose">
+          <p>
+            Three-cushion — also called 3-cushion carom — is the carom
+            discipline played on a pocketless table with three balls. You score
+            by making the cue ball contact both object balls, with at least
+            three cushion contacts before it reaches the second ball. There is
+            no pot to aim at and nowhere to hide: angle, spin and speed decide
+            everything. This page gives you a full-size table with that rule set
+            enforced, a smaller table for practice, and a physics model that
+            treats cushions and spin as carefully as the real thing.
+          </p>
+          <p>
+            The game has a deep competitive tradition. The
+            <a
+              href="https://en.wikipedia.org/wiki/UMB_World_Three-cushion_Championship"
+              target="_blank"
+              rel="noopener noreferrer"
+              >world championship</a
+            >
+            has been held since 1928 under the
+            <a
+              href="https://www.umb-carom.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Union Mondiale de Billard</a
+            >, and three-cushion has been a
+            <a
+              href="https://en.wikipedia.org/wiki/Three-cushion_billiards"
+              target="_blank"
+              rel="noopener noreferrer"
+              >World Games</a
+            >
+            sport since 2001. Belgium's Raymond Ceulemans won 21 world titles,
+            the Netherlands' Dick Jaspers and Sweden's Torbjörn Blomdahl
+            dominated the modern era, and Vietnam's Bao Phương Vinh became world
+            champion in 2023. You do not need any of that pedigree to start
+            here, but the table will not flatter a careless shot either.
+          </p>
+          <p>
+            Everything on this page is free and open source: the match table,
+            the practice table, the
+            <a href="./diagrams/diamond">diamond-system guide</a>, the
+            <a href="./exam/threecushion">three-cushion exam</a>, Korean
+            four-ball (sagu), and online play against real people. No installer,
+            no account, no upgrade tier.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── Tables / formats ───────────────────── -->
+      <section
+        class="section tables-section"
+        id="formats"
+        aria-labelledby="formats-title"
+      >
+        <p class="section-label">Tables</p>
+        <h2 id="formats-title">
+          A 10ft match table, a 5ft practice table, or a change of carom game
+        </h2>
+        <p class="section-lede">
+          Every table below runs the same physics engine — only the size and the
+          rule set change.
+        </p>
+
+        <div class="mode-grid">
+          <article class="mode-card mode-card-twelve">
+            <div>
+              <h3>Three-cushion <small>match table, 10ft</small></h3>
+              <p>
+                The full carom table: 10ft of cloth, three balls and the
+                three-cushion rule enforced. Cue-ball control, cushion-first
+                routes and long positional shots all behave the way they do on a
+                club table.
+              </p>
+            </div>
+            <a class="btn btn-primary" href="./?ruletype=threecushion&lod=4"
+              >Play 3-cushion now</a
+            >
+          </article>
+
+          <article class="mode-card">
+            <div>
+              <h3>Small table <small>practice and phones</small></h3>
+              <p>
+                A 5ft table with the same rules. Shorter distances make the
+                angles easier to read while you learn the diamond system, and it
+                fits comfortably on a phone screen.
+              </p>
+            </div>
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=threecushion&lod=4&tableSize=5"
+              >Small table (5ft)</a
+            >
+          </article>
+
+          <article class="mode-card">
+            <div>
+              <h3>Sagu and libre <small>other carom games</small></h3>
+              <p>
+                Want a different carom game? Korean four-ball (sagu) is the
+                crowded-table game behind Korea's billiards halls, and libre
+                removes the cushion requirement entirely for basic cue-ball
+                work.
+              </p>
+            </div>
+            <div class="hero-actions">
+              <a class="btn btn-secondary" href="./?ruletype=sagu&lod=4"
+                >Play sagu</a
+              >
+              <a class="btn btn-secondary" href="./?ruletype=libre&lod=4"
+                >Play libre</a
+              >
+            </div>
+          </article>
+        </div>
+
+        <p class="practice-line">
+          New to carom? Start on the
+          <a href="./?ruletype=threecushion&lod=4&tableSize=5">small table</a>
+          to learn the angles, then move to the full-size table for a proper
+          game.
+        </p>
+      </section>
+
+      <!-- ── Rules ──────────────────────────────── -->
+      <section class="section" id="rules" aria-labelledby="rules-title">
+        <p class="section-label">Rules</p>
+        <h2 id="rules-title">Three-cushion rules in plain English</h2>
+        <p class="section-lede">
+          One point per successful carom, and the table is handed over when you
+          miss. That is the whole game — the difficulty is entirely in the route
+          you choose.
+        </p>
+
+        <div class="prose">
+          <p>
+            <strong>Scoring.</strong> The cue ball must contact both object
+            balls, and it must touch at least three cushions before it contacts
+            the second object ball. Contact can be ball first, cushion first or
+            any mixture, and extra cushion contacts do not hurt. A completed
+            carom is one point, and the striker continues until a shot fails to
+            score.
+          </p>
+          <p>
+            <strong>Innings and average.</strong> A match is played to an agreed
+            number of points — 50 is common in professional play, short race
+            formats are common online. Your average is points scored divided by
+            innings taken, which is why a three-cushion scoreboard says more
+            about consistency than about one brilliant shot.
+          </p>
+          <p>
+            <strong>Fouls.</strong> Failing to complete the carom ends the
+            inning. Pushing through the cue ball, touching a ball with hand or
+            cue, or shooting while balls are still moving are fouls; the rules
+            this simulator uses follow the standard UMB three-cushion rule set.
+            If you want the official wording, the
+            <a
+              href="https://files.umb-carom.org/Public/Rules/RULES_3Cushion_INDIVIDUALS.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              >UMB championship rules</a
+            >
+            are published as a PDF.
+          </p>
+          <p>
+            <strong>Why it looks different from pool.</strong> There are no
+            pockets, so the cue ball's path after contact matters more than the
+            contact itself. Good players choose the route first — three cushions
+            into a favourable angle — and treat the two object balls as targets
+            at the end of it, not the beginning.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── Diamond system ─────────────────────── -->
+      <section
+        class="section"
+        id="diamond-system"
+        aria-labelledby="diamond-title"
+      >
+        <p class="section-label">Diamond system</p>
+        <h2 id="diamond-title">
+          Learn the diamond system on a table that answers back
+        </h2>
+        <p class="section-lede">
+          The diamonds along the rails are not decoration: they are the
+          measuring marks for cushion routes. Our guide shows the path from
+          above, and the game lets you play it.
+        </p>
+
+        <div class="course-panel">
+          <div>
+            <h3>Diamond and five-and-half systems</h3>
+            <p>
+              The classic corner-five system gives you a starting number on the
+              cue-ball rail and a target number on the object-ball rail, with
+              the difference telling you where to send the cue ball into the
+              cushions. The five-and-half system handles the angles that the
+              corner system cannot. Both rely on the same thing: knowing where
+              the diamonds are and how a ball leaves a cushion at speed.
+            </p>
+            <ul class="course-list">
+              <li>Interactive top-down guide to the diamond system</li>
+              <li>Shot lines drawn against a physics simulation</li>
+              <li>
+                A graded exam that scores your routes, not just your misses
+              </li>
+            </ul>
+          </div>
+          <a class="btn btn-primary" href="./diagrams/diamond"
+            >Open the diamond system guide</a
+          >
+        </div>
+
+        <p class="practice-line">
+          When the routes start to make sense, put them under pressure with the
+          <a href="./exam/threecushion">three-cushion exam</a> — it grades
+          cue-ball control, cushion routes and diamond-system shots and gives
+          you a level to improve on.
+        </p>
+      </section>
+
+      <!-- ── The sport around the world ─────────── -->
+      <section class="section" id="champions" aria-labelledby="champions-title">
+        <p class="section-label">The sport</p>
+        <h2 id="champions-title">
+          Three-cushion around the world — Europe, Asia and beyond
+        </h2>
+        <p class="section-lede">
+          Carom billiards is a small sport with a serious following. These are
+          the scenes and players that built it.
+        </p>
+
+        <ul class="feature-list">
+          <li>
+            <div>
+              <strong>Europe: Belgium, the Netherlands, Sweden</strong>
+              <p>
+                Raymond Ceulemans of Belgium won 21 world championships; the
+                Netherlands' Dick Jaspers holds the record high run of 34, and
+                Sweden's Torbjörn Blomdahl collected five world titles and more
+                than 40 World Cup wins. Belgium remains a regular stop on the
+                World Cup circuit.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Korea: the game's biggest hall culture</strong>
+              <p>
+                Korea is arguably the sport's largest market by tables and
+                players, and billiards is taught in schools there. Blomdahl has
+                called it the number one country in the world for tables, clubs
+                and players. Korean four-ball (sagu), the local hall game, is
+                also playable here.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Vietnam: world champions in a generation</strong>
+              <p>
+                Vietnam's Bao Phương Vinh won the 2023 world championship, the
+                first Vietnamese player to do so, and Vietnam has since won the
+                world championship for national teams. Ho Chi Minh City now
+                hosts a World Cup of its own, and the country's halls are full
+                of three-cushion players.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Turkey and Latin America: the World Cup circuit</strong>
+              <p>
+                Ankara hosted the 2023 world championship, and Turkish players
+                such as Semih Saygıner and Tayfun Taşdemir are among the sport's
+                most recognisable names. Colombia's Bogotá World Cup and events
+                across Peru and Mexico keep the Latin American scene strong.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <p class="practice-line">
+          Players and tournaments are mentioned here to celebrate three-cushion
+          billiards. This project is not affiliated with, sponsored by or
+          endorsed by any of them.
+        </p>
+      </section>
+
+      <!-- ── Multiplayer ────────────────────────── -->
+      <section
+        class="section"
+        id="play-with-friends"
+        aria-labelledby="multiplayer-title"
+      >
+        <p class="section-label">Play with friends</p>
+        <h2 id="multiplayer-title">
+          Play three-cushion with friends online, for free
+        </h2>
+        <p class="section-lede">
+          Open the lobby, see who is online, send a challenge and the match
+          starts. No invite codes, no subscription, no registration.
+        </p>
+
+        <div class="multiplayer-panel">
+          <div>
+            <p>
+              The <a href="./lobby">online lobby</a> lists every player who is
+              connected right now, along with the table they are playing on.
+              Challenge someone and the game opens on both screens at once. When
+              your opponent leaves, the next challenger is a click away — and if
+              the lobby is quiet, two practice bots are always waiting.
+            </p>
+            <a class="btn btn-primary" href="./lobby"
+              >Play three-cushion with friends</a
+            >
+          </div>
+          <div class="multiplayer-side">
+            <span class="bot-list-label">Practice bots, online 24/7</span>
+            <ul class="bot-list" aria-label="Practice bots you can play">
+              <li>ClawBreak</li>
+              <li>TheFarJaw</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Practice / exam ────────────────────── -->
+      <section class="section" id="practice" aria-labelledby="practice-title">
+        <p class="section-label">Practice and assessment</p>
+        <h2 id="practice-title">A free three-cushion exam that scores you</h2>
+        <p class="section-lede">
+          Pick a shot, play it, get marked. The exam works through a graded
+          series of carom positions so you can see progress instead of guessing
+          at it.
+        </p>
+
+        <div class="prose">
+          <p>
+            The
+            <a href="./exam/threecushion">three-cushion exam</a> starts with
+            basic caroms and cue-ball control, then moves into cushion-first
+            routes, the five-and-half system, diamond-system shots and the
+            reinforced positions that decide close games. Each shot is played on
+            a real table with the same physics as the game, and completion,
+            score and assessment level are tracked as you go.
+          </p>
+          <p>
+            If you would rather build your own layouts, open
+            <a href="./practice">practice mode</a>, drag the balls anywhere and
+            replay a shot until the route feels natural. The
+            <a href="./diagrams/diamond">diamond system guide</a> and
+            <a href="./diagrams/three">three-cushion physics page</a> are there
+            when you want to understand why a shot did what it did.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── Screenshots ────────────────────────── -->
+      <section class="section" aria-labelledby="screens-title">
+        <p class="section-label">On the table</p>
+        <h2 id="screens-title">Three-cushion that plays the same on a phone</h2>
+        <p class="section-lede">
+          Touch aiming, a top-down view for planning the route and a close view
+          along the cue. Same physics, same table, wherever you are.
+        </p>
+
+        <ul class="shots">
+          <li>
+            <figure>
+              <img
+                src="images/threecushion1.jpg"
+                alt="Top-down camera view of a three-cushion carom table in the browser, used for planning the cue ball route"
+                width="1080"
+                height="2039"
+                loading="lazy"
+              />
+              <figcaption>
+                Top-down view — read the diamonds before you shoot
+              </figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure>
+              <img
+                src="images/threecushion2.jpg"
+                alt="Aim view along the cue in a free online three-cushion billiards game on a phone"
+                width="1080"
+                height="2031"
+                loading="lazy"
+              />
+              <figcaption>Aim view — line up the cue with a touch</figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure>
+              <img
+                src="images/dm.jpg"
+                alt="Top-down view of a carom billiards table showing the diamonds marked along the rails"
+                width="1200"
+                height="800"
+                loading="lazy"
+              />
+              <figcaption>
+                Diamonds along the rail — the marks behind every system
+              </figcaption>
+            </figure>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ── Features ───────────────────────────── -->
+      <section
+        class="section features-section"
+        id="features"
+        aria-labelledby="features-title"
+      >
+        <p class="section-label">Why it plays well</p>
+        <h2 id="features-title">
+          Built on a real physics model, not an arcade one
+        </h2>
+        <p class="section-lede">
+          Three-cushion exposes every approximation. Running side has to come
+          off the cushion at the angle the spin says it will, or the route is
+          nonsense.
+        </p>
+
+        <ul class="feature-list">
+          <li>
+            <div>
+              <strong>Realistic cushion and ball physics</strong>
+              <p>
+                Cushions, throw and spin transfer follow published billiards
+                research, so running side and check side behave like they do on
+                cloth. The maths is documented on the
+                <a href="./diagrams/three">three-cushion physics page</a>.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Desktop, tablet and phone</strong>
+              <p>
+                Mouse or touch, any modern browser. Nothing to install and no
+                app store involved, and the 5ft table is built for small
+                screens.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Completely free, no registration</strong>
+              <p>
+                Every table, the lobby, the diamond guide and the exam are free.
+                No account, no email, no upgrade tier.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Open source and improving since 2018</strong>
+              <p>
+                The whole WebGL billiards project is public, with a
+                <a
+                  href="https://scoreboard-tailuge.vercel.app/leaderboard"
+                  rel="noopener noreferrer"
+                  >leaderboard</a
+                >
+                to chase your best average on.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ── FAQ ────────────────────────────────── -->
+      <section class="section" id="faq" aria-labelledby="faq-title">
+        <p class="section-label">FAQ</p>
+        <h2 id="faq-title">Free three-cushion billiards: common questions</h2>
+
+        <ul class="faq-list">
+          <li>
+            <details open>
+              <summary>
+                Is there a free alternative to 3ball.app for three-cushion
+                billiards?
+              </summary>
+              <p class="faq-answer">
+                Yes. This site is a free, open source three-cushion carom
+                simulator that runs in a browser, which makes it a free
+                alternative to 3ball.app and other online carom games. Nothing
+                needs installing, there is no account, and the whole project is
+                open source. You get a full-size match table, a smaller practice
+                table, the
+                <a href="./diagrams/diamond">diamond-system guide</a>, a
+                <a href="./exam/threecushion">scored three-cushion exam</a> and
+                free multiplayer.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>What are the rules of three-cushion billiards?</summary>
+              <p class="faq-answer">
+                Three-cushion is a carom game played with three balls on a
+                pocketless table. To score a point, the cue ball must contact
+                both object balls, and it must touch the cushions at least three
+                times before it reaches the second object ball. The order of
+                ball and cushion contacts is otherwise free, so a shot can start
+                with an object ball, a cushion, or a mix of both. A successful
+                carom scores one point and the player continues until a shot
+                misses, then the opponent plays the table as it lies.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>
+                Do I need to download or register to play three-cushion online?
+              </summary>
+              <p class="faq-answer">
+                No. There is no download, no app and no registration. The game
+                runs in your browser on desktop and mobile, and you can choose a
+                name in the <a href="./lobby">lobby</a> if you want one to
+                appear on the leaderboard. Nothing is installed and no email
+                address is required.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>
+                Can I play three-cushion billiards with friends online?
+              </summary>
+              <p class="faq-answer">
+                Yes. Open the <a href="./lobby">lobby</a>, see who is connected,
+                send a challenge and the match opens on both screens. There is
+                no charge and no account. When nobody else is around, two
+                practice bots, ClawBreak and TheFarJaw, are always available for
+                a game.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>
+                How do I practise the diamond system for three-cushion?
+              </summary>
+              <p class="faq-answer">
+                Use the
+                <a href="./diagrams/diamond">interactive diamond system guide</a
+                >, which shows the cushion contacts and cue-ball paths for
+                three-cushion routes from above, and then take the
+                <a href="./exam/threecushion">free three-cushion exam</a>. The
+                exam grades a series of carom positions covering cue-ball
+                control, cushion routes, the five-and-half system and
+                diamond-system shots, so you can see which part of your game
+                needs work.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>
+                What is the difference between three-cushion, pool and snooker?
+              </summary>
+              <p class="faq-answer">
+                Pool and snooker are played on tables with pockets and potted
+                balls are the objective. Three-cushion is carom billiards: the
+                table has no pockets, only three balls are used, and the aim is
+                to make the cue ball contact both object balls after at least
+                three cushion contacts. That makes spin, cushion rebound and
+                positional routes far more important than potting accuracy.
+                There is a separate
+                <a href="./snooker">online snooker</a> page if you want the
+                pocket game.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>Does the three-cushion game work on a phone?</summary>
+              <p class="faq-answer">
+                Yes. Aiming works with touch, there is a top-down camera for
+                planning position and a close aim view along the cue, and the
+                5ft table is designed for small screens. The whole game is
+                responsive, so the same match plays on a phone, tablet, laptop
+                or desktop without installing anything.
+              </p>
+            </details>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ── Alternatives ────────────────────── -->
+      <section class="section" aria-labelledby="alternatives-title">
+        <p class="section-label">Also worth a look</p>
+        <h2 id="alternatives-title">
+          Other places to play or follow three-cushion
+        </h2>
+        <div class="prose">
+          <p>
+            If you'd like to try a few different takes on online carom, these
+            free options are worth checking out:
+            <a
+              href="https://3carena.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >3C Arena</a
+            >
+            (browser three-cushion with ranked play),
+            <a
+              href="https://www.casualarena.com/french-billiards"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Casual Arena French Billiards</a
+            >,
+            <a
+              href="https://dongne.org/en/games/three-cushion"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Dongne's 3-Cushion</a
+            >
+            and
+            <a
+              href="https://iplayer.org/3-cushion-billards"
+              target="_blank"
+              rel="noopener noreferrer"
+              >iPlayer's 3 Cushion Billiards</a
+            >. To follow the real sport,
+            <a
+              href="https://www.umb-carom.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >UMB Carom</a
+            >
+            publishes the calendar, rankings and live scoring for World
+            Championships and World Cups, and
+            <a
+              href="https://en.wikipedia.org/wiki/Three-cushion_billiards"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Wikipedia</a
+            >
+            has the history and rules. For the pocket games, try our
+            <a href="./nineball">free 9-ball pool</a>,
+            <a href="./eightball">8-ball pool</a> and
+            <a href="./snooker">online snooker</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── Final CTA ──────────────────────────── -->
+      <section class="final-cta" aria-labelledby="final-title">
+        <h2 id="final-title">The balls are set — your inning</h2>
+        <p>
+          Free three-cushion billiards, no download, no registration. Play solo,
+          take the exam, or challenge someone right now.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="./?ruletype=threecushion&lod=4"
+            >Play 3-cushion now</a
+          >
+          <a class="btn btn-secondary" href="./lobby">Play with a friend</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site">
+      <p>
+        An open source WebGL billiards and carom project built on published ball
+        and cushion physics research. Source code on
+        <a href="https://github.com/tailuge/billiards">GitHub</a>, scores on the
+        <a href="https://scoreboard-tailuge.vercel.app/leaderboard"
+          >leaderboard</a
+        >. Other game modes: <a href="./nineball">9-ball pool</a>,
+        <a href="./eightball">8-ball pool</a>, <a href="./snooker">snooker</a>,
+        <a href="./">all billiards games</a> and
+        <a href="./practice">practice mode</a>.
+      </p>
+      <ul class="lang-list" aria-label="Other languages">
+        <li><a href="./chinese" hreflang="zh-Hant">中文 三库开伦</a></li>
+        <li><a href="./spanish" hreflang="es">Billar a tres bandas</a></li>
+        <li><a href="./dutch" hreflang="nl">Driebanden biljart</a></li>
+        <li><a href="./korean" hreflang="ko">3쿠션 당구</a></li>
+        <li><a href="./japanese" hreflang="ja">スリークッション</a></li>
+        <li><a href="./turkish" hreflang="tr">Üç bant bilardo</a></li>
+        <li><a href="./german" hreflang="de">Dreiband Billard</a></li>
+        <li><a href="./vietnamese" hreflang="vi">Bida 3 băng</a></li>
+      </ul>
+    </footer>
+
+    <script>
+      fetch("https://billiards-network.onrender.com/api/usage/threecushion", {
+        method: "PUT",
+        mode: "cors",
+      }).catch(() => {})
+    </script>
+  </body>
+</html>
