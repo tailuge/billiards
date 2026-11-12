@@ -36,6 +36,7 @@ export class LobbyIndicator {
   private readonly tableSize: number
   private readonly freeAim: boolean
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
+  private static readonly OFFLINE_ANNOUNCEMENT_DELAY_MS = 30_000
   private readonly messagingUrl: string
   private currentTableId: string | null = null
   private readonly replayMode: boolean
@@ -54,15 +55,19 @@ export class LobbyIndicator {
   private opponentSeen = false
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
+  private readonly isEnd: (() => boolean) | undefined
   private readonly offlineHandler: () => void
   private lobbyLeaveTimer: ReturnType<typeof setTimeout> | null = null
+  private offlineAnnouncementTimer: ReturnType<typeof setTimeout> | null = null
+  private offlineAnnounced = false
 
   constructor(
     botMode: boolean,
     replayMode: boolean,
     rules: Rules,
     onChatMessage?: (msg: string) => void,
-    messagingUrl?: string
+    messagingUrl?: string,
+    isEnd?: () => boolean
   ) {
     this.offlineHandler = () => {
       this.onChatMessage?.("🚫")
@@ -70,6 +75,7 @@ export class LobbyIndicator {
     this.rules = rules
     this.replayMode = replayMode
     this.onChatMessage = onChatMessage
+    this.isEnd = isEnd
     const isInsecure =
       messagingUrl?.startsWith("ws://") || messagingUrl?.startsWith("http://")
     const httpProtocol = isInsecure ? "http" : "https"
@@ -522,14 +528,49 @@ export class LobbyIndicator {
     // sending is deliberately left enabled.
     if (!this.isTwoPlayerGame()) return
     if (wasOnline === true && !isOnline) {
-      this.onChatMessage?.("🔌")
+      this.scheduleOfflineAnnouncement()
     } else if (wasOnline === false && isOnline && hadBeenSeen) {
-      this.onChatMessage?.("⚡")
+      const hadAnnounced = this.offlineAnnounced
+      this.cancelOfflineAnnouncement()
+      if (hadAnnounced) {
+        this.onChatMessage?.("⚡")
+      }
     }
+  }
+
+  /**
+   * A tab switch pauses the library's lobby heartbeat, which can briefly look
+   * like the opponent left. Keep the plug back long enough for a reconnect to
+   * cancel it, except once the game is over, where the disconnect is final.
+   */
+  private scheduleOfflineAnnouncement(): void {
+    this.cancelOfflineAnnouncement()
+    if (this.isEnd?.()) {
+      this.announceOffline()
+      return
+    }
+    this.offlineAnnouncementTimer = setTimeout(() => {
+      this.offlineAnnouncementTimer = null
+      this.announceOffline()
+    }, LobbyIndicator.OFFLINE_ANNOUNCEMENT_DELAY_MS)
+  }
+
+  private announceOffline(): void {
+    this.offlineAnnounced = true
+    this.onChatMessage?.("🔌")
+  }
+
+  private cancelOfflineAnnouncement(): void {
+    if (this.offlineAnnouncementTimer !== null) {
+      clearTimeout(this.offlineAnnouncementTimer)
+      this.offlineAnnouncementTimer = null
+    }
+    this.offlineAnnounced = false
   }
 
   async stop(): Promise<void> {
     this.cancelScheduledLeave()
+    this.cancelOfflineAnnouncement()
     try {
       globalThis.removeEventListener?.("offline", this.offlineHandler)
       if (this.lobby) {

@@ -527,7 +527,8 @@ describe("LobbyIndicator", () => {
     await indicator.stop()
   })
 
-  it("announces opponent disconnect and reconnect in chat", async () => {
+  it("announces the opponent disconnect only after 30 seconds", async () => {
+    jest.useFakeTimers()
     Session.init("p1", "Player 1", "table-1", false)
     Session.getInstance().setOpponentClientId("p2")
 
@@ -554,8 +555,13 @@ describe("LobbyIndicator", () => {
     ])
     expect(mockOnChatMessage).not.toHaveBeenCalled()
 
-    // The opponent leaving the table is the same transition the dot reports.
+    // The opponent leaving the table is the same transition the dot reports,
+    // but the plug waits so a tab switch cannot flood the chat.
     onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
+    jest.advanceTimersByTime(29_999)
+    expect(mockOnChatMessage).not.toHaveBeenCalled()
+
+    jest.advanceTimersByTime(1)
     expect(mockOnChatMessage).toHaveBeenCalledWith("🔌")
 
     mockOnChatMessage.mockClear()
@@ -564,6 +570,74 @@ describe("LobbyIndicator", () => {
       { userId: "p2", tableId: "table-1" },
     ])
     expect(mockOnChatMessage).toHaveBeenCalledWith("⚡")
+
+    await indicator.stop()
+    jest.useRealTimers()
+  })
+
+  it("cancels the delayed disconnect when the opponent reconnects", async () => {
+    jest.useFakeTimers()
+    Session.init("p1", "Player 1", "table-1", false)
+    Session.getInstance().setOpponentClientId("p2")
+
+    const mockRules = { rulename: "nineball" } as any
+    const mockOnChatMessage = jest.fn()
+    const indicator = new LobbyIndicator(
+      false,
+      false,
+      mockRules,
+      mockOnChatMessage
+    )
+    await indicator.init()
+
+    const mockLobby = (indicator as any).lobby
+    const onUsersChangeCallback = mockLobby.onUsersChange.mock.calls[0][0]
+
+    onUsersChangeCallback([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "table-1" },
+    ])
+    onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
+    jest.advanceTimersByTime(20_000)
+    onUsersChangeCallback([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "table-1" },
+    ])
+    jest.advanceTimersByTime(30_000)
+
+    // The plug was never shown, so the return is not a reconnect either.
+    expect(mockOnChatMessage).not.toHaveBeenCalled()
+
+    await indicator.stop()
+    jest.useRealTimers()
+  })
+
+  it("announces the opponent disconnect immediately in End", async () => {
+    Session.init("p1", "Player 1", "table-1", false)
+    Session.getInstance().setOpponentClientId("p2")
+
+    const mockRules = { rulename: "nineball" } as any
+    const mockOnChatMessage = jest.fn()
+    const indicator = new LobbyIndicator(
+      false,
+      false,
+      mockRules,
+      mockOnChatMessage,
+      undefined,
+      () => true
+    )
+    await indicator.init()
+
+    const mockLobby = (indicator as any).lobby
+    const onUsersChangeCallback = mockLobby.onUsersChange.mock.calls[0][0]
+
+    onUsersChangeCallback([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "table-1" },
+    ])
+    onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
+
+    expect(mockOnChatMessage).toHaveBeenCalledWith("🔌")
 
     await indicator.stop()
   })
