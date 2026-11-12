@@ -128,7 +128,9 @@
   </head>
 
   <body>
-    <div class="about-more" id="about-more" hidden>
+    <!-- hidden="until-found": the panel still only opens on demand, but the copy
+         stays search-indexable and find-in-page can reveal it. -->
+    <div class="about-more" id="about-more" hidden="until-found">
       <div class="about-panel">
         <button
           class="about-close"
@@ -242,7 +244,7 @@
             </div>
           </section>
 
-          <details class="about-section">
+          <details class="about-section" open>
             <summary>About</summary>
             <h1>Free Online Pool, Snooker &amp; Billiards Game</h1>
             <p>
@@ -587,17 +589,15 @@
               </button>
             </div>
           </header>
-          <pre id="botDebugLog" aria-live="polite">
-          <img
-            src="images/billiards.png"
-            loading="lazy"
-            alt="Billiards Pool Game Promo - Realistic Physics Simulation"
-          />
-          Find it on <a href="https://github.com/tailuge/billiards">github</a>
-        </pre>
+          <pre id="botDebugLog" aria-live="polite"></pre>
         </div>
         <div class="chatarea">
-          <div id="chatoutput" class="chatoutput"></div>
+          <div
+            id="chatoutput"
+            class="chatoutput"
+            role="log"
+            aria-live="polite"
+          ></div>
         </div>
         <dialog id="inputTextDiv" contenteditable="false">
           <div id="inputTextDivInner">
@@ -668,7 +668,14 @@
             </div>
           </template>
           <div id="ballContainerWrapper" class="ballContainerWrapper">
-            <button id="openElevation" type="button" class="openElevation">
+            <button
+              id="openElevation"
+              type="button"
+              class="openElevation"
+              aria-label="Cue elevation"
+              aria-controls="tiltSliderContainer"
+              aria-expanded="false"
+            >
               +
             </button>
             <div id="ballContainer" class="ballContainer">
@@ -817,6 +824,8 @@
                 id="help"
                 type="button"
                 aria-label="Help"
+                aria-controls="about-more"
+                aria-expanded="false"
               >
                 ⓘ
               </button>

@@ -113,11 +113,16 @@ export class Menu {
       // toggle out of it.
       document.body.classList.add("chromeless")
     }
+    const aboutPanel = document.getElementById("about-more")
+    if (aboutPanel) {
+      // Find-in-page fires beforematch before a hidden="until-found" panel is
+      // revealed; open it properly so the overlay layout and close button
+      // apply rather than a bare uncollapsed block.
+      aboutPanel.addEventListener("beforematch", () => this.setHelpOpen(true))
+    }
     const closeBtn = document.getElementById("aboutClose")
     if (closeBtn) {
-      closeBtn.onclick = () => {
-        document.getElementById("about-more")?.setAttribute("hidden", "true")
-      }
+      closeBtn.onclick = () => this.setHelpOpen(false)
     }
     if (this.concede) {
       this.concede.onclick = (_) => {
@@ -255,11 +260,23 @@ export class Menu {
   toggleHelpOverlay() {
     const panel = document.getElementById("about-more")
     if (panel) {
-      if (panel.hasAttribute("hidden")) {
-        panel.removeAttribute("hidden")
-      } else {
-        panel.setAttribute("hidden", "true")
-      }
+      this.setHelpOpen(panel.hasAttribute("hidden"))
+    }
+  }
+
+  /** hidden="until-found" is the resting state: closed, but findable. */
+  setHelpOpen(open: boolean) {
+    const panel = document.getElementById("about-more")
+    if (!panel) {
+      return
+    }
+    if (open) {
+      panel.removeAttribute("hidden")
+    } else {
+      panel.setAttribute("hidden", "until-found")
+    }
+    if (this.help) {
+      this.help.setAttribute("aria-expanded", open ? "true" : "false")
     }
   }
 }

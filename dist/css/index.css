@@ -931,14 +931,30 @@ body.chromeless #panel .powerSliderContainer {
   position: fixed;
   inset: 0;
   z-index: 3000;
+}
+
+/* `display` is only set in the open state: the closed state relies on the
+   browser's own rule for the `hidden` attribute, which for hidden="until-found"
+   is content-visibility rather than display. Setting `display` here would
+   override it and break find-in-page reveal and indexing. */
+.about-more:not([hidden]) {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* The blur cannot live on .about-more: while closed the element keeps its box
+   (content-visibility skips its contents, not its own paint). A pseudo-element
+   is content, so it is skipped too. */
+.about-more::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   backdrop-filter: blur(3px);
 }
 
 .about-more[hidden] {
-  display: none !important;
+  pointer-events: none;
 }
 
 .about-more .about-panel {

@@ -184,6 +184,7 @@ export class AimInputs {
       )
       if (this.controlsDisabled) {
         this.tiltSliderContainerElement.hidden = true
+        this.setElevationExpanded(false)
       }
     }
     if (this.cueTiltElement) {
@@ -333,9 +334,18 @@ export class AimInputs {
       return
     }
     this.tiltSliderContainerElement.hidden = false
+    this.setElevationExpanded(true)
     requestAnimationFrame(() => {
       this.tiltSliderContainerElement?.classList.add("is-open")
     })
+  }
+
+  /** The "+" button discloses the elevation slider; announce that state. */
+  private setElevationExpanded(expanded: boolean) {
+    this.openElevationElement?.setAttribute(
+      "aria-expanded",
+      expanded ? "true" : "false"
+    )
   }
 
   toggleTiltControl = (e?: any) => {
@@ -355,6 +365,7 @@ export class AimInputs {
     if (this.tiltSliderContainerElement) {
       this.tiltSliderContainerElement.classList.remove("is-open")
       this.tiltSliderContainerElement.hidden = true
+      this.setElevationExpanded(false)
     }
   }
 
