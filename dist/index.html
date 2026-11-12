@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Free Online Billiards, Pool &amp; Snooker Game</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <style>
       @font-face {
         font-family: Exo;
@@ -27,17 +28,10 @@
       name="description"
       content="Play free online pool, billiards and snooker with realistic 3D physics. Try 8-ball, 9-ball, three-cushion carom and practice challenges in your browser. No download or account required."
     />
-    <meta
-      name="keywords"
-      content="billiards, billiards simulator, online billiards, free billiards game, pool game, snooker game, 8-ball, 9-ball, three-cushion billiards, three cushion carom, carom billiards, 4-ball billiards, open source billiards, ビリヤード, ビリヤードゲーム, 無料ビリヤード, 3クッション, スリークッション, 9ボール, 당구, 무료 당구, 온라인 당구, 당구 게임, 3쿠션, 사구, 스누커, Bida 3 băng, bi-a 3 băng, Biliar 3 bandas, billar a tres bandas, billar de carambolas, jugar billar carambolas, billar online gratis, Üç bant bilardo, üç bant, driebanden, biljart, gratis biljart, biljart spel, Carom3D, ShootersPool"
-    />
     <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#0b1611" />
     <link rel="canonical" href="https://billiards.tailuge.workers.dev/" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       property="og:title"
       content="Free Online Billiards, Pool &amp; Snooker Game"
@@ -50,12 +44,21 @@
     <meta property="og:url" content="https://billiards.tailuge.workers.dev/" />
     <meta
       property="og:image"
-      content="https://tailuge.github.io/billiards/dist/images/billiards.png"
+      content="https://billiards.tailuge.workers.dev/images/billiards.png"
     />
     <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:video" content="https://youtu.be/bAeiRQcQuyg" />
+    <meta property="og:image:height" content="600" />
+    <meta
+      property="og:video:url"
+      content="https://www.youtube.com/embed/bAeiRQcQuyg"
+    />
+    <meta
+      property="og:video:secure_url"
+      content="https://www.youtube.com/embed/bAeiRQcQuyg"
+    />
     <meta property="og:video:type" content="text/html" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="ocs-site-verification"
@@ -80,7 +83,7 @@
         "@type": "VideoGame",
         "name": "Free Online Billiards, Pool and Snooker",
         "url": "https://billiards.tailuge.workers.dev/",
-        "image": "https://tailuge.github.io/billiards/dist/images/billiards.png",
+        "image": "https://billiards.tailuge.workers.dev/images/billiards.png",
         "description": "Play free online pool, billiards and snooker with realistic 3D physics. Try 8-ball, 9-ball, three-cushion carom and practice challenges in your browser.",
         "applicationCategory": "GameApplication",
         "operatingSystem": "Web",
@@ -105,7 +108,7 @@
           "@type": "VideoObject",
           "name": "Billiards Pool Game Gameplay",
           "description": "Realistic physics simulation and gameplay of Break Builder pool game.",
-          "thumbnailUrl": "https://tailuge.github.io/billiards/dist/images/billiards.png",
+          "thumbnailUrl": "https://billiards.tailuge.workers.dev/images/billiards.png",
           "contentUrl": "https://youtu.be/bAeiRQcQuyg",
           "embedUrl": "https://www.youtube.com/embed/bAeiRQcQuyg",
           "uploadDate": "2026-04-30T00:00:00+00:00"
@@ -265,23 +268,23 @@
             <h2>Pool, Snooker and Carom Games</h2>
             <ul>
               <li>
-                <a href="eightball.html">8-ball pool</a> — play the classic
+                <a href="eightball">8-ball pool</a> — play the classic
                 solids-and-stripes pool game with realistic ball physics and a
                 high-resolution rendering mode.
               </li>
               <li>
-                <a href="nineball.html">9-ball pool</a> — play the fast-paced
+                <a href="nineball">9-ball pool</a> — play the fast-paced
                 rotation game, practise custom table layouts, and share replay
                 links to review interesting shots.
               </li>
               <li>
-                <a href="snooker.html">Snooker</a> — play snooker on a full-size
+                <a href="snooker">Snooker</a> — play snooker on a full-size
                 12-foot table with 15 reds, or practise on a smaller 6-foot
                 table. Practise potting, cue-ball positioning and
                 break-building.
               </li>
               <li>
-                <a href="threecushion.html">Three-cushion billiards</a>
+                <a href="threecushion">Three-cushion billiards</a>
                 — play 3-cushion carom, where the cue ball must contact both
                 object balls, reaching at least three cushions before contacting
                 the second object ball. Explore spin, rebound angles and
@@ -289,18 +292,17 @@
                 cushion behaviour.
               </li>
               <li>
-                <a href="index.html?ruletype=sagu">Sagu (Korean four-ball)</a> —
-                play the Korean four-ball carom game on a standard or smaller
-                5-foot table.
+                <a href="?ruletype=sagu">Sagu (Korean four-ball)</a> — play the
+                Korean four-ball carom game on a standard or smaller 5-foot
+                table.
               </li>
             </ul>
             <p>
               Two practice bots, ClawBreak and TheFarJaw, play when nobody else
               is around; the
-              <a href="speedrun/index.html">speedrun challenge</a> races you
-              against the clock, and the
-              <a href="reveal/index.html">reveal game</a> uncovers pictures with
-              straight-pool potting.
+              <a href="speedrun/">speedrun challenge</a> races you against the
+              clock, and the <a href="reveal/">reveal game</a> uncovers pictures
+              with straight-pool potting.
             </p>
 
             <h2>Realistic billiards physics</h2>
@@ -338,40 +340,39 @@
               >, with Stronge's compliant-cushion model available as an
               alternative. Spin, throw and cushion rebound can all be inspected
               and re-tuned on the
-              <a href="diagrams/three.html">three-cushion physics page</a>.
+              <a href="diagrams/three">three-cushion physics page</a>.
             </p>
 
             <h2>Pool, Snooker and Billiards Practice</h2>
             <ul>
               <li>
-                <a href="practice.html">Billiards practice table</a> — set up
-                custom shots and ball positions, then repeat them to practise
-                aim, spin and cue-ball control without an opponent or a time
-                limit.
+                <a href="practice">Billiards practice table</a> — set up custom
+                shots and ball positions, then repeat them to practise aim, spin
+                and cue-ball control without an opponent or a time limit.
               </li>
               <li>
-                <a href="exam/index.html">Billiards skill tests</a> — work
-                through a graded series of shots and receive an assessment
-                level, completion status and score.
+                <a href="exam/">Billiards skill tests</a> — work through a
+                graded series of shots and receive an assessment level,
+                completion status and score.
               </li>
               <li>
-                <a href="exam/snooker.html">Snooker practice and assessment</a>
+                <a href="exam/snooker">Snooker practice and assessment</a>
                 — work through a graded course of snooker shots, from basic pots
                 to difficult positions.
               </li>
               <li>
-                <a href="exam/threecushion.html"
+                <a href="exam/threecushion"
                   >Three-cushion practice and assessment</a
                 >
                 — practise carom shots across a graded series, from basic
                 positions to advanced cushion routes.
               </li>
               <li>
-                <a href="fit/research.html">Shot sensitivity analysis</a> — see
-                how aim, spin, power and elevation change the result.
+                <a href="fit/research">Shot sensitivity analysis</a> — see how
+                aim, spin, power and elevation change the result.
               </li>
               <li>
-                <a href="diagrams/diamond.html">The diamond system</a> for
+                <a href="diagrams/diamond">The diamond system</a> for
                 three-cushion cue-ball paths.
               </li>
             </ul>
@@ -379,11 +380,11 @@
             <h2>Online Multiplayer Pool and Billiards</h2>
             <p>
               Play online billiards against other players. The
-              <a href="lobby.html">multiplayer lobby</a> shows who is online and
-              lets you challenge available opponents. Use
-              <a href="2tab.html">two-tab mode</a> to play across two windows on
-              one device, or join <a href="arena.html">scheduled arenas</a> for
-              timed tournaments. High breaks appear on the
+              <a href="lobby">multiplayer lobby</a> shows who is online and lets
+              you challenge available opponents. Use
+              <a href="2tab">two-tab mode</a> to play across two windows on one
+              device, or join <a href="arena">scheduled arenas</a> for timed
+              tournaments. High breaks appear on the
               <a
                 href="https://scoreboard-tailuge.vercel.app/leaderboard"
                 target="_blank"
@@ -402,17 +403,16 @@
             <h2>Guides and Billiards Research</h2>
             <ul>
               <li>
-                <a href="blog1.html">Why most pool games feel wrong</a> — what
-                makes a physics engine read as real, and where the cheap ones
-                cheat.
+                <a href="blog1">Why most pool games feel wrong</a> — what makes
+                a physics engine read as real, and where the cheap ones cheat.
               </li>
               <li>
-                <a href="blog2.html">Clearing the line-up</a> — a practice log
-                on running the balls, and how to drill it on the practice table.
+                <a href="blog2">Clearing the line-up</a> — a practice log on
+                running the balls, and how to drill it on the practice table.
               </li>
               <li>
-                <a href="blog3.html">Implementing Mathavan cushion physics</a> —
-                the maths behind the cushion model, written up in the open.
+                <a href="blog3">Implementing Mathavan cushion physics</a> — the
+                maths behind the cushion model, written up in the open.
               </li>
             </ul>
 
@@ -428,7 +428,7 @@
                 >GitHub</a
               >, and contributions — bugs, physics tweaks, translations, new
               rule sets — are welcome. Read more on the
-              <a href="about.html">about page</a>.
+              <a href="about">about page</a>.
             </p>
 
             <h2>Play Billiards in Your Language</h2>
@@ -456,7 +456,7 @@
                 </p>
               </li>
               <li>
-                <a href="./japanese.html" lang="ja"
+                <a href="./japanese" lang="ja"
                   >無料ビリヤードゲーム・オンラインビリヤード</a
                 >
                 —
@@ -470,34 +470,32 @@
                 もご覧ください。
               </li>
               <li>
-                <a href="./chinese.html" lang="zh">免費線上斯諾克</a> —
+                <a href="./chinese" lang="zh">免費線上斯諾克</a> —
                 免安裝、免註冊，手機也能玩。
               </li>
               <li>
-                <a href="./turkish.html" lang="tr">Ücretsiz online bilardo</a> —
-                3 bant karambol, gerçekçi fizik, kayıt gerekmez.
+                <a href="./turkish" lang="tr">Ücretsiz online bilardo</a> — 3
+                bant karambol, gerçekçi fizik, kayıt gerekmez.
               </li>
               <li>
-                <a href="./german.html" lang="de">Kostenloses 3-Band-Billard</a>
+                <a href="./german" lang="de">Kostenloses 3-Band-Billard</a>
                 — ohne Download und Anmeldung im Browser.
               </li>
               <li>
-                <a href="./spanish.html" lang="es"
-                  >Billar a tres bandas gratis</a
-                >
+                <a href="./spanish" lang="es">Billar a tres bandas gratis</a>
                 — sin descargas ni registro, también en el móvil.
               </li>
               <li>
-                <a href="./dutch.html" lang="nl">Online driebanden spelen</a> —
+                <a href="./dutch" lang="nl">Online driebanden spelen</a> —
                 gratis carambole in je browser.
               </li>
               <li>
-                <a href="./vietnamese.html" lang="vi">Game bi-a 3 băng</a> —
-                miễn phí, không cần cài đặt hay đăng ký.
+                <a href="./vietnamese" lang="vi">Game bi-a 3 băng</a> — miễn
+                phí, không cần cài đặt hay đăng ký.
               </li>
               <li lang="fr">
                 Entraînez-vous au libre avec
-                <a href="./exam/libre.html">l'examen</a>.
+                <a href="./exam/libre">l'examen</a>.
               </li>
             </ul>
             <h3>Mentions</h3>
@@ -876,7 +874,7 @@
           <span class="challenge-vs" aria-hidden="true">⚔</span>
         </div>
         <a
-          href="https://billiards.tailuge.workers.dev/lobby.html"
+          href="https://billiards.tailuge.workers.dev/lobby"
           class="pill"
           title="Lobby"
           id="lobbyOverlay"
