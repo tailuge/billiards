@@ -13,14 +13,14 @@ This is an open-source project bringing unsophisticated billiards physics writte
 
 ## Online Demo
 
-Demos run in all major desktop and mobile browsers and use WebGL
+Demos run in all major desktop and mobile browsers and use WebGL.
 
 * [Nine ball ⬀](https://billiards.tailuge.workers.dev/?practice=true) make a break and share replay link with friends
 * [Three cushion billiards ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4) the ultimate test of physics and player (average on both counts). You need the [beginner mode ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&practice=true). Try the [practice mode ⬀](https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&practice&drill) to drill specific shots.
 * [Sagu ⬀](https://billiards.tailuge.workers.dev/?ruletype=sagu) Korean four-ball carom game. Try [sagu on a 5ft table ⬀](https://billiards.tailuge.workers.dev/?ruletype=sagu&tableSize=5).
 * [Snooker ⬀](https://billiards.tailuge.workers.dev/?ruletype=snooker&lod=4&tableSize=12) we await the first 147 submission to the leaderboard.
 * [8-Ball ⬀](https://billiards.tailuge.workers.dev/?ruletype=eightball&lod=4) try it in Hi-Res mode!
-* [Libre⬀](https://billiards.tailuge.workers.dev/challenge/) try and top the high scores.
+* [Libre ⬀](https://billiards.tailuge.workers.dev/challenge/) try and top the high scores.
 * Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak) and [TheFarJaw ⬀](https://billiards.tailuge.workers.dev/?bot=TheFarJaw).
 * Try [Multiplayer online](https://billiards.tailuge.workers.dev/lobby.html) pool lobby.
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on Vercel.
@@ -31,9 +31,9 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * Three cushion trainer and [sensitivity analysis ⬀](https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&practice&drill) from an excellent [fork ⬀](https://github.com/velikodimov/billiards) of this project.
 * Another great fork for [Italian 5 pin](https://gameland.altervista.org/italian_billiards/lobby.html).
 * Generate SVG and PNG [diagrams](https://billiards.tailuge.workers.dev/diagrams/export?ruletype=threecushion&init=%5B0.12664656341075897%2C-0.566656768321991%2C-0.8321752548217773%2C0.6028573513031006%2C0.2764659821987152%2C0.1675983965396881%5D&initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.2879289388656616%2C%22power%22%3A2.619999885559082%2C%22offset%22%3A%7B%22x%22%3A-0.28158292174339294%2C%22y%22%3A0.35101431608200073%7D%2C%22elevation%22%3A0%7D) of shots for blog posts.
-* Race again the clock to clear the table in a [speedrun](https://billiards.tailuge.workers.dev/speedrun/index.html).
+* Race against the clock to clear the table in a [speedrun](https://billiards.tailuge.workers.dev/speedrun/index.html).
 * Customise your [cue](https://billiards.tailuge.workers.dev/cue) and [emblem](https://billiards.tailuge.workers.dev/wall) for other players to see
-* Sit a hand curated [exam](https://billiards.tailuge.workers.dev/exam/index.html) to asses your level of play.
+* Sit a hand curated [exam](https://billiards.tailuge.workers.dev/exam/index.html) to assess your level of play.
 * Measure your progress in rated games by tracking your [ELO](https://scoreboard-tailuge.vercel.app/elo) (Glicko2).
 * Reveal [textures](https://billiards.tailuge.workers.dev/reveal/) on the table cloth by potting balls in straight pool.
 * Invite friends and play to win as many games as you can in 30 mins in [hourly arenas](https://billiards.tailuge.workers.dev/arena.html) ([lichess.org](https://lichess.org/) style)
@@ -54,11 +54,8 @@ You dont, you just play in your browser at [billiards.tailuge.workers.dev/lobby]
 
 If you prefer, you can install a thin client wrapper:
 
-* **Windows / macOS / Linux** — [Download](https://github.com/tailuge/tbilliards/releases/latest)
-* **Android**
-— Driect [Download](https://github.com/tailuge/wbilliards/releases/latest)
- or via [APKPure](https://apkpure.com/billiards/dev.tailuge.billiards)
- or [Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/tailuge/wbilliards)
+* Windows / macOS / Linux: [Download](https://github.com/tailuge/tbilliards/releases/latest)
+* Android: [Download](https://github.com/tailuge/wbilliards/releases/latest) directly, or via [APKPure](https://apkpure.com/billiards/dev.tailuge.billiards) or [Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/tailuge/wbilliards)
 
 ## Reference material
 
@@ -244,7 +241,7 @@ yarn build
 yarn gltfpack
 ```
 
-This generates artefacts in /dist for prod deployment (e.g. on github static pages)
+This generates artefacts in /dist for prod deployment (e.g. on GitHub static pages).
 
 ### Run
 
@@ -275,7 +272,7 @@ yarn prettify
 yarn serve
 ```
 
-then open <http://localhost:8080/multi.html> to see options, message server is public nchan.
+then open <http://localhost:8080/multi.html> to see the options. The message server is public nchan.
 
 ## Controls
 
@@ -318,15 +315,13 @@ Use mouse, trackpad, touch screen or keyboard:
 
 <kbd style="border: 1px solid #aaa; border-radius: 0.2em; padding: 0.1em 0.3em; font-size: 0.85em;">dbl click</kbd> Hit
 
-### Trajectory Fitting, Machine Learning & Simulation
+## Trajectory fitting, machine learning & simulation
 
-The physics engine is lightweight and deterministic, making batch rollouts, parameter fitting, and simulation experiments practical:
+The physics engine is deterministic and small enough to run in bulk: about 500 rollouts a second on 4 CPU cores in plain TypeScript, across worker threads, in the browser through Web Workers or headless under Node.
 
-* Throughput & batch execution: Performs ~500 rollouts/sec on 4 CPU cores in pure TypeScript, scaling across worker threads. Runs in-browser via Web Workers or headlessly via Node.js for parallel batch runs.
-* System identification & real-to-sim calibration: Designed for trajectory fitting and physics calibration against recorded real-world shot trajectories. Used to estimate physical parameters such as rolling friction, sliding friction, spin decay, restitution, and cushion deflection.
-* Reinforcement learning & planning: Suitable as a fast test environment for RL agents, continuous control, Monte Carlo Tree Search (MCTS), trajectory forecasting, or synthetic dataset generation.
-* Parameter optimization: The [multi-shot physics optimiser](https://tailuge.github.io/billiards/dist/fit/common.html) provides a starting point for fitting parameters and exploring the loss landscape against recorded shots.
-* Worker interface & headless runs: The [Web Worker / simulation research page](https://tailuge.github.io/billiards/dist/ww.html) documents the worker protocol, parallel rollouts, headless Node.js scripts, batch processing, and runtime parameter overrides.
+That makes it usable for fitting the model against recorded shots from a real table, estimating rolling and sliding friction, spin decay, restitution and cushion deflection. The [multi-shot physics optimiser](https://tailuge.github.io/billiards/dist/fit/common.html) is where to start with that. It is also a fast test environment for reinforcement learning, continuous control, Monte Carlo tree search and synthetic data generation.
+
+The [Web Worker page](https://tailuge.github.io/billiards/dist/ww.html) documents the worker protocol, parallel rollouts, the headless Node scripts, batch processing and runtime parameter overrides.
 
 Contributions and experiments are welcome.
 
@@ -354,14 +349,13 @@ August 2023 (mobile)
 
 ![Three cushion](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/three630x500.png)
 
-
-Star History
+## Star history
 
 [![RepoStars](https://www.repostars.dev/api/og?repos=tailuge/billiards&theme=light)](https://www.repostars.dev/api/og?repos=tailuge/billiards&theme=light)
 
 ## Licence
 
-This project is open source and licensed under the GNU General Public License - see the [LICENSE](LICENSE) file for details. Contributions welcome.
+This project is open source and licensed under the GNU General Public License - see the [LICENSE](LICENSE) file for details.
 
 ## Translations
 
@@ -401,7 +395,9 @@ This project is open source and licensed under the GNU General Public License - 
 練球、調整物理參數的圖表工具與 Web Worker 批次模擬，2018 年起在 GitHub
 上公開發展的開源撞球專案。
 
-### Keywords
+</details>
+
+## Keywords
 
 billiards, billiards simulator, online billiards, free billiards game,
 pool game, snooker game, 8-ball, 9-ball, three-cushion billiards,
@@ -412,7 +408,7 @@ billar de carambolas, jugar billar carambolas, billar online gratis,
 Üç bant bilardo, üç bant, driebanden, biljart, gratis biljart, biljart spel,
 Carom3D, ShootersPool
 
-### Mentions
+## Mentions
 
 [Molbergen](https://pbc-molbergen.de/Simulator.html),
 [Bored](https://www.bored.com/link/tailuge-github-io-billiards/),
@@ -433,5 +429,3 @@ Carom3D, ShootersPool
 [IndexPage](https://indexpage.org/search?q=billiards),
 [Slowden](https://slowden.com/games/tailuge-billiards/),
 [Foundplay](https://foundplay.io/games/billiards)
-
-</details>
