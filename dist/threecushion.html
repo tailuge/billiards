@@ -362,9 +362,21 @@
       h1,
       h2,
       h3,
+      h4,
       p {
         margin-top: 0;
         line-break: strict;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        text-wrap: balance;
+      }
+
+      p {
+        text-wrap: pretty;
       }
 
       .visually-hidden {
@@ -634,7 +646,7 @@
       }
 
       .prose {
-        max-width: 680px;
+        max-width: min(680px, 68ch);
         color: var(--text-soft);
         font-size: 0.95rem;
       }
@@ -668,14 +680,14 @@
         background: linear-gradient(135deg, #123324 0%, #1a4a31 100%);
       }
 
-      .mode-card h3 {
+      .mode-card :is(h3, h4) {
         margin-bottom: 8px;
         font-size: clamp(1.2rem, 2.4vw, 1.6rem);
         font-weight: 900;
         letter-spacing: -0.01em;
       }
 
-      .mode-card h3 small {
+      .mode-card :is(h3, h4) small {
         color: var(--text-dim);
         font-size: 0.62em;
         font-weight: 700;
@@ -1124,15 +1136,12 @@
     </style>
   </head>
   <body>
+    <!-- [html-validate-disable no-redundant-role -- Safari drops list semantics when list-style: none or display: flex/grid is applied, so these lists carry role="list" to restore them] -->
     <a class="skip-link" href="#content">Skip to main content</a>
 
     <header class="site">
-      <a
-        class="brand"
-        href="./threecushion"
-        aria-label="Free online three-cushion billiards home"
-      >
-        <span class="brand-mark">B</span>
+      <a class="brand" href="./threecushion">
+        <span class="brand-mark" aria-hidden="true">B</span>
         <span>TAILUGE BILLIARDS</span>
       </a>
       <nav class="site-nav" aria-label="Main menu">
@@ -1145,12 +1154,12 @@
       </nav>
     </header>
 
-    <main id="content">
+    <main>
       <!-- ── Hero ───────────────────────────────── -->
-      <section class="hero" aria-labelledby="hero-title">
+      <section class="hero" aria-labelledby="content">
         <div>
           <p class="hero-tag">Free · No download · No registration</p>
-          <h1 id="hero-title">
+          <h1 id="content" tabindex="-1">
             Free online <em>three-cushion billiards</em>, played in your browser
           </h1>
           <p class="hero-desc">
@@ -1170,7 +1179,7 @@
               >Small table (5ft)</a
             >
           </div>
-          <ul class="hero-note">
+          <ul class="hero-note" role="list">
             <li>PC · Mac · phone · tablet</li>
             <li>Mouse or touch</li>
             <li>Free multiplayer</li>
@@ -1433,7 +1442,7 @@
           the scenes and players that built it.
         </p>
 
-        <ul class="feature-list">
+        <ul class="feature-list" role="list">
           <li>
             <div>
               <strong>Europe: Belgium, the Netherlands, Sweden</strong>
@@ -1557,7 +1566,11 @@
           </div>
           <div class="multiplayer-side">
             <span class="bot-list-label">Practice bots, online 24/7</span>
-            <ul class="bot-list" aria-label="Practice bots you can play">
+            <ul
+              class="bot-list"
+              role="list"
+              aria-label="Practice bots you can play"
+            >
               <li>ClawBreak</li>
               <li>TheFarJaw</li>
             </ul>
@@ -1628,7 +1641,7 @@
           </p>
         </div>
 
-        <ul class="shots">
+        <ul class="shots" role="list">
           <li>
             <figure>
               <a
@@ -1703,7 +1716,7 @@
         <div class="mode-grid">
           <div class="mode-card">
             <div>
-              <h3>Aim error (in ball widths)</h3>
+              <h4>Aim error (in ball widths)</h4>
               <p>
                 How far you can shift the ghost-ball line, measured in ball
                 widths, before the shot stops going in. The left and right marks
@@ -1714,7 +1727,7 @@
           </div>
           <div class="mode-card">
             <div>
-              <h3>Contact point (side, follow and draw)</h3>
+              <h4>Contact point (side, follow and draw)</h4>
               <p>
                 See how side spin, follow and draw across the face of the cue
                 ball change the outcome. Rather than memorising one contact
@@ -1725,7 +1738,7 @@
           </div>
           <div class="mode-card">
             <div>
-              <h3>Power</h3>
+              <h4>Power</h4>
               <p>
                 Test how sensitive the position is to pace. Some shots have to
                 arrive at a given point on exactly the right speed; others
@@ -1735,7 +1748,7 @@
           </div>
           <div class="mode-card">
             <div>
-              <h3>Cue elevation</h3>
+              <h4>Cue elevation</h4>
               <p>
                 From a nearly level cue to an almost upright one, check how
                 elevation changes the route and the result. It is especially
@@ -1771,7 +1784,7 @@
           </p>
         </div>
 
-        <ul class="shots">
+        <ul class="shots" role="list">
           <li class="narrow">
             <figure>
               <a
@@ -1815,7 +1828,7 @@
           </p>
         </div>
 
-        <ul class="shots">
+        <ul class="shots" role="list">
           <li>
             <figure>
               <a
@@ -1899,7 +1912,7 @@
             <li>Which value actually makes this shot difficult?</li>
           </ul>
 
-          <ul class="shots">
+          <ul class="shots" role="list">
             <li class="credit">
               <figure>
                 <a href="./blog3.html">
@@ -1973,7 +1986,7 @@
           spin says it will, or the route is nonsense.
         </p>
 
-        <ul class="feature-list">
+        <ul class="feature-list" role="list">
           <li>
             <div>
               <strong>Realistic cushion and ball physics</strong>
@@ -2026,7 +2039,7 @@
         <p class="section-label">FAQ</p>
         <h2 id="faq-title">Free three-cushion billiards: common questions</h2>
 
-        <ul class="faq-list">
+        <ul class="faq-list" role="list">
           <li>
             <details open>
               <summary>
@@ -2240,15 +2253,27 @@
         <a href="./">all billiards games</a> and
         <a href="./practice">practice mode</a>.
       </p>
-      <ul class="lang-list" aria-label="Other languages">
-        <li><a href="./chinese" hreflang="zh-Hant">中文 三库开伦</a></li>
-        <li><a href="./spanish" hreflang="es">Billar a tres bandas</a></li>
-        <li><a href="./dutch" hreflang="nl">Driebanden biljart</a></li>
-        <li><a href="./korean" hreflang="ko">3쿠션 당구</a></li>
-        <li><a href="./japanese" hreflang="ja">スリークッション</a></li>
-        <li><a href="./turkish" hreflang="tr">Üç bant bilardo</a></li>
-        <li><a href="./german" hreflang="de">Dreiband Billard</a></li>
-        <li><a href="./vietnamese" hreflang="vi">Bida 3 băng</a></li>
+      <ul class="lang-list" role="list" aria-label="Other languages">
+        <li>
+          <a href="./chinese" hreflang="zh-Hant" lang="zh-Hant">
+            中文 三库开伦
+          </a>
+        </li>
+        <li>
+          <a href="./spanish" hreflang="es" lang="es">Billar a tres bandas</a>
+        </li>
+        <li>
+          <a href="./dutch" hreflang="nl" lang="nl">Driebanden biljart</a>
+        </li>
+        <li><a href="./korean" hreflang="ko" lang="ko">3쿠션 당구</a></li>
+        <li>
+          <a href="./japanese" hreflang="ja" lang="ja">スリークッション</a>
+        </li>
+        <li><a href="./turkish" hreflang="tr" lang="tr">Üç bant bilardo</a></li>
+        <li>
+          <a href="./german" hreflang="de" lang="de">Dreiband Billard</a>
+        </li>
+        <li><a href="./vietnamese" hreflang="vi" lang="vi">Bida 3 băng</a></li>
       </ul>
     </footer>
 
@@ -2256,7 +2281,7 @@
       fetch("https://billiards-network.onrender.com/api/usage/threecushion", {
         method: "PUT",
         mode: "cors",
-      }).catch(() => {})
+      }).catch(() => {});
     </script>
   </body>
 </html>
