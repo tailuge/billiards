@@ -257,9 +257,10 @@ export class Cue {
     }
     const hitOffset = this.hitAnimationWeight * curveVal * 2 * R
     const strokeX = (1 - this.hitAnimationWeight) * swing - hitOffset
-    const strokeZ = (0.15 + Math.min(this.t / 5, 0.25)) * hitOffset
-
-    this.restZ = Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R)
+    // The stroke is axial only: inside tiltMesh, cueBody.position.x already
+    // runs along the cue, so a local z term would translate the shaft across
+    // itself (dropping it through any ball sitting behind the cue ball).
+    this.restZ = Math.max(-0.5 * R, this.aim.offset.y * R)
     const z = this.hitLift !== 0 ? Cue.maxHitLift * R : this.restZ
     for (const c of this.cues) {
       c.cueBody.position.set(
