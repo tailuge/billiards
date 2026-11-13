@@ -378,10 +378,12 @@ export class LobbyIndicator {
 
   /**
    * The game the reader is playing, as the mark shown left of their own name:
-   * the same map the tooltip uses. This page's ruleType carries a suffix in
-   * bot, exam, speedrun and club games, so it is the base that names the rule;
-   * a replay, a spectator or any base the map does not know shows nothing
-   * rather than printing the label as text.
+   * the same map the tooltip uses. This reads the rules object rather than
+   * `ruleType`: in replay and spectate `ruleType` is the presence label
+   * ("replay", "spectator"), while the rules were built from the URL's
+   * `ruletype` and so still name the game being watched. The base names the
+   * rule in bot, exam, speedrun and club games, and any base the map does not
+   * know shows nothing rather than printing the label as text.
    *
    * Its own element, like the lobby icon: inside the name's own text the mark's
    * fallback font gave the line a taller box than the name's and the pair sat
@@ -389,7 +391,7 @@ export class LobbyIndicator {
    * instead, and its size is the CSS's to set without moving the name.
    */
   private ruleBadge(): string {
-    const base = this.ruleType.split("-")[0]
+    const base = this.rules.rulename.split("-")[0]
     const emoji = ruleTypeMap[base]?.emoji
     return emoji ? `<span class="lobby-rule">${emoji}</span>` : ""
   }

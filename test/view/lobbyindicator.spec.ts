@@ -400,6 +400,26 @@ describe("LobbyIndicator", () => {
     await indicator2.stop()
   })
 
+  it("shows the watched rule's emoji in replay and spectate modes", async () => {
+    const mockRules = { rulename: "snooker" } as any
+    const ruleBadge = () =>
+      document
+        .getElementById("lobbyOverlay")
+        ?.querySelector(".lobby-count .lobby-rule")?.textContent
+
+    const replay = new LobbyIndicator(false, true, mockRules)
+    await replay.init()
+    expect(ruleBadge()).toBe("⚫")
+    await replay.stop()
+
+    Session.reset()
+    Session.init("p1", "Player 1", "table-1", true)
+    const spectator = new LobbyIndicator(false, false, mockRules)
+    await spectator.init()
+    expect(ruleBadge()).toBe("⚫")
+    await spectator.stop()
+  })
+
   it("keeps the watcher's name when replay playback overwrites the session name", async () => {
     const mockRules = { rulename: "nineball" } as any
     Session.init("p1", "Player 1", "table-1", false)
