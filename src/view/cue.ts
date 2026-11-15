@@ -158,12 +158,19 @@ export class Cue {
     }
   }
 
-  aimAtNext(cueball, ball) {
-    if (!ball) {
-      return
+  /** Point the cue at the centre of `ball`, then move it clear of anything it
+   * would otherwise pass through, when a table is supplied. The clearance
+   * must not depend on the aim controls being enabled: this runs on turn
+   * transitions (e.g. the gap between our shot and the opponent's update)
+   * while they are still disabled. */
+  aimAtNext(cueball, ball, table?: Table) {
+    if (ball) {
+      const lineTo = norm(this.tempVec.copy(ball.pos).sub(cueball.pos))
+      this.aim.angle = atan2(lineTo.y, lineTo.x)
     }
-    const lineTo = norm(this.tempVec.copy(ball.pos).sub(cueball.pos))
-    this.aim.angle = atan2(lineTo.y, lineTo.x)
+    if (table) {
+      this.avoidCueTouchingOtherBall(table)
+    }
   }
 
   adjustSpin(delta: Vector3, table: Table) {
@@ -212,17 +219,30 @@ export class Cue {
     }
 
     // Once the offset is clamped at offCenterLimit, raise the elevation
-    // instead (0.01 at a time, up to a maximum of 0.05). Use the setter so
-    // the elevation indicator updates and any analysis-mode aimLimits apply.
+    // instead (0.01 at a time, up to a maximum of 0.05).
     let elevationSteps = 0
     while (elevationSteps < 5 && this.intersectsAnything(table)) {
-      this.setElevation(this.aim.elevation + 0.01)
+      this.raiseElevation(0.01)
       elevationSteps++
     }
 
     if (n > 1 || elevationSteps > 0) {
       this.updateAimInput()
     }
+  }
+
+  /** Raise the cue elevation for the automatic clearance pass. Unlike the
+   * user-facing setElevation it is not gated on the aim controls being
+   * enabled, because aimAtNext clears the cue while they are still disabled. */
+  private raiseElevation(delta: number) {
+    let elevation = this.aim.elevation + delta
+    if (this.aimLimits) {
+      elevation = Math.min(
+        this.aimLimits.elevationMax,
+        Math.max(this.aimLimits.elevationMin, elevation)
+      )
+    }
+    this.aim.elevation = elevation
   }
 
   updateAimInput() {

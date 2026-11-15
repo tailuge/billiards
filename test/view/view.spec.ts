@@ -54,7 +54,7 @@ describe("View", () => {
     // Set camera to aimView and configure grace period
     view.camera.forceMode(view.camera.aimView)
     view.camera.aimGraceStartT = 1.0
-    view.camera.t = 3.0 // elapsed time is 2 seconds, which is less than 5 seconds (grace period active)
+    view.camera.t = 2.5 // elapsed time is 1.5 seconds, which is less than the 2 second grace period
 
     // Override isInMotionNotVisible to return true
     view.isInMotionNotVisible = () => true
@@ -68,8 +68,8 @@ describe("View", () => {
     view.render()
     expect(suggestModeCalled).to.be.false
 
-    // Advance t past grace period (e.g. 6.1 seconds since grace start)
-    view.camera.t = 7.1
+    // Advance t past the grace period (2.1 seconds since grace start)
+    view.camera.t = 3.1
     view.render()
     expect(suggestModeCalled).to.be.true
     done()

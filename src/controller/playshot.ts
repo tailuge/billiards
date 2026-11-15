@@ -49,7 +49,8 @@ export class PlayShot extends ControllerBase {
     this.container.recorder.updateBreak(outcome, isPartOfBreak, isEndOfGame)
     table.cue?.aimAtNext(
       table.cueball,
-      this.container.rules.nextCandidateBall()
+      this.container.rules.nextCandidateBall(),
+      table
     )
 
     if (globalThis.parent !== (globalThis as any)) {

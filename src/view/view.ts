@@ -140,7 +140,7 @@ export class View {
   render() {
     const isGracePeriod =
       this.camera.aimGraceStartT !== undefined &&
-      this.camera.t - this.camera.aimGraceStartT < 5
+      this.camera.t - this.camera.aimGraceStartT < 2
     if (
       !isGracePeriod &&
       this.isInMotionNotVisible() &&

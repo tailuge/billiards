@@ -45,13 +45,15 @@ export class Aim extends ControllerBase {
     table.cue.aim.i = table.balls.indexOf(table.cueball)
     table.cue.moveTo(table.cueball.pos)
     if (!customShot) {
+      table.cue.aim.elevation = 0
       table.cue.aimAtNext(
         table.cueball,
-        this.container.rules.nextCandidateBall()
+        this.container.rules.nextCandidateBall(),
+        table
       )
-      table.cue.aim.elevation = 0
+    } else {
+      table.cue.avoidCueTouchingOtherBall(table)
     }
-    table.cue.avoidCueTouchingOtherBall(table)
     this.container.view.camera.aimzLerp = Camera.aimzDefaultLerp
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
     table.cue.updateAimInput()

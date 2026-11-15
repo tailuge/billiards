@@ -288,6 +288,24 @@ describe("Cue", () => {
     expect(cue.aim.offset.length()).to.be.closeTo(offCenterLimit, 0.001)
   })
 
+  test("aimAtNext clears the cue while the aim controls are disabled", () => {
+    const cueball = new Ball(zero)
+    const target = new Ball(new Vector3(3 * R, 0, 0))
+    const blocker = new Ball(new Vector3(-4 * R, 0, 0))
+    const table = new Table([cueball, target, blocker])
+    updateMatrix(table)
+    const cue = new Cue()
+    cue.moveTo(cueball.pos)
+    cue.aimInputs = aimInputsStub({ isDisabled: () => true })
+
+    cue.aimAtNext(cueball, target, table)
+
+    // The elevation fallback must run even though the controls are disabled:
+    // auto-aim happens on turn transitions, before Aim.onFirst enables them.
+    expect(cue.aim.elevation).to.be.greaterThan(0)
+    expect(cue.intersectsAnything(table)).to.be.false
+  })
+
   test("avoidCueTouchingOtherBall raises elevation for a real intersection", () => {
     const { cue, table } = createCueAndTable(new Vector3(-4 * R, 0, 0))
     cue.aimInputs = aimInputsStub()
