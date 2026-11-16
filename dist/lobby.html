@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Billiards Lobby</title>
+    <title>Billiards Lobby — Free Online Multiplayer Pool &amp; Snooker</title>
     <meta
       name="description"
       content="Free multiplayer lobby for Billiards. Find matches, challenge players, and play realistic pool online with accurate physics."
@@ -16,12 +16,16 @@
     <link rel="canonical" href="https://billiards.tailuge.workers.dev/lobby" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-    <meta property="og:title" content="Tailuge Billiards" />
+    <meta
+      property="og:title"
+      content="Billiards Lobby — Free Online Multiplayer Pool &amp; Snooker"
+    />
     <meta
       property="og:description"
-      content="Free multiplayer billiards — 무료 온라인 당구 게임. 3쿠션, 9볼, 스누커를 실제 물리 엔진으로 즐기고 다른 플레이어에게 도전하세요."
+      content="Free multiplayer lobby for Billiards. Find matches, challenge players, and play realistic pool online with accurate physics."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Tailuge Billiards" />
     <meta
       property="og:url"
       content="https://billiards.tailuge.workers.dev/lobby"
@@ -31,15 +35,31 @@
       content="https://billiards.tailuge.workers.dev/images/billiards.png"
     />
     <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:video" content="https://youtu.be/bAeiRQcQuyg" />
+    <meta property="og:image:height" content="600" />
+    <meta
+      property="og:image:alt"
+      content="Break building pool table mid-break: cue ball in the foreground, numbered balls scattered across the blue baize"
+    />
+    <meta
+      property="og:video:url"
+      content="https://www.youtube.com/embed/bAeiRQcQuyg"
+    />
+    <meta
+      property="og:video:secure_url"
+      content="https://www.youtube.com/embed/bAeiRQcQuyg"
+    />
     <meta property="og:video:type" content="text/html" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Multiplayer Billiards - Free" />
+    <meta
+      name="twitter:title"
+      content="Billiards Lobby — Free Online Multiplayer Pool &amp; Snooker"
+    />
     <meta
       name="twitter:description"
-      content="Free multiplayer billiards — 무료 온라인 당구 게임. 3쿠션, 9볼, 스누커를 실제 물리 엔진으로 즐기고 다른 플레이어에게 도전하세요."
+      content="Free multiplayer lobby for Billiards. Find matches, challenge players, and play realistic pool online with accurate physics."
     />
     <meta
       name="twitter:image"
@@ -52,10 +72,10 @@
         "@type": "VideoGame",
         "name": "Billiards Pool Game",
         "alternateName": ["온라인 당구 - 무료 멀티플레이어", "당구 로비"],
-        "url": "https://billiards.tailuge.workers.dev/lobby.html",
+        "url": "https://billiards.tailuge.workers.dev/lobby",
         "image": "https://billiards.tailuge.workers.dev/images/billiards.png",
         "description": "Multiplayer lobby for the open source pool and billiards by tailuge",
-        "inLanguage": ["en", "ko"],
+        "inLanguage": "en",
         "applicationCategory": "GameApplication",
         "operatingSystem": "Web",
         "offers": {
@@ -195,6 +215,21 @@
         }
       }
 
+      /* The page heading sits inside the panel, above the intro, where the
+         static copy lives. Styled like the section headings so it reads as a
+         label rather than a banner; column-span keeps it out of the columns. */
+      .site-links-title {
+        column-span: all;
+        margin: 0 0 0.35rem;
+        color: #757575;
+        font-size: 0.75rem;
+        line-height: 1.4;
+      }
+
+      html[theme="dark"] .site-links-title {
+        color: #999;
+      }
+
       /* Spans both columns so the intro reads as an opening paragraph rather
          than as the first item of the first column. */
       .site-links-intro {
@@ -206,6 +241,21 @@
       }
 
       html[theme="dark"] .site-links-intro {
+        color: #999;
+      }
+
+      /* The only copy on this page that is not shared with another page, so it
+         sits at the top of the index. Left in the column flow rather than
+         spanned across both columns, which would push lines past 140
+         characters at 0.75rem. */
+      .site-links-copy {
+        margin: 0 0 0.6rem;
+        color: #757575;
+        font-size: 0.75rem;
+        line-height: 1.4;
+      }
+
+      html[theme="dark"] .site-links-copy {
         color: #999;
       }
 
@@ -267,22 +317,6 @@
   <body>
     <lobby-app></lobby-app>
 
-    <h1 hidden>Billiards Lobby — free online pool, snooker and carom</h1>
-
-    <noscript>
-      <h1>Billiards Lobby — free online pool, snooker and carom</h1>
-      <p>
-        A free multiplayer lobby for an open source billiards game built on a
-        real physics engine — three-cushion carom, 9-ball, 8-ball and snooker,
-        played against opponents around the world on desktop or mobile.
-      </p>
-      <p>
-        The live player list and challenges need JavaScript, so they are not
-        available in this view. The games themselves run entirely in the browser
-        with nothing to download, install or sign up for.
-      </p>
-    </noscript>
-
     <nav class="site-links" aria-label="Billiards pages">
       <details class="site-links-more">
         <summary>
@@ -291,6 +325,10 @@
         </summary>
 
         <div class="site-links-panel">
+          <h1 class="site-links-title">
+            Billiards Lobby — free online pool, snooker and carom
+          </h1>
+
           <p class="site-links-intro">
             Free online billiards, pool, snooker and three-cushion carom in a 3D
             browser simulator. Snooker, 9-ball, 8-ball, three-cushion and Korean
@@ -302,16 +340,28 @@
             are available in eight other languages.
           </p>
 
+          <h2>How the lobby works</h2>
+          <p class="site-links-copy">
+            The lobby lists who is online right now and which game they are
+            waiting for, and shows the arenas running this hour. Challenge
+            someone from the list, or open a table and let the next arrival take
+            the other end. Nine-ball, eight-ball, snooker, three-cushion and
+            Korean four-ball share one lobby; you pick the game when you sit
+            down.
+          </p>
+          <p class="site-links-copy">
+            Nothing to install, and no account to create. Matches run in the
+            browser on the same physics engine as solo play. Spin, collision
+            throw and cushion response come from a tuned constants table. High
+            breaks, recent results and the arena leaderboard sit beside the
+            player list, so you can see how well people are playing before you
+            join. Chat is built in. If nobody is around, this page still works
+            as a practice table, a drill set-up, or a two-player game on one
+            device.
+          </p>
+
           <h2>About</h2>
           <ul>
-            <li>
-              <a href="./about">About this project</a>
-              <span class="site-links-desc">
-                What the simulator is, the rule sets it plays and the published
-                physics behind the shot, plus where to read and contribute to
-                the code.
-              </span>
-            </li>
             <li>
               <a href="./nineball">Free 9-ball pool</a>
               <span class="site-links-desc">
