@@ -3213,7 +3213,7 @@ __metadata:
     jest-environment-jsdom: "npm:30.5.2"
     jsoncrush: "npm:^1.1.8"
     postcss: "npm:8.5.33"
-    postcss-html: "npm:2.0.0"
+    postcss-html: "npm:2.0.1"
     prettier: "npm:3.10.1"
     stylelint: "npm:18.0.0"
     stylelint-config-standard: "npm:41.0.0"
@@ -6874,16 +6874,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-html@npm:2.0.0":
-  version: 2.0.0
-  resolution: "postcss-html@npm:2.0.0"
+"postcss-html@npm:2.0.1":
+  version: 2.0.1
+  resolution: "postcss-html@npm:2.0.1"
   dependencies:
     htmlparser2: "npm:^9.1.0"
     js-tokens: "npm:^9.0.0"
     postcss-safe-parser: "npm:^7.0.1"
   peerDependencies:
     postcss: ^8.5.0
-  checksum: 10c0/7c11a7711faf56cedcdf288bbc18091b1ea5ad49327689fd049b454cc336950147f620763a2bf0b0cbcc11c1ace540d9a91de965458a5eb789a803a8ebde3b65
+  checksum: 10c0/129320f6a354d1da9139275d4d95bc7a7473a4f849993cccca79e022007da54e25fea48defa7870d6cd33a3e4b1898b6a8d3e646f1743ea6c76b9fd61154aa54
   languageName: node
   linkType: hard
 
