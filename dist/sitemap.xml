@@ -66,11 +66,6 @@
     <lastmod>2026-08-23</lastmod>
   </url>
   <url>
-    <loc>https://tailuge.github.io/billiards/dist/fit/viewer.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/fit/viewer" />
-    <lastmod>2026-08-23</lastmod>
-  </url>
-  <url>
     <loc>https://tailuge.github.io/billiards/dist/blog1.html</loc>
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/blog1" />
     <lastmod>2026-08-23</lastmod>
@@ -164,11 +159,6 @@
     <loc>https://tailuge.github.io/billiards/dist/eightball.html</loc>
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/eightball" />
     <lastmod>2026-10-06</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/about.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/about" />
-    <lastmod>2026-10-08</lastmod>
   </url>
   <url>
     <loc>https://tailuge.github.io/billiards/dist/fit/research.html</loc>

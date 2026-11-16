@@ -59,12 +59,12 @@
     <link
       rel="alternate"
       hreflang="en"
-      href="https://billiards.tailuge.workers.dev/lobby"
+      href="https://billiards.tailuge.workers.dev/threecushion"
     />
     <link
       rel="alternate"
       hreflang="x-default"
-      href="https://billiards.tailuge.workers.dev/lobby"
+      href="https://billiards.tailuge.workers.dev/threecushion"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
@@ -454,6 +454,17 @@
         border-radius: 12px;
         border: 1px solid var(--line-strong);
         box-shadow: 0 20px 60px rgb(0 0 0 / 50%);
+      }
+
+      .hero-visual .hero-sticker {
+        position: absolute;
+        top: -14px;
+        right: 12px;
+        width: clamp(110px, 26%, 190px);
+        border-radius: 10px;
+        border: 1px solid rgb(255 255 255 / 40%);
+        box-shadow: 0 10px 28px rgb(0 0 0 / 55%);
+        transform: rotate(4deg);
       }
 
       .hero-visual figcaption {
@@ -1005,6 +1016,15 @@
             width="630"
             height="500"
             fetchpriority="high"
+          />
+          <img
+            class="hero-sticker"
+            src="images/dm.jpg"
+            alt="キャロム台を真上から見た俯瞰図"
+            width="1200"
+            height="800"
+            loading="lazy"
+            decoding="async"
           />
           <figcaption>実際のゲーム画面</figcaption>
         </figure>

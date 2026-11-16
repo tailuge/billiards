@@ -57,12 +57,12 @@
     <link
       rel="alternate"
       hreflang="en"
-      href="https://billiards.tailuge.workers.dev/lobby"
+      href="https://billiards.tailuge.workers.dev/threecushion"
     />
     <link
       rel="alternate"
       hreflang="x-default"
-      href="https://billiards.tailuge.workers.dev/lobby"
+      href="https://billiards.tailuge.workers.dev/threecushion"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
@@ -500,6 +500,14 @@
         line-height: 1.32;
       }
 
+      .subhead {
+        max-width: 620px;
+        margin: 40px 0 12px;
+        font-size: clamp(1.1rem, 2vw, 1.35rem);
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+
       .section-lede {
         max-width: 560px;
         margin-bottom: 36px;
@@ -803,6 +811,7 @@
       </a>
       <nav class="site-nav" aria-label="Menú principal">
         <a href="#juegos">Juegos</a>
+        <a href="#como-jugar">Cómo jugar</a>
         <a href="#multijugador">Partidas Online</a>
         <a href="#caracteristicas">Características</a>
         <a class="nav-lobby" href="./lobby">Lobby Online</a>
@@ -848,7 +857,7 @@
             >
           </div>
           <p class="hero-note">
-            <span>PC y móvil</span>
+            <span>PC, tablet y celular</span>
             <span>Ratón · control táctil</span>
             <span>Partidas online en vivo</span>
           </p>
@@ -868,6 +877,8 @@
             alt="Mesa de billar de carambola - vista superior"
             width="1200"
             height="800"
+            loading="lazy"
+            decoding="async"
           />
           <figcaption>Partida en la mesa de tres bandas</figcaption>
         </figure>
@@ -932,6 +943,95 @@
             >mesa pequeña de práctica</a
           >
           antes de entrar en partida.
+        </p>
+      </section>
+
+      <!-- ── How to play ────────────────────────── -->
+      <section
+        class="section"
+        id="como-jugar"
+        aria-labelledby="como-jugar-title"
+      >
+        <p class="section-label">Cómo se juega</p>
+        <h2 id="como-jugar-title">
+          Billar de carambola a 3 bandas: reglas, bandas y serie
+        </h2>
+        <p class="section-lede">
+          Si vienes del pool, aquí cambian las reglas: la mesa no tiene troneras
+          y se juega con tres bolas. Así funciona el billar 3 bandas, también
+          llamado carambola a tres bandas, en la mesa real y en este juego.
+        </p>
+
+        <ul class="feature-list">
+          <li>
+            <div>
+              <strong>La carambola</strong>
+              <p>
+                Una carambola es un solo golpe con el que la bola jugadora toca
+                las otras dos. No hay que embocar nada: el objetivo es el
+                contacto. Cada carambola válida suma un punto y te deja seguir
+                en la mesa.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Las tres bandas</strong>
+              <p>
+                La bola jugadora debe tocar al menos tres bandas antes de llegar
+                a la segunda bola. No hacen falta tres bandas distintas: tres
+                contactos en la misma banda también valen. El efecto y la
+                velocidad deciden si llegas a la tercera banda con la dirección
+                correcta.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>La serie y el final</strong>
+              <p>
+                Mientras aciertas sigues tirando y sumas tu serie; si fallas o
+                cometes falta, pasa el turno. La partida acaba cuando alguien
+                llega al número de carambolas acordado: en una partida rápida
+                pueden ser 7, y en competición, 40 o más.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Mesa, bolas y taco</strong>
+              <p>
+                La mesa de billar no tiene troneras y su superficie de juego
+                mide 2,84 × 1,42 m. Se juega con tres bolas de 61,5 mm de
+                diámetro: blanca, amarilla y roja. El taco es un taco de billar
+                de carambola y el punto de ataque manda: de ahí sale la
+                diferencia entre una bola que vuelve y una que se queda corta.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h3 class="subhead">
+          Billar francés, pool y snooker: en qué se diferencian
+        </h3>
+        <p class="section-lede">
+          El billar francés o carambola es la familia del tres bandas: mesa sin
+          troneras y tres bolas. El pool, o billar americano, usa troneras y
+          bolas numeradas; el snooker juega con 22 bolas en una mesa mayor. Si
+          lo que quieres es pool, prueba el
+          <a href="./?ruletype=eightball&userName=Ochoa"
+            >billar americano a 8 bolas</a
+          >
+          o el
+          <a href="./?ruletype=nineball&userName=Nona">billar a 9 bolas</a>;
+          esta página es carambola a tres bandas.
+        </p>
+
+        <p class="practice-line">
+          ¿Ya tienes la mecánica? Mide tu nivel en el
+          <a href="https://billiards.tailuge.workers.dev/exam/threecushion"
+            >examen de tres bandas</a
+          >.
         </p>
       </section>
 
@@ -1005,10 +1105,11 @@
           </li>
           <li>
             <div>
-              <strong>PC y móvil, sin app ni descarga</strong>
+              <strong>PC, tablet y celular, sin app ni descarga</strong>
               <p>
-                Juega con ratón en PC o con controles táctiles en el móvil. Abre
-                la mesa en un navegador moderno y empieza, sin instalación.
+                Juega con ratón en la computadora o con controles táctiles en el
+                celular o la tablet. Abre la mesa en un navegador moderno y
+                empieza, sin instalar nada.
               </p>
             </div>
           </li>
@@ -1031,6 +1132,30 @@
             </div>
           </li>
         </ul>
+      </section>
+
+      <!-- ── Where it is played ─────────────────── -->
+      <section
+        class="section"
+        id="donde-se-juega"
+        aria-labelledby="donde-se-juega-title"
+      >
+        <p class="section-label">Dónde se juega</p>
+        <h2 id="donde-se-juega-title">
+          La carambola a tres bandas, con federación propia
+        </h2>
+        <p class="section-lede">
+          El tres bandas se juega en sala, sobre mesa de match y sin troneras, y
+          tiene federación propia en España, Colombia y México:
+          <a href="https://rfeb.org/">la Real Federación Española de Billar</a>,
+          <a href="https://fecolbi.com/">la Federación Colombiana de Billar</a>
+          y
+          <a href="https://billar.org.mx/">la Federación Mexicana de Billar</a>.
+          En Colombia la carambola libre y la carambola a tres bandas son
+          modalidades federadas, y Bogotá ha sido sede de la Copa Mundo de
+          Billar. Sus reglamentos son la referencia de las reglas que aplica
+          este juego.
+        </p>
       </section>
 
       <!-- ── Final CTA ──────────────────────────── -->
