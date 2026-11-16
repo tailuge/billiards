@@ -127,12 +127,22 @@
         min-width: 80px;
       }
 
+      .aim-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
       footer {
         margin-top: 20px;
         font-size: 16px;
         color: #666;
         text-align: center;
         width: 100%;
+      }
+
+      footer a {
+        color: #666;
       }
 
       .topview {
@@ -341,7 +351,7 @@
         <div class="diagram-group-header">
           <span>Aim</span>
         </div>
-        <div style="display: flex; flex-direction: column; align-items: center">
+        <div class="aim-column">
           <div id="aim-ball-container">
             <div id="aim-ball"></div>
           </div>
@@ -358,7 +368,7 @@
 
     <footer>
       Data source:
-      <a href="https://www.youtube.com/c/NightCaféBilliard" style="color: #666"
+      <a href="https://www.youtube.com/c/NightCaféBilliard"
         >Night Café Billiard</a
       >
       - Match between Cemal Cay and Ersin Dogan in December 2022

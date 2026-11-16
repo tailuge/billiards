@@ -47,27 +47,105 @@
       .tol-input {
         width: 45px;
       }
+
+      .subtitle {
+        font-size: 10px;
+        color: #666;
+      }
+
+      .main-row {
+        display: flex;
+        gap: 2px;
+        align-items: flex-start;
+        margin-top: 2px;
+      }
+
+      .sim-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .button-grid {
+        display: flex;
+        gap: 1px;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 350px;
+      }
+
+      .check-label {
+        display: flex;
+        align-items: center;
+        gap: 1px;
+      }
+
+      .shot-select {
+        font-size: 11px;
+        font-family: monospace;
+        width: 18ch;
+      }
+
+      .optimiser-select {
+        font-size: 11px;
+        font-family: monospace;
+      }
+
+      #simplifyTol {
+        width: 80px;
+      }
+
+      #cutoffInput {
+        width: 40px;
+      }
+
+      #rmseCanvas {
+        margin-top: 1px;
+        border: 1px solid #c0c0c0;
+      }
+
+      #paramTable {
+        border-collapse: collapse;
+      }
+
+      .canvas-wrap {
+        position: relative;
+        display: inline-block;
+      }
+
+      #c {
+        margin-top: 0;
+        border: 1px solid #ccc;
+      }
+
+      #playBtn {
+        position: absolute;
+        bottom: 4px;
+        right: 36px;
+        font-size: 10px;
+      }
+
+      #editBtn {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        font-size: 10px;
+      }
+
+      #report {
+        font-size: 9px;
+      }
     </style>
   </head>
   <body>
     <h1 hidden>Billiards Physics Constants Optimiser</h1>
-    <div style="font-size: 10px; color: #666">
+    <div class="subtitle">
       Constants Optimiser - Nelder-Mead / Particle Swarm
     </div>
-    <div
-      style="display: flex; gap: 2px; align-items: flex-start; margin-top: 2px"
-    >
-      <div style="display: flex; flex-direction: column; align-items: center">
+    <div class="main-row">
+      <div class="sim-column">
         <textarea id="simEdit" rows="12" cols="44" disabled></textarea>
-        <div
-          style="
-            display: flex;
-            gap: 1px;
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 350px;
-          "
-        >
+        <div class="button-grid">
           <button id="simBtn" type="button" disabled>View Shot</button>
           <button id="saveBtn" type="button" disabled>Save JSON</button>
           <button id="simplifyBtn" type="button" disabled>Simplify</button>
@@ -80,31 +158,23 @@
               max="1000"
               step="5"
               class="tol-input"
-              style="width: 80px"
             /><span id="simplifyTolVal">100</span></label
           >
-          <select
-            id="trajectoryShots"
-            style="font-size: 11px; font-family: monospace; width: 18ch"
-          >
+          <select id="trajectoryShots" class="shot-select">
             <option value="">trajectory shots</option>
           </select>
-          <label style="display: flex; align-items: center; gap: 1px"
+          <label class="check-label"
             ><input type="checkbox" id="trackAll" />track all</label
           >
-          <label style="display: flex; align-items: center; gap: 1px"
+          <label class="check-label"
             >cutoff(s):<input
               type="number"
               id="cutoffInput"
               value="4"
               min="0"
               step="0.5"
-              style="width: 40px"
           /></label>
-          <select
-            id="optimiserSelect"
-            style="font-size: 11px; font-family: monospace"
-          >
+          <select id="optimiserSelect" class="optimiser-select">
             <option value="nm">Nelder-Mead</option>
             <option value="pso">PSO</option>
           </select>
@@ -113,15 +183,10 @@
         </div>
         <span id="status">Click 'view shot' to see the simulated path</span>
         <span id="optStatus">Iterations:0</span>
-        <canvas
-          id="rmseCanvas"
-          width="320"
-          height="86"
-          style="margin-top: 1px; border: 1px solid #c0c0c0"
-        ></canvas>
+        <canvas id="rmseCanvas" width="320" height="86"></canvas>
         <span id="rmseLabel">RMSE</span>
       </div>
-      <table id="paramTable" style="border-collapse: collapse">
+      <table id="paramTable">
         <thead>
           <tr>
             <th>tune</th>
@@ -136,26 +201,12 @@
       </table>
     </div>
 
-    <div style="position: relative; display: inline-block">
-      <canvas id="c" style="margin-top: 0; border: 1px solid #ccc"></canvas>
-      <button
-        id="playBtn"
-        type="button"
-        style="position: absolute; bottom: 4px; right: 36px; font-size: 10px"
-        disabled
-      >
-        play
-      </button>
-      <button
-        id="editBtn"
-        type="button"
-        style="position: absolute; bottom: 4px; right: 4px; font-size: 10px"
-        disabled
-      >
-        edit
-      </button>
+    <div class="canvas-wrap">
+      <canvas id="c"></canvas>
+      <button id="playBtn" type="button" disabled>play</button>
+      <button id="editBtn" type="button" disabled>edit</button>
     </div>
-    <pre id="report" style="font-size: 9px"></pre>
+    <pre id="report"></pre>
     <script type="module">
       import { runSim } from "./sim.js"
       import { redraw, HALF_W, HALF_H } from "./plot.js"

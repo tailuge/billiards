@@ -1102,6 +1102,21 @@ body.chromeless #panel .powerSliderContainer {
   color: #9a9a9a;
 }
 
+/* Screenshot above the keyword footnote. */
+.about-panel .about-shot {
+  display: block;
+  margin: 12px 0 0;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.about-panel .about-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .about-panel .help-row {
   display: flex;
   align-items: center;

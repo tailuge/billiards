@@ -122,6 +122,27 @@
         gap: 5px;
       }
 
+      .control-group.right {
+        margin-left: auto;
+      }
+
+      #btn-export {
+        border-color: #0f6;
+      }
+
+      .legend-velocity {
+        color: #0f6;
+      }
+
+      .legend-acceleration {
+        color: #f33;
+      }
+
+      .legend-hint {
+        color: #666;
+        margin-left: 10px;
+      }
+
       button {
         background: #2a2a2a;
         border: 1px solid #555;
@@ -201,11 +222,9 @@
           <div class="control-group">
             <button id="btn-play-pause" type="button">Play</button>
             <button id="btn-reset" type="button">Reset</button>
-            <button id="btn-export" type="button" style="border-color: #0f6">
-              Export
-            </button>
+            <button id="btn-export" type="button">Export</button>
           </div>
-          <div class="control-group" style="margin-left: auto">
+          <div class="control-group right">
             <span>Speed:</span>
             <select id="play-speed">
               <option value="0.25">0.25x</option>
@@ -219,11 +238,11 @@
 
         <div class="sparkline-container">
           <div class="sparkline-label">
-            <span style="color: #0f6">■ Velocity (m/s)</span> |
-            <span style="color: #f33"
+            <span class="legend-velocity">■ Velocity (m/s)</span> |
+            <span class="legend-acceleration"
               >■ -Acceleration &times; 10 (m/s&sup2;)</span
             >
-            <span style="color: #666; margin-left: 10px">- Click to scrub</span>
+            <span class="legend-hint">- Click to scrub</span>
           </div>
           <canvas id="sparkline-canvas" width="800" height="180"></canvas>
         </div>

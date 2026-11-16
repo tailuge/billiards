@@ -79,17 +79,60 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+
+      .app-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 2px;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 1px;
+        align-items: center;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 2px;
+        align-items: center;
+        margin-top: 2px;
+      }
+
+      .rmse-input {
+        width: 70px;
+      }
+
+      #status {
+        font-weight: bold;
+        margin-top: 2px;
+      }
+
+      #rmseLabel {
+        text-align: center;
+      }
+
+      .param-table-wrap {
+        flex: 1;
+      }
+
+      #plotContainer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        margin-top: 2px;
+        width: 100%;
+        justify-content: center;
+      }
     </style>
   </head>
   <body>
     <h1 hidden>Multi-Shot Billiards Physics Optimiser</h1>
-    <div style="font-size: 14px; font-weight: bold; margin-bottom: 2px">
-      Multi-Shot Physics Optimiser
-    </div>
+    <div class="app-title">Multi-Shot Physics Optimiser</div>
 
     <div class="container">
       <div class="controls">
-        <div style="display: flex; gap: 1px; align-items: center">
+        <div class="button-row">
           <button id="loadBtn" type="button">Load shots.json</button>
           <button id="clearBtn" type="button">Clear All</button>
           <button id="resetBtn" type="button">Reset</button>
@@ -107,7 +150,7 @@
               value="0"
               min="0"
               step="any"
-              style="width: 70px"
+              class="rmse-input"
           /></label>
           <label
             >max RMSE (cm)
@@ -117,13 +160,11 @@
               value="20"
               min="0"
               step="any"
-              style="width: 70px"
+              class="rmse-input"
           /></label>
         </div>
 
-        <div
-          style="display: flex; gap: 2px; align-items: center; margin-top: 2px"
-        >
+        <div class="toolbar">
           <label><input type="checkbox" id="trackAll" /> track all</label>
           <select id="optimiserSelect">
             <option value="nm">Nelder-Mead</option>
@@ -133,16 +174,14 @@
           <button id="stopBtn" type="button" disabled>Stop</button>
         </div>
 
-        <div id="status" style="font-weight: bold; margin-top: 2px">
-          Status: Idle
-        </div>
+        <div id="status">Status: Idle</div>
         <div id="optStatus">Iterations: 0</div>
 
         <canvas id="rmseCanvas" width="300" height="100"></canvas>
-        <div id="rmseLabel" style="text-align: center">Global RMSE</div>
+        <div id="rmseLabel">Global RMSE</div>
       </div>
 
-      <div style="flex: 1">
+      <div class="param-table-wrap">
         <table id="paramTable">
           <thead id="paramHeader">
             <tr>
@@ -159,17 +198,7 @@
       </div>
     </div>
 
-    <div
-      id="plotContainer"
-      style="
-        display: flex;
-        flex-wrap: wrap;
-        gap: 2px;
-        margin-top: 2px;
-        width: 100%;
-        justify-content: center;
-      "
-    ></div>
+    <div id="plotContainer"></div>
 
     <script type="module">
       import { runSim } from "./sim.js"

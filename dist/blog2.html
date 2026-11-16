@@ -197,6 +197,35 @@
         gap: 20px;
         flex-wrap: wrap;
       }
+
+      nav.back-bottom {
+        margin-top: 64px;
+        border-top: 1px solid #222;
+        padding-top: 32px;
+      }
+
+      .figure-tight {
+        margin: 32px 0;
+      }
+
+      .figure-link {
+        display: block;
+      }
+
+      .lineup-img {
+        display: block;
+        margin: 0 auto;
+        border: 1px solid #222;
+        image-rendering: pixelated;
+      }
+
+      .figure-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 4px;
+        border: 1px solid #222;
+      }
     </style>
   </head>
 
@@ -236,18 +265,13 @@
         and have a go.
       </p>
 
-      <figure style="margin: 32px 0">
-        <a href="./practice.html" style="display: block">
+      <figure class="figure-tight">
+        <a href="./practice.html" class="figure-link">
           <img
             src="./images/lineup.png"
             alt="Line up drill — balls along the centre line"
             loading="lazy"
-            style="
-              display: block;
-              margin: 0 auto;
-              border: 1px solid #222;
-              image-rendering: pixelated;
-            "
+            class="lineup-img"
           />
         </a>
       </figure>
@@ -265,32 +289,22 @@
         >
       </p>
 
-      <figure style="margin: 32px 0">
+      <figure class="figure-tight">
         <a
           href="https://scoreboard-tailuge.vercel.app/api/replay/482"
           rel="noopener noreferrer"
-          style="display: block"
+          class="figure-link"
         >
           <img
             src="./images/celebrate.jpg"
             alt="Cleared the line up"
             loading="lazy"
-            style="
-              width: 100%;
-              height: auto;
-              display: block;
-              border-radius: 4px;
-              border: 1px solid #222;
-            "
+            class="figure-img"
           />
         </a>
       </figure>
 
-      <nav
-        class="back"
-        aria-label="Bottom navigation"
-        style="margin-top: 64px; border-top: 1px solid #222; padding-top: 32px"
-      >
+      <nav class="back back-bottom" aria-label="Bottom navigation">
         <a href="./index.html">Play</a>
         <a href="./practice.html">Practice</a>
         <a
