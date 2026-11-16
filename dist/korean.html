@@ -792,6 +792,15 @@
         margin-bottom: 0;
       }
 
+      .lang-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
       /* ── Responsive ──────────────────────── */
 
       @media (width >= 640px) {
@@ -1184,6 +1193,37 @@
           >네이버 블로그 소개글</a
         >)
       </p>
+      <!-- [html-validate-disable-next no-redundant-role -- Safari drops list semantics when list-style: none or display: flex/grid is applied, so these lists carry role="list" to restore them] -->
+      <ul class="lang-list" role="list" aria-label="다른 언어">
+        <li>
+          <a href="./threecushion" hreflang="en" lang="en"
+            >3-cushion billiards</a
+          >
+        </li>
+        <li>
+          <a href="./chinese" hreflang="zh-Hant" lang="zh-Hant"
+            >中文 三库开伦</a
+          >
+        </li>
+        <li>
+          <a href="./spanish" hreflang="es" lang="es">Billar a tres bandas</a>
+        </li>
+        <li>
+          <a href="./dutch" hreflang="nl" lang="nl">Driebanden biljart</a>
+        </li>
+        <li>
+          <a href="./japanese" hreflang="ja" lang="ja">スリークッション</a>
+        </li>
+        <li>
+          <a href="./turkish" hreflang="tr" lang="tr">Üç bant bilardo</a>
+        </li>
+        <li>
+          <a href="./german" hreflang="de" lang="de">Dreiband Billard</a>
+        </li>
+        <li>
+          <a href="./vietnamese" hreflang="vi" lang="vi">Bida 3 băng</a>
+        </li>
+      </ul>
     </footer>
 
     <script>
