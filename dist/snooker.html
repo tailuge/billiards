@@ -37,46 +37,6 @@
       hreflang="x-default"
       href="https://billiards.tailuge.workers.dev/snooker"
     />
-    <link
-      rel="alternate"
-      hreflang="zh-Hant"
-      href="https://billiards.tailuge.workers.dev/chinese"
-    />
-    <link
-      rel="alternate"
-      hreflang="es"
-      href="https://billiards.tailuge.workers.dev/spanish"
-    />
-    <link
-      rel="alternate"
-      hreflang="nl"
-      href="https://billiards.tailuge.workers.dev/dutch"
-    />
-    <link
-      rel="alternate"
-      hreflang="ko"
-      href="https://billiards.tailuge.workers.dev/korean"
-    />
-    <link
-      rel="alternate"
-      hreflang="ja"
-      href="https://billiards.tailuge.workers.dev/japanese"
-    />
-    <link
-      rel="alternate"
-      hreflang="tr"
-      href="https://billiards.tailuge.workers.dev/turkish"
-    />
-    <link
-      rel="alternate"
-      hreflang="de"
-      href="https://billiards.tailuge.workers.dev/german"
-    />
-    <link
-      rel="alternate"
-      hreflang="vi"
-      href="https://billiards.tailuge.workers.dev/vietnamese"
-    />
 
     <meta
       property="og:title"
@@ -694,6 +654,25 @@
         width: fit-content;
       }
 
+      .mode-card figure {
+        margin: 18px 0 0;
+      }
+
+      .mode-card img {
+        display: block;
+        width: 100%;
+        max-width: 392px;
+        height: auto;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+      }
+
+      .mode-card figcaption {
+        margin-top: 8px;
+        color: var(--text-dim);
+        font-size: 0.78rem;
+      }
+
       /* ── Multiplayer ─────────────────────── */
 
       .multiplayer-panel {
@@ -896,6 +875,23 @@
         gap: 14px;
         padding: 20px 4px;
         border-bottom: 1px solid var(--line);
+      }
+
+      /* ── From the blog ──────────────────────── */
+
+      .blog-list {
+        max-width: 680px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid var(--line);
+      }
+
+      .blog-list li {
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+        color: var(--text-soft);
+        font-size: 0.92rem;
       }
 
       .feature-list li::before {
@@ -1270,6 +1266,19 @@
                 A compact three-red table that fits a small screen. Built for
                 touch controls, and a frame takes a couple of minutes.
               </p>
+              <figure>
+                <img
+                  src="./images/minisnook.png"
+                  alt="The 6ft mini snooker table: three reds and a few colours on a compact cloth"
+                  width="392"
+                  height="312"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <figcaption>
+                  The 6ft mini table: three reds, a handful of colours
+                </figcaption>
+              </figure>
             </div>
             <a
               class="btn btn-secondary"
@@ -1431,59 +1440,6 @@
         </div>
       </section>
 
-      <!-- ── Screenshots ────────────────────────── -->
-      <section class="section" aria-labelledby="screens-title">
-        <p class="section-label">On the table</p>
-        <h2 id="screens-title">Snooker that plays the same on a phone</h2>
-        <p class="section-lede">
-          Touch aiming, a top-down view for planning position and a close view
-          along the cue. Same physics, same frames, wherever you are.
-        </p>
-
-        <ul class="shots">
-          <li>
-            <figure>
-              <img
-                src="images/mobile1.jpg"
-                alt="Top-down camera view of a snooker table, used for planning position on a mobile screen"
-                width="360"
-                height="800"
-                loading="lazy"
-              />
-              <figcaption>
-                Top-down view: plan the position before you commit
-              </figcaption>
-            </figure>
-          </li>
-          <li>
-            <figure>
-              <img
-                src="images/mobile2.jpg"
-                alt="Aim view along the cue on a mobile touchscreen snooker game"
-                width="360"
-                height="800"
-                loading="lazy"
-              />
-              <figcaption>Aim view: line the cue up with a touch</figcaption>
-            </figure>
-          </li>
-          <li>
-            <figure>
-              <img
-                src="images/snooker1.jpg"
-                alt="Snooker aiming interface on a phone, with spin and power controls"
-                width="540"
-                height="1017"
-                loading="lazy"
-              />
-              <figcaption>
-                Spin, power and the position indicator on mobile
-              </figcaption>
-            </figure>
-          </li>
-        </ul>
-      </section>
-
       <!-- ── Features ───────────────────────────── -->
       <section
         class="section features-section"
@@ -1641,6 +1597,27 @@
                 tablet, laptop or desktop without installing anything.
               </p>
             </details>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ── From the blog ─────────────────────── -->
+      <section class="section" aria-labelledby="blog-title">
+        <p class="section-label">From the blog</p>
+        <h2 id="blog-title">Snooker notes, shots and table physics</h2>
+        <ul class="blog-list">
+          <li>
+            <a href="./blog4">Snooker maximum clearance on the small table</a>
+            — what the impossible 147 feeling looks like when the pockets are
+            generous.
+          </li>
+          <li>
+            <a href="./blog1">Why most pool games feel wrong</a>
+            — the cushion physics this snooker table is built on.
+          </li>
+          <li>
+            <a href="./blog3">Implementing Mathavan cushion physics</a>
+            — the research paper behind the cushions, throw and spin.
           </li>
         </ul>
       </section>
