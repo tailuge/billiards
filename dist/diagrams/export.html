@@ -432,7 +432,10 @@
       // Setup button — forward to three.html or practice.html
       document.getElementById("setup-btn")?.addEventListener("click", () => {
         if (!config) return
-        if (ruletype === "threecushion" || ruletype === "sagu") {
+        // Every carom rule the editor offers -- libre included -- is set up on
+        // three.html, which is the page with the shot editor and the rule's own
+        // layout; practice.html only drags pool and snooker balls about.
+        if (["threecushion", "libre", "sagu"].includes(ruletype)) {
           const cueBall = config.balls[config.shot.cueBallId]
           const ballsPos = config.balls.flatMap((b) => [b.pos.x, b.pos.y])
           const state = {

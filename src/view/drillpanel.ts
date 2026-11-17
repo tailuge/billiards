@@ -265,37 +265,45 @@ export class DrillPanel {
     this.analyseBtn.disabled = !isAiming || !hasLastShot
 
     if (this.previewActive) {
-      if (!isAiming) {
-        this.hidePreview()
-        return
+      this.updatePreview(t)
+    }
+  }
+
+  /**
+   * Keep the live preview in step with the aim: re-run it once the aim has been
+   * still for PREVIEW_DEBOUNCE, and drop it as soon as aiming ends.
+   */
+  private updatePreview(t: number) {
+    if (!(this.container.controller instanceof Aim)) {
+      this.hidePreview()
+      return
+    }
+
+    const a = this.container.table.cue.aim
+    const s = this.previewAimSnapshot!
+    const aimChanged =
+      a.angle !== s.angle ||
+      a.power !== s.power ||
+      a.offset.x !== s.ox ||
+      a.offset.y !== s.oy ||
+      a.elevation !== s.elevation
+
+    if (aimChanged) {
+      this.container.table.showTraces(false)
+      this.container.table.proximityIndicator.hide()
+      this.previewAimSnapshot = {
+        angle: a.angle,
+        power: a.power,
+        ox: a.offset.x,
+        oy: a.offset.y,
+        elevation: a.elevation,
       }
-
-      const a = this.container.table.cue.aim
-      const s = this.previewAimSnapshot!
-      const aimChanged =
-        a.angle !== s.angle ||
-        a.power !== s.power ||
-        a.offset.x !== s.ox ||
-        a.offset.y !== s.oy ||
-        a.elevation !== s.elevation
-
-      if (aimChanged) {
-        this.container.table.showTraces(false)
-        this.container.table.proximityIndicator.hide()
-        this.previewAimSnapshot = {
-          angle: a.angle,
-          power: a.power,
-          ox: a.offset.x,
-          oy: a.offset.y,
-          elevation: a.elevation,
-        }
-        this.pendingPreview = true
-        this.aimStableTime = 0
-      } else if (this.pendingPreview) {
-        this.aimStableTime += t
-        if (this.aimStableTime >= PREVIEW_DEBOUNCE) {
-          this.runPendingPreview()
-        }
+      this.pendingPreview = true
+      this.aimStableTime = 0
+    } else if (this.pendingPreview) {
+      this.aimStableTime += t
+      if (this.aimStableTime >= PREVIEW_DEBOUNCE) {
+        this.runPendingPreview()
       }
     }
   }

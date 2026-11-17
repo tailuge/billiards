@@ -430,6 +430,9 @@ export function initExam() {
     const cfg = configs[0]
     const ruleType = cfg.ruleType || "threecushion"
     const isThreeCushion = ruleType === "threecushion"
+    // The carom rules all have a shot editor on three.html; only the pool and
+    // snooker games fall back to practice.html, which just lays the balls out.
+    const isCarom = ["threecushion", "libre", "sagu"].includes(ruleType)
     const ballsPos = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
 
     const parent = svg.parentElement
@@ -496,11 +499,11 @@ export function initExam() {
     setupBtn.className = "setup-btn"
     setupBtn.style.cssText =
       "position:absolute;bottom:4%;right:15%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0"
-    setupBtn.title = isThreeCushion
+    setupBtn.title = isCarom
       ? "Open in three cushion research view"
       : "Open in practice layout view"
     setupBtn.addEventListener("click", () => {
-      if (isThreeCushion) {
+      if (isCarom) {
         const cueBall = cfg.balls[cfg.shot.cueBallId]
         const state = {
           diagram: true,
@@ -518,6 +521,10 @@ export function initExam() {
         }
         const p = new URLSearchParams()
         p.set("s", JSON.stringify(state))
+        // three.html reads its game type from the URL and fixes it for the
+        // page load, defaulting to three cushion -- so libre and sagu have to
+        // say which rule they are or the editor opens on the wrong one.
+        if (ruleType !== "threecushion") p.set("ruletype", ruleType)
         window.open(`../diagrams/three.html?${p}`, "_blank")
       } else {
         const init = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])

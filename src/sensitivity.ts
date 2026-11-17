@@ -676,6 +676,120 @@ function isCellValid(
   return true
 }
 
+/** Enumerate every cell in the bounded box, then keep the valid ones. */
+function buildValidCells(
+  opts: SensitivityOptions,
+  axes: AxisSpec[]
+): number[][] {
+  let cells: number[][] = [[]]
+  for (const a of axes) {
+    const next: number[][] = []
+    for (const c of cells) {
+      for (let k = -a.stepsEachSide; k <= a.stepsEachSide; k++) {
+        next.push([...c, k])
+      }
+    }
+    cells = next
+  }
+  return cells.filter((c) => isCellValid(opts.baseShot, axes, c))
+}
+
+/** "Expand range": when an inner half-window is given, drop every cell that a
+ * previous, narrower run already scanned — i.e. cells inside the inner box on
+ * both spin axes. The step/2 tolerance absorbs float rounding so a cell that sat
+ * exactly on the previous window edge is reliably treated as done. The grid is
+ * seed-centred with a fixed step, so old and new points share a lattice and the
+ * survivors are exactly the new annular ring. */
+function dropPreviouslyScanned(
+  cells: number[][],
+  axes: AxisSpec[],
+  inner: number
+): number[][] {
+  const spinAxes = axes
+    .map((a, i) => ({ a, i }))
+    .filter(({ a }) => a.key === "offsetX" || a.key === "offsetY")
+  if (spinAxes.length === 0) return cells
+  return cells.filter((c) =>
+    spinAxes.some(({ a, i }) => Math.abs(c[i] * a.step) > inner + a.step / 2)
+  )
+}
+
+/** Evaluate the cells concurrently across `lanes` lanes. Each lane pulls the next
+ * cell until the grid is exhausted, the user aborts, or one lane errors (`stop`).
+ * allSettled (not all) so every lane's rejection is observed — no unhandled
+ * rejections when one lane fails or we abort. Fills `scoring` and returns the
+ * number of evaluated cells. */
+async function evaluateCells(
+  cells: number[][],
+  axes: AxisSpec[],
+  opts: SensitivityOptions,
+  score: Scorer,
+  lanes: number,
+  scoring: Map<string, number[]>
+): Promise<number> {
+  let cursor = 0
+  let stop = false
+  let evaluated = 0
+  const lane = async (): Promise<void> => {
+    for (;;) {
+      if (stop || opts.signal?.aborted) return
+      const i = cursor++
+      if (i >= cells.length) return
+      const cell = cells[i]
+      const shot = cellToShot(opts.baseShot, axes, cell)
+      let scored: boolean
+      try {
+        scored = await score(shot)
+      } catch (e) {
+        if (opts.signal?.aborted || stop) return
+        stop = true
+        throw e
+      }
+      evaluated++
+      if (scored) scoring.set(keyOf(cell), cell)
+      opts.onEvaluate?.(shot, scored)
+      opts.onProgress?.(evaluated, scoring.size)
+    }
+  }
+  const settled = await Promise.allSettled(
+    Array.from({ length: lanes }, () => lane())
+  )
+  if (opts.signal?.aborted) throw new Error("aborted")
+  const failed = settled.find((s) => s.status === "rejected")
+  if (failed) throw (failed as PromiseRejectedResult).reason
+  return evaluated
+}
+
+/** Per-parameter windows for display: the scanned window (clamped to the
+ * physical limits) plus the range covered by the scoring cells. */
+function buildParamRanges(
+  axes: AxisSpec[],
+  scoring: Map<string, number[]>
+): ParamRange[] {
+  return axes.map((axis, i) => {
+    const scannedMin = Math.max(valueAt(axis, -axis.stepsEachSide), axis.min)
+    const scannedMax = Math.min(valueAt(axis, axis.stepsEachSide), axis.max)
+    let scoringMinIdx: number | null = null
+    let scoringMaxIdx: number | null = null
+    for (const indices of scoring.values()) {
+      const k = indices[i]
+      scoringMinIdx = scoringMinIdx === null ? k : Math.min(scoringMinIdx, k)
+      scoringMaxIdx = scoringMaxIdx === null ? k : Math.max(scoringMaxIdx, k)
+    }
+    return {
+      key: axis.key,
+      center: axis.center,
+      step: axis.step,
+      physicalMin: axis.min,
+      physicalMax: axis.max,
+      scannedMin,
+      scannedMax,
+      scoringMin: valueAt(axis, scoringMinIdx ?? 0),
+      scoringMax: valueAt(axis, scoringMaxIdx ?? 0),
+    }
+  })
+}
+
 const keyOf = (indices: number[]) => indices.join(",")
 
 /** Pluggable per-shot scorer (real worker by default; a stub in tests). */
@@ -754,7 +868,7 @@ export async function runSensitivityAnalysis(
       }
 
   const scoring = new Map<string, number[]>() // key -> indices
-  let evaluated = 0
+  let evaluated: number
   const concurrency = Math.max(
     1,
     opts.scorer ? Math.max(1, poolSize) : poolSize
@@ -770,72 +884,20 @@ export async function runSensitivityAnalysis(
       )
     }
 
-    // Enumerate every cell in the bounded box, then keep the valid ones.
-    let cells: number[][] = [[]]
-    for (const a of axes) {
-      const next: number[][] = []
-      for (const c of cells) {
-        for (let k = -a.stepsEachSide; k <= a.stepsEachSide; k++) {
-          next.push([...c, k])
-        }
-      }
-      cells = next
-    }
-    let validCells = cells.filter((c) => isCellValid(opts.baseShot, axes, c))
-
-    // "Expand range": when an inner half-window is given, drop every cell that a
-    // previous, narrower run already scanned — i.e. cells inside the inner box on
-    // both spin axes. The step/2 tolerance absorbs float rounding so a cell that
-    // sat exactly on the previous window edge is reliably treated as done. The
-    // grid is seed-centred with a fixed step, so old and new points share a
-    // lattice and the survivors are exactly the new annular ring.
+    let validCells = buildValidCells(opts, axes)
     const inner = opts.spinInnerHalfWindow
     if (inner !== undefined) {
-      const spinAxes = axes
-        .map((a, i) => ({ a, i }))
-        .filter(({ a }) => a.key === "offsetX" || a.key === "offsetY")
-      if (spinAxes.length > 0) {
-        validCells = validCells.filter((c) =>
-          spinAxes.some(
-            ({ a, i }) => Math.abs(c[i] * a.step) > inner + a.step / 2
-          )
-        )
-      }
+      validCells = dropPreviouslyScanned(validCells, axes, inner)
     }
 
-    // Evaluate the valid cells concurrently across the pool. Each lane pulls the
-    // next cell until the grid is exhausted, the user aborts, or one lane errors
-    // (`stop`). allSettled (not all) so every lane's rejection is observed — no
-    // unhandled rejections when one lane fails or we abort.
-    let cursor = 0
-    let stop = false
-    const lane = async (): Promise<void> => {
-      for (;;) {
-        if (stop || opts.signal?.aborted) return
-        const i = cursor++
-        if (i >= validCells.length) return
-        const cell = validCells[i]
-        const shot = cellToShot(opts.baseShot, axes, cell)
-        let scored: boolean
-        try {
-          scored = await score(shot)
-        } catch (e) {
-          if (opts.signal?.aborted || stop) return
-          stop = true
-          throw e
-        }
-        evaluated++
-        if (scored) scoring.set(keyOf(cell), cell)
-        opts.onEvaluate?.(shot, scored)
-        opts.onProgress?.(evaluated, scoring.size)
-      }
-    }
-    const settled = await Promise.allSettled(
-      Array.from({ length: concurrency }, () => lane())
+    evaluated = await evaluateCells(
+      validCells,
+      axes,
+      opts,
+      score,
+      concurrency,
+      scoring
     )
-    if (opts.signal?.aborted) throw new Error("aborted")
-    const failed = settled.find((s) => s.status === "rejected")
-    if (failed) throw (failed as PromiseRejectedResult).reason
   } finally {
     pool?.terminate()
   }
@@ -844,35 +906,7 @@ export async function runSensitivityAnalysis(
     cellToShot(opts.baseShot, axes, indices)
   )
 
-  // --- per-parameter ranges for display.
-  const ranges: ParamRange[] = axes.map((axis, i) => {
-    // Scanned range = the bounded window (clamped to physical limits).
-    const scannedMin = Math.max(valueAt(axis, -axis.stepsEachSide), axis.min)
-    const scannedMax = Math.min(valueAt(axis, axis.stepsEachSide), axis.max)
-    let scoringMinIdx = 0
-    let scoringMaxIdx = 0
-    let hasScoring = false
-    for (const indices of scoring.values()) {
-      scoringMinIdx = hasScoring
-        ? Math.min(scoringMinIdx, indices[i])
-        : indices[i]
-      scoringMaxIdx = hasScoring
-        ? Math.max(scoringMaxIdx, indices[i])
-        : indices[i]
-      hasScoring = true
-    }
-    return {
-      key: axis.key,
-      center: axis.center,
-      step: axis.step,
-      physicalMin: axis.min,
-      physicalMax: axis.max,
-      scannedMin,
-      scannedMax,
-      scoringMin: valueAt(axis, scoringMinIdx),
-      scoringMax: valueAt(axis, scoringMaxIdx),
-    }
-  })
+  const ranges = buildParamRanges(axes, scoring)
 
   return {
     selected,

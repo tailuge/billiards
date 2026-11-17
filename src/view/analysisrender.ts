@@ -1135,6 +1135,13 @@ export type BarTick = {
   label: string
   align: "start" | "center" | "end"
 }
+/** Ruler labels sit inside the track, flush with whichever end they mark. */
+function tickAlign(pct: number): BarTick["align"] {
+  if (pct === 0) return "start"
+  if (pct === 100) return "end"
+  return "center"
+}
+
 export type BarModel = {
   finite: boolean
   lo: number
@@ -1228,7 +1235,7 @@ export function computeBarModel(od: OneDResult): BarModel {
   const ruler: BarTick[] = [0, 25, 50, 75, 100].map((pct) => ({
     pct,
     label: formatAxisValue(od, valueAtPct(pct)),
-    align: pct === 0 ? "start" : pct === 100 ? "end" : "center",
+    align: tickAlign(pct),
   }))
 
   const segments = buildBarSegments(od, lo, hi)
