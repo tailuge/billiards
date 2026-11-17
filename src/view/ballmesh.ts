@@ -161,7 +161,10 @@ export class BallMesh {
       BallMesh.getShadowGeometry(),
       BallMesh.getShadowMaterial()
     )
-    this.spinAxisArrow = new ArrowHelper(up, zero, 2, 0x000000, 0.01, 0.01)
+    // Zero length until updateArrows() gives it a direction: it is created at
+    // the origin and made visible by showSpin(), so a real length here would
+    // draw a stray arrow across the table centre.
+    this.spinAxisArrow = new ArrowHelper(up, zero, 0, 0x000000, 0, 0)
     this.spinAxisArrow.visible = false
     this.trace = new Trace(500, color)
   }
