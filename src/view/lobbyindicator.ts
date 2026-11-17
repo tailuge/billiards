@@ -11,6 +11,7 @@ import { LOBBY_URL } from "../network/client/constants"
 import { VERSION } from "../utils/version"
 import { NetworkLogger } from "../utils/network-logger"
 import { getRuleEmoji, ruleTypeMap } from "../utils/utils"
+import { t } from "../utils/i18n"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
@@ -123,6 +124,12 @@ export class LobbyIndicator {
 
   private setupElement(): void {
     if (!this.element) return
+
+    // Caption under the crossed swords, hinting that the ✅ beside them accepts.
+    const hint = id("challengeHint")
+    if (hint) {
+      hint.textContent = t("Accept challenge")
+    }
 
     if (this.element instanceof HTMLAnchorElement) {
       this.element.setAttribute("target", "_self")

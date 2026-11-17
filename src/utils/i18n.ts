@@ -72,6 +72,9 @@ const translations: Record<Locale, Record<string, string>> = {
     upload: "업로드",
     "Break : {score}": "브레이크: {score}",
     "Open high break {score}": "하이브레이크 {score} 보기",
+    // Caption under the crossed swords in the lobby chip that tells an incoming
+    // challenger to accept.
+    "Accept challenge": "도전 수락",
   },
   // Traditional Chinese, in the vocabulary Taiwanese billiards players use:
   // 母球 (cue ball), 自由球 (ball in hand), 出桿 (stroke), 單桿 (a break/run).
@@ -114,6 +117,9 @@ const translations: Record<Locale, Record<string, string>> = {
     // High-break banner: 單桿 is the carom/snooker term for a single run.
     "Break : {score}": "單桿：{score}",
     "Open high break {score}": "查看最高單桿 {score}",
+    // Caption under the crossed swords in the lobby chip that tells an incoming
+    // challenger to accept.
+    "Accept challenge": "接受挑戰",
   },
 }
 

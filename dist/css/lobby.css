@@ -27,11 +27,34 @@
    the light glyph legible over bright cloth. The sibling rule keeps it out of
    the way whenever no challenge is pending. */
 .challenge-vs {
+  position: relative;
   margin-right: 3px;
   font-size: 20px;
   line-height: 1;
   color: #e6e6e6;
   text-shadow: 0 2px 0 rgb(0 0 0 / 60%);
+}
+
+/* Caption under the crossed swords, naming the action the ✅ beside them takes.
+   Absolutely positioned so it hangs below the glyph without adding to the row's
+   height -- in flow it would stretch .challenge-row past the 30px username pill
+   and drag that pill out of line. Smaller than the 16px of the lobby name and
+   the challenge pill, and, like the swords, no background: it reads straight
+   over the table with a hard drop shadow keeping it legible on bright cloth --
+   a shorter one than the swords', since their inherited 2px is too far for text
+   this small. Translated in src/view/lobbyindicator.ts, and hidden with its
+   parent when no challenge is pending (the sibling rule above). */
+.challenge-hint {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 400;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 60%);
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 .challenge-pill[hidden] ~ .challenge-vs {
