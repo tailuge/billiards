@@ -7,14 +7,16 @@
     <!-- Japanese is this page's only language, so the head carries the search
          metadata the site's other pages already have (see
          src/client/index.html), written in Japanese: the <html lang> above, a
-         title, description, keywords, a robots line, an og block with a
-         social card image, and the matching twitter card. The card image is an
-         absolute URL on the game host, as the Open Graph protocol requires
-         (unlike the page body's screenshot, which is a different asset). There
-         is deliberately no
-         canonical or og:url — the map ships from more than one host (the Docker
-         image, ../billiards/dist, the scoreboard), so there is no single URL
-         for this page to claim as its own. -->
+         title, description, keywords, a robots line, a canonical, and og and
+         twitter blocks with a social card image. The card image is an absolute
+         URL on the game host, as the Open Graph protocol requires (unlike the
+         page body's screenshot, which is a different asset).
+
+         The canonical claims the same host the lobby, arena, reveal and
+         challenge pages claim, even though this page also ships from the
+         Docker image and ../billiards/dist: the map has no language variants
+         of its own, so the duplicate-host question is settled the way the rest
+         of the site settles it. -->
     <title>東京ビリヤード場めぐり｜スリークッション・チャレンジ</title>
     <meta
       name="description"
@@ -25,6 +27,10 @@
       content="ビリヤード, スリークッション, 三クッション, カラム, 撞球, 東京, ビリヤード場, ビリヤード 東京, ビリヤード 地図"
     />
     <meta name="robots" content="index, follow" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/map/"
+    />
     <meta
       property="og:title"
       content="東京ビリヤード場めぐり｜スリークッション・チャレンジ"
@@ -35,6 +41,10 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ja_JP" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/map/"
+    />
     <meta
       property="og:image"
       content="https://billiards.tailuge.workers.dev/images/map.png"
@@ -63,6 +73,443 @@
       name="twitter:image:alt"
       content="東京のスリークッション・ビリヤード場を地図でめぐるチャレンジ"
     />
+
+    <!-- The halls the page plots, as structured data. Billiard Soma is left
+         out: the page marks it permanently closed, so listing it as a business
+         would send visitors to a shop that is no longer there. Every @id
+         points at the article below that carries the same address, phone,
+         hours and story, so the markup and the directory cannot drift far
+         apart without the two visibly disagreeing on the page. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://billiards.tailuge.workers.dev/map/#webpage",
+            "url": "https://billiards.tailuge.workers.dev/map/",
+            "name": "東京ビリヤード場めぐり｜スリークッション・チャレンジ",
+            "description": "東京のスリークッション・ビリヤード場を地図でめぐるチャレンジ。各店の住所・営業時間と、その店にまつわる思い出をたどりながら、ブラウザで三クッションのゲームが遊べます。",
+            "inLanguage": "ja",
+            "mainEntity": {
+              "@id": "https://billiards.tailuge.workers.dev/map/#halls"
+            },
+            "breadcrumb": {
+              "@id": "https://billiards.tailuge.workers.dev/map/#breadcrumb"
+            }
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://billiards.tailuge.workers.dev/map/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Billiards",
+                "item": "https://billiards.tailuge.workers.dev/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "東京ビリヤード場めぐり",
+                "item": "https://billiards.tailuge.workers.dev/map/"
+              }
+            ]
+          },
+          {
+            "@type": "ItemList",
+            "@id": "https://billiards.tailuge.workers.dev/map/#halls",
+            "name": "東京のスリークッション・ビリヤード場",
+            "numberOfItems": 15,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-nabbi",
+                  "name": "Billiard Club Nabbi",
+                  "alternateName": "ビリヤードクラブナビー",
+                  "url": "https://bc-nabbi.jimdofree.com/",
+                  "telephone": "+81 3-3576-1226",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "1-18-11 Kita-Otsuka, Otsuka KY Bldg",
+                    "addressLocality": "Toshima-ku",
+                    "addressRegion": "Tokyo",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.732634,
+                    "longitude": 139.7306202
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-matsuyama",
+                  "name": "Matsuyama Billiards",
+                  "alternateName": "松山ビリヤード",
+                  "url": "https://japantravel.navitime.com/en/area/jp/guide/NTJarea0027-en/",
+                  "telephone": "+81 3-3412-2921",
+                  "openingHours": "2:00 PM - 12:00 AM Daily",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "2-20-14 Kitazawa",
+                    "addressLocality": "Setagaya-ku",
+                    "addressRegion": "Tokyo",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.6611294,
+                    "longitude": 139.6671216
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-roots",
+                  "name": "Billiard Cafe Roots",
+                  "alternateName": "ビリヤード カフェ ルーツ",
+                  "url": "https://roots-asagaya.wixsite.com/roots",
+                  "telephone": "+81 3-5378-2778",
+                  "openingHours": "12:00 PM - 3:00 AM (Fri/Sat until 5:00 AM)",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "3F Dai-7 Sky Bldg, 1-18-6 Asagayaminami",
+                    "addressLocality": "Suginami-ku",
+                    "addressRegion": "Tokyo",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.6987,
+                    "longitude": 139.6381
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-kobbys",
+                  "name": "Kobby's Billiards",
+                  "alternateName": "コビービリヤード",
+                  "url": "https://kobbybilliards.com/",
+                  "telephone": "+81 3-3336-6030",
+                  "openingHours": "1:00 PM - 3:00 AM (Fri/Sat until 5:00 AM)",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "6-50-10 Nogata, MT Nogata B1F",
+                    "addressLocality": "Nakano-ku",
+                    "addressRegion": "Tokyo",
+                    "postalCode": "165-0027",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.7231,
+                    "longitude": 139.6521
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 5,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-reve-mizue",
+                  "name": "billiard club reve",
+                  "alternateName": "ビリヤードクラブ レーヴ",
+                  "url": "https://club-reve.jp/",
+                  "telephone": "+81 3-5243-3175",
+                  "openingHours": "Mon-Fri: 2:00 PM - Late / Sat-Sun & Holidays: 12:00 PM - Late",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "5F Daini Tanaka Kogyosho Bldg, 2-3-5 Mizue",
+                    "addressLocality": "Edogawa-ku",
+                    "addressRegion": "Tokyo",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.6926,
+                    "longitude": 139.8981
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 6,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-alvis",
+                  "name": "Billiard Alvis",
+                  "alternateName": "ビリヤード アルビス",
+                  "url": "http://www.alvis.cc/",
+                  "telephone": "+81 3-3682-1233",
+                  "openingHours": "2:00 PM - 12:00 AM Daily",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "2-12-8 Kameido",
+                    "addressLocality": "Koto-ku",
+                    "addressRegion": "Tokyo",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.6983,
+                    "longitude": 139.8251
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 7,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-arai",
+                  "name": "ARAI Billiards Headquarters",
+                  "alternateName": "ビリヤード ARAI 本店",
+                  "url": "http://araiyagisawa.mitolabo.jp/",
+                  "telephone": "+81 42-467-8331",
+                  "openingHours": "12:00 PM - 12:00 AM Daily",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "1-1-22 Yagisawa",
+                    "addressLocality": "Nishitokyo City",
+                    "addressRegion": "Tokyo",
+                    "postalCode": "202-0022",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.7272,
+                    "longitude": 139.5513
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 8,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-sansui",
+                  "name": "Billiard Sansui",
+                  "alternateName": "山水ビリヤード",
+                  "url": "http://sansui-cup.com/",
+                  "telephone": "+81 3-3209-6047",
+                  "openingHours": "10:00 AM - 11:00 PM Daily",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "2-18-11 Takadanobaba",
+                    "addressLocality": "Shinjuku City",
+                    "addressRegion": "Tokyo",
+                    "postalCode": "169-0075",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.7132,
+                    "longitude": 139.7042
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 9,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-kobayashi",
+                  "name": "Kobayashi Billiards (Bright)",
+                  "alternateName": "ビリヤード小林",
+                  "url": "https://kobayashi.silver-dice.com/",
+                  "telephone": "+81 3-3371-4589",
+                  "openingHours": "12:00 PM - 4:30 AM Daily",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "2-10-1 Hyakunincho 4F",
+                    "addressLocality": "Shinjuku-ku",
+                    "addressRegion": "Tokyo",
+                    "postalCode": "169-0073",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.7017778,
+                    "longitude": 139.6996667
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 10,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-e-place",
+                  "name": "Billiards E-place",
+                  "alternateName": "ビリヤード イープレイス",
+                  "url": "https://e-place.storeinfo.jp/",
+                  "telephone": "+81 3-3815-3912",
+                  "openingHours": "2:00 PM - 12:00 AM Daily",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "1-9-10 Yushima B2F",
+                    "addressLocality": "Bunkyo-ku",
+                    "addressRegion": "Tokyo",
+                    "postalCode": "113-0034",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.7018,
+                    "longitude": 139.7651
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 11,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-yamate",
+                  "name": "Billiard Yamate",
+                  "alternateName": "ビリヤード山手",
+                  "url": "https://billi-walker.jp/bwpoolhall/index.php?mode=show_detail&g_id=13195",
+                  "telephone": "+81 3-3493-6162",
+                  "openingHours": "3:00 PM - 1:00 AM Daily",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "1-5-16 Meguro B2F",
+                    "addressLocality": "Meguro-ku",
+                    "addressRegion": "Tokyo",
+                    "postalCode": "153-0063",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.6339,
+                    "longitude": 139.7153
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 12,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-alice",
+                  "name": "ALICE Billiards",
+                  "alternateName": "ビリヤードALICE",
+                  "url": "http://billiard-alice.com/",
+                  "telephone": "+81 3-3743-3192",
+                  "openingHours": "3:00 PM - 2:00 AM Daily",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "2-9-8 Honhaneda",
+                    "addressLocality": "Ota-ku",
+                    "addressRegion": "Tokyo",
+                    "postalCode": "144-0044",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.5451,
+                    "longitude": 139.7408
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 13,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-nikka5",
+                  "name": "NIKKA5",
+                  "alternateName": "NIKKA5（ニッカファイブ）",
+                  "url": "https://nikka5.jp/",
+                  "telephone": "+81 3-6451-3833",
+                  "openingHours": "Sun-Thu: 12:00 PM - 2:00 AM, Fri-Sat: 12:00 PM - 5:00 AM",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "Royal Musashikoyama 4F, 3 Chome-8-7 Ebara",
+                    "addressLocality": "Shinagawa City",
+                    "addressRegion": "Tokyo",
+                    "postalCode": "142-0063",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.6176,
+                    "longitude": 139.7067
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 14,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-glanz",
+                  "name": "Billiards Cafe GLANZ",
+                  "alternateName": "ビリヤード場GLANZ",
+                  "url": "https://dreiband.wixsite.com/glanz",
+                  "telephone": "+81 3-6323-2376",
+                  "openingHours": "Mon-Fri: 2:00 PM - 12:00 AM, Sat-Sun: 12:00 PM - 12:00 AM",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "1-23-20 Hatagaya",
+                    "addressLocality": "Shibuya City",
+                    "addressRegion": "Tokyo",
+                    "postalCode": "151-0072",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.6745,
+                    "longitude": 139.6745
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 15,
+                "item": {
+                  "@type": "SportsActivityLocation",
+                  "@id": "https://billiards.tailuge.workers.dev/map/#club-lupin-kameido",
+                  "name": "Billiard Lupin Kameido",
+                  "alternateName": "ビリヤード亀戸ルパン",
+                  "url": "https://www.billiards-lupin.com/",
+                  "telephone": "+81 3-3685-3471",
+                  "openingHours": "2:00 PM - 11:00 PM (Sun-Mon) / 2:00 PM - 2:00 AM (Tue-Sat)",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "4F T.V.C. Building, 5-15-2 Kameido",
+                    "addressLocality": "Koto-ku",
+                    "addressRegion": "Tokyo",
+                    "addressCountry": "JP"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 35.6999,
+                    "longitude": 139.8258
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
 
     <!-- The page's three subresource origins, warmed up before the parser
          reaches the Leaflet tags below: unpkg serves the stylesheet and the
