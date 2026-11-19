@@ -181,7 +181,10 @@ export class Sagu extends ThreeCushion {
     const reason = this.foulReason(outcomes)
     if (reason) {
       const session = Session.getInstance()
-      session.setMyScore(Math.max(0, session.myScore() - 1))
+      const { score, target } = this.getShooterScoreAndTarget()
+      if (score !== target - 1) {
+        session.setMyScore(Math.max(0, session.myScore() - 1))
+      }
 
       this.container.notify({
         type: "Foul",

@@ -353,7 +353,11 @@ export class BotEventHandler {
     }
 
     if (this.container.rules.rulename === "sagu") {
-      session.setOpponentScore(Math.max(0, session.opponentScore() - 1))
+      const botClientId = session.opponentClientId ?? "opponent"
+      const botTarget = session.getRaceTargetForPlayer(botClientId)
+      if (session.opponentScore() !== botTarget - 1) {
+        session.setOpponentScore(Math.max(0, session.opponentScore() - 1))
+      }
     }
 
     const { p1: s1, p2: s2 } = session.orderedScoresForHud()
