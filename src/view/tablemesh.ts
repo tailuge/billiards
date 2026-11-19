@@ -138,7 +138,6 @@ export class TableMesh {
       TableMesh.boxCache.set(key, geometry)
     }
     const mesh = new Mesh(geometry, material)
-    mesh.receiveShadow = true
     mesh.position.copy(pos)
     scene.add(mesh)
   }

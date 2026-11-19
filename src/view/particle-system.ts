@@ -149,8 +149,6 @@ export class ParticleSystem {
     })
 
     this.instancedMesh = new InstancedMesh(geo, mat, this.count)
-    this.instancedMesh.castShadow = true
-    this.instancedMesh.receiveShadow = true
     this.instancedMesh.frustumCulled = false // Instance positions aren't considered in culling
     this.scene.add(this.instancedMesh)
 
