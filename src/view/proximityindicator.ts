@@ -16,6 +16,9 @@ import {
 import { R } from "../model/physics/constants"
 import { Ball } from "../model/ball"
 
+// Indicator height in ball radii, just clear of the ball-shadow plane (-0.99R).
+const PROXIMITY_Z = -0.991
+
 export class ProximityIndicator {
   readonly group = new Group()
   private readonly borders: LineLoop[] = []
@@ -32,7 +35,7 @@ export class ProximityIndicator {
     if (typeof document === "undefined") {
       return
     }
-    this.group.position.z = -0.965 * R // Just above the grid lines
+    this.group.position.z = PROXIMITY_Z * R
     this.group.visible = false
 
     const radii = [4, 3, 2]
@@ -140,7 +143,7 @@ export class ProximityIndicator {
   }
 
   showAt(pos: Vector3) {
-    this.group.position.set(pos.x, pos.y, -0.965 * R)
+    this.group.position.set(pos.x, pos.y, PROXIMITY_Z * R)
     this.group.visible = true
 
     // Fixed distance 4r from ball center toward table center
