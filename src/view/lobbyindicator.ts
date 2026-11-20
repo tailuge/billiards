@@ -180,6 +180,10 @@ export class LobbyIndicator {
 
   /** Whether this page is framed, where navigating it would steer the host. */
   private isEmbedded(): boolean {
+    // Local runs are often framed by another project's harness, where a new
+    // tab would break its tests. Only a framed page on a real host counts.
+    const host = globalThis.location?.hostname ?? ""
+    if (host.includes("localhost")) return false
     return globalThis.self !== globalThis.top
   }
 
