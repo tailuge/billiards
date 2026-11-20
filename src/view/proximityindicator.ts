@@ -32,7 +32,7 @@ export class ProximityIndicator {
     if (typeof document === "undefined") {
       return
     }
-    this.group.position.z = -0.97 * R // Near table bed
+    this.group.position.z = -0.965 * R // Just above the grid lines
     this.group.visible = false
 
     const radii = [4, 3, 2]
@@ -140,7 +140,7 @@ export class ProximityIndicator {
   }
 
   showAt(pos: Vector3) {
-    this.group.position.set(pos.x, pos.y, -0.991 * R)
+    this.group.position.set(pos.x, pos.y, -0.965 * R)
     this.group.visible = true
 
     // Fixed distance 4r from ball center toward table center
