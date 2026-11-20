@@ -380,6 +380,12 @@ This project is open source and licensed under the GNU General Public License - 
 담고 있습니다. 2018년부터 GitHub에서 공개적으로 발전해 온 오픈소스 당구
 프로젝트입니다.
 
+이 무료 사이트가 더 많은 당구인에게 닿을 수 있도록 도와주세요. 마음씨 좋은
+분께서 [네이버 3쿠션 카페](https://cafe.naver.com/3cushion)에 이 게임을
+소개해 주실 수 있을까요? 당구를 사랑하는 여러분,
+[네이버 당구 카페](https://cafe.naver.com/8440566)에도 무료 온라인 당구 게임을
+널리 알려 주세요. 함께할 사람이 한 명 더 늘어날 때마다 이 프로젝트가 조금씩 나아집니다.
+
 [네이버 블로그](https://blog.naver.com/jasuil/224416229214)
 [티스토리 블로그](https://news11213.tistory.com/1)
 
