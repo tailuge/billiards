@@ -89,7 +89,7 @@ export class Assets {
 
   loadFromWeb(ready) {
     this.ready = ready
-    this.sound = new Sound(true)
+    this.sound = new Sound(true, this.rules.rulename)
     this.room = new Room()
     this.background = this.room.generateRoom()
     importGltf(this.rules.asset, (m) => {

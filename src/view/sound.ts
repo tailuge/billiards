@@ -1,5 +1,38 @@
 import { AudioListener, Audio, AudioLoader, MathUtils } from "three"
 
+const SAGU_VOICE = [
+  "start",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+  "16",
+  "17",
+  "18",
+  "19",
+  "20",
+  "21",
+  "22",
+  "23",
+  "24",
+  "25",
+  "foul",
+  "cushion",
+  "three_cushion",
+  "win",
+]
+
 export class Sound {
   listener: AudioListener
   audioLoader: AudioLoader
@@ -14,8 +47,9 @@ export class Sound {
   lastOutcomeIndex = 0
   lastOutcomesRef: any[] | null = null
   loadAssets
+  voice?: Map<string, Audio>
 
-  constructor(loadAssets) {
+  constructor(loadAssets, ruletype = "") {
     this.loadAssets = loadAssets
     if (!loadAssets) {
       return
@@ -37,6 +71,15 @@ export class Sound {
 
     this.success = new Audio(this.listener)
     this.load("sounds/success.ogg", this.success)
+
+    if (ruletype === "sagu") {
+      this.voice = new Map()
+      for (const id of SAGU_VOICE) {
+        const audio = new Audio(this.listener)
+        this.voice.set(id, audio)
+        this.load(`tts/${id}.ogg`, audio)
+      }
+    }
   }
 
   addCameraToListener(camera) {
@@ -127,5 +170,12 @@ export class Sound {
 
   playSuccess(pitch) {
     this.play(this.success, 0.1, pitch * 100 - 2200)
+  }
+
+  playVoice(id) {
+    const audio = this.voice?.get(id)
+    if (audio?.buffer) {
+      this.play(audio, 1)
+    }
   }
 }
