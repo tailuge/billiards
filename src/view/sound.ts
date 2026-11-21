@@ -79,6 +79,13 @@ export class Sound {
       this.voice = new Map()
       for (const id of SAGU_VOICE) {
         const audio = new Audio(this.listener)
+        // Set before any play(): three binds source.onended from this property
+        // when play() runs, so a handler assigned afterwards never fires.
+        audio.onEnded = () => {
+          Audio.prototype.onEnded.call(audio)
+          this.voicePlaying = false
+          this.playNextVoice()
+        }
         this.voice.set(id, audio)
         this.load(`tts/${id}.ogg`, audio, () => this.playNextVoice())
       }
@@ -226,10 +233,6 @@ export class Sound {
         return
       }
       this.voiceQueue.shift()
-      audio.onEnded = () => {
-        this.voicePlaying = false
-        this.playNextVoice()
-      }
       return
     }
   }
