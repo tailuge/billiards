@@ -333,16 +333,17 @@ export class Container {
     previousBreak: number,
     previousMyScore: number
   ): void {
-    if (
-      this.rules.rulename !== "sagu" ||
-      this.replayMode ||
-      Session.isSpectator()
-    ) {
+    if (this.rules.rulename !== "sagu" || Session.isSpectator()) {
       return
     }
     const session = Session.getInstance()
     if (session.currentBreak > previousBreak && session.currentBreak > 0) {
       this.sound.speak([`${session.currentBreak}`])
+    }
+    // Replays speak the recorded break scores only; their start, race warning
+    // and foul lines are not part of the footage.
+    if (this.replayMode) {
+      return
     }
     const target = session.getRaceTargetForPlayer(session.clientId)
     if (

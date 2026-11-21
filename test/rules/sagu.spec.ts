@@ -253,6 +253,26 @@ describe("Sagu", () => {
     done()
   })
 
+  it("Sagu replay speaks the recorded break scores only", (done) => {
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      ruletype: rule,
+      replayMode: true,
+    })
+    const speakSpy = jest.spyOn(container.sound, "speak")
+
+    container.updateScoreHud(0, 0, 1, 1)
+    container.updateScoreHud(0, 0, 2, 1)
+    // Race point reached: a replay still speaks only the break, never the
+    // three-cushion warning.
+    container.updateScoreHud(ThreeCushionConfig.raceTo - 1, 0, 3, 1)
+
+    expect(speakSpy.mock.calls).to.deep.equal([[["1"]], [["2"]], [["3"]]])
+    done()
+  })
+
   describe("Sagu Handicap specific behaviors", () => {
     let getHandicapsSpy: jest.SpyInstance
 
