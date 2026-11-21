@@ -49,7 +49,8 @@ export class ResumeHandler {
       entry.score.p1,
       entry.score.p2,
       entry.score.b,
-      entry.score.active as 0 | 1 | 2
+      entry.score.active as 0 | 1 | 2,
+      false
     )
     this.host.container.updateController(controller)
     this.resumed = true

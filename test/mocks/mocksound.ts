@@ -9,4 +9,7 @@ export class Sound {
   playSuccess() {
     // for mocks
   }
+  speak(_ids: string[]) {
+    // for mocks
+  }
 }

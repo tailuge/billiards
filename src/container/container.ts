@@ -104,6 +104,7 @@ export class Container {
   private hudActivePlayer: ActivePlayer = 0
   private wasReplay: boolean = false
   private revealTracker: RevealTracker | null = null
+  private saguStartAnnounced = false
 
   lastShotInit?: string
   lastShotData?: string
@@ -281,9 +282,21 @@ export class Container {
     }
   }
 
-  updateScoreHud(p1: number, p2: number, b: number, active?: ActivePlayer) {
+  updateScoreHud(
+    p1: number,
+    p2: number,
+    b: number,
+    active?: ActivePlayer,
+    announce = true
+  ) {
     const session = Session.getInstance()
+    const previousBreak = session.currentBreak
+    const previousMyScore =
+      this.myHudSlot() === 1 ? this.hudScores.p1 : this.hudScores.p2
     session.updateScoresFromNetwork(p1, p2, b)
+    if (announce) {
+      this.announceScoreChange(previousBreak, previousMyScore)
+    }
     this.updateReveal(session)
     const orderedScores = session.orderedScoresForHud()
     this.hudScores = orderedScores
@@ -308,6 +321,60 @@ export class Container {
       p2Star
     )
     this.setHudActivePlayer(active ?? this.inferActivePlayer())
+  }
+
+  /**
+   * Speaks sagu's running break and its raceTo-1 warning from the one score
+   * funnel that both the shooter and the watching device use. The previous
+   * values come from the HUD snapshot because the rules have already synced
+   * this shot's score into the Session by the time the funnel runs.
+   */
+  private announceScoreChange(
+    previousBreak: number,
+    previousMyScore: number
+  ): void {
+    if (
+      this.rules.rulename !== "sagu" ||
+      this.replayMode ||
+      Session.isSpectator()
+    ) {
+      return
+    }
+    const session = Session.getInstance()
+    if (session.currentBreak > previousBreak && session.currentBreak > 0) {
+      this.sound.speak([`${session.currentBreak}`])
+    }
+    const target = session.getRaceTargetForPlayer(session.clientId)
+    if (
+      target > 1 &&
+      previousMyScore !== target - 1 &&
+      session.myScore() === target - 1
+    ) {
+      this.sound.speak(["three_cushion"])
+    }
+  }
+
+  /**
+   * Says the game-start line once per game, at the first Aim/WatchAim
+   * transition on this device. That covers solo (which never receives a
+   * BeginEvent) and both two-player clients. Scores must be 0-0, so a resumed
+   * game with points does not announce; a refresh at 0-0 may say it again.
+   */
+  private announceSaguStart(controller: Controller): void {
+    const session = Session.getInstance()
+    if (
+      this.saguStartAnnounced ||
+      this.rules.rulename !== "sagu" ||
+      this.replayMode ||
+      Session.isSpectator() ||
+      session.myScore() !== 0 ||
+      session.opponentScore() !== 0 ||
+      !(controller instanceof Aim || controller instanceof WatchAim)
+    ) {
+      return
+    }
+    this.saguStartAnnounced = true
+    this.sound.speak(["start"])
   }
 
   /**
@@ -464,8 +531,23 @@ export class Container {
   }
 
   notify(data: NotificationData | string, duration?: number) {
+    this.announceNotification(data)
     this.notification.show(data, duration)
     this.sendEvent(new NotificationEvent(data, duration))
+  }
+
+  /** Plays the sagu foul line for a Foul banner shown on this device. */
+  announceNotification(data: NotificationData | string): void {
+    if (
+      this.rules.rulename !== "sagu" ||
+      this.replayMode ||
+      Session.isSpectator() ||
+      typeof data === "string" ||
+      data.type !== "Foul"
+    ) {
+      return
+    }
+    this.sound.speak(["foul"])
   }
 
   notifyLocal(
@@ -578,6 +660,7 @@ export class Container {
       // a     const playerName = Session.getInstance().playername
       // b     this.log(`${playerName}: Transition to ${controller.name}`)
       this.controller = controller
+      this.announceSaguStart(controller)
       this.setActiveCue(controller)
       const active = this.inferActivePlayer(controller)
       if (

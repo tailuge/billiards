@@ -41,6 +41,7 @@ export abstract class ControllerBase extends Controller {
         .getTopBreaks(3)
         .map(({ score, hiScoreUri }) => ({ score, url: hiScoreUri }))
     }
+    this.container.announceNotification(data)
     this.container.notification.show(data, event.duration)
     return this
   }

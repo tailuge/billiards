@@ -167,42 +167,30 @@ describe("ScoreReporter", () => {
     )
   })
 
-  it("should retry once on network failure for tournament result", async () => {
+  it("should not retry a failed tournament result", async () => {
     const reporter = new ScoreReporter()
-    const networkError = new Error("Network error")
-    mockFetch.mockRejectedValue(networkError)
+    mockFetch.mockRejectedValue(new Error("Network error"))
 
-    const promise = reporter.submitTournamentResult(
+    await reporter.submitTournamentResult(
       "tournament/1",
       "table-1",
       "winner-1",
       "loser-1"
     )
 
-    // Attempt 0 fails, wait 1s
-    await flushPromises()
     expect(mockFetch).toHaveBeenCalledTimes(1)
-    jest.advanceTimersByTime(1000)
-
-    // Attempt 1 fails, stop (single retry)
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-
-    await promise
-    expect(console.error).toHaveBeenCalledTimes(2)
+    expect(console.error).toHaveBeenCalledTimes(1)
   })
 
-  it("should retry once on tournament result timeout", async () => {
+  it("should time out a tournament result after 15 seconds without retrying", async () => {
     const reporter = new ScoreReporter()
     mockFetch.mockImplementation((url, { signal }) => {
       return new Promise((resolve, reject) => {
-        if (signal) {
-          signal.addEventListener("abort", () => {
-            const error = new Error("The operation was aborted.")
-            error.name = "AbortError"
-            reject(error)
-          })
-        }
+        signal.addEventListener("abort", () => {
+          const error = new Error("The operation was aborted.")
+          error.name = "AbortError"
+          reject(error)
+        })
       })
     })
 
@@ -213,19 +201,19 @@ describe("ScoreReporter", () => {
       "loser-1"
     )
 
-    // Attempt 0 times out after 10s, wait 1s
     await flushPromises()
-    jest.advanceTimersByTime(10000)
-    await flushPromises()
-    jest.advanceTimersByTime(1000)
+    expect(mockFetch).toHaveBeenCalledTimes(1)
 
-    // Attempt 1 times out after 10s, stop
+    // Still in flight just before the 15s timeout.
+    jest.advanceTimersByTime(14999)
     await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-    jest.advanceTimersByTime(10000)
+    expect(console.error).not.toHaveBeenCalled()
 
+    jest.advanceTimersByTime(1)
     await promise
-    expect(mockFetch).toHaveBeenCalledTimes(2)
+
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    expect(console.error).toHaveBeenCalledTimes(1)
   })
 
   it("should not retry tournament result on a 409 response", async () => {
@@ -248,106 +236,24 @@ describe("ScoreReporter", () => {
     expect(mockFetch).toHaveBeenCalledTimes(1)
   })
 
-  it("should retry once on a 5xx response for tournament result", async () => {
-    const reporter = new ScoreReporter()
-    mockFetch
-      .mockResolvedValueOnce({
-        ok: false,
-        status: 503,
-        statusText: "Service Unavailable",
-        headers: "arena-response-headers",
-        text: () => Promise.resolve("Server busy"),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        statusText: "OK",
-        headers: "arena-response-headers",
-        text: () => Promise.resolve('{"recorded":true}'),
-      })
-
-    const promise = reporter.submitTournamentResult(
-      "tournament/1",
-      "table-1",
-      "winner-1",
-      "loser-1"
-    )
-
-    // Attempt 0 returns 503, wait 1s
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(1)
-    jest.advanceTimersByTime(1000)
-
-    // Attempt 1 succeeds
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-
-    await promise
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-  })
-
-  it("should retry once on a 429 response for tournament result", async () => {
-    const reporter = new ScoreReporter()
-    mockFetch
-      .mockResolvedValueOnce({
-        ok: false,
-        status: 429,
-        statusText: "Too Many Requests",
-        headers: "arena-response-headers",
-        text: () => Promise.resolve("Rate limited"),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        statusText: "OK",
-        headers: "arena-response-headers",
-        text: () => Promise.resolve('{"recorded":true}'),
-      })
-
-    const promise = reporter.submitTournamentResult(
-      "tournament/1",
-      "table-1",
-      "winner-1",
-      "loser-1"
-    )
-
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(1)
-    jest.advanceTimersByTime(1000)
-
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-
-    await promise
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-  })
-
-  it("should stop after a single retry when both attempts return 5xx", async () => {
+  it("should not retry a tournament result on a 5xx response", async () => {
     const reporter = new ScoreReporter()
     mockFetch.mockResolvedValue({
       ok: false,
-      status: 500,
-      statusText: "Internal Server Error",
+      status: 503,
+      statusText: "Service Unavailable",
       headers: "arena-response-headers",
-      text: () => Promise.resolve("Server error"),
+      text: () => Promise.resolve("Server busy"),
     })
 
-    const promise = reporter.submitTournamentResult(
+    await reporter.submitTournamentResult(
       "tournament/1",
       "table-1",
       "winner-1",
       "loser-1"
     )
 
-    await flushPromises()
     expect(mockFetch).toHaveBeenCalledTimes(1)
-    jest.advanceTimersByTime(1000)
-
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-
-    await promise
-    expect(mockFetch).toHaveBeenCalledTimes(2)
   })
 
   it("should send the match result as a JSON POST request", async () => {
@@ -368,188 +274,74 @@ describe("ScoreReporter", () => {
     })
   })
 
-  it("should retry 3 times on network failure with exponential backoff", async () => {
+  it("should not retry a failed match result upload", async () => {
     const reporter = new ScoreReporter()
-    const networkError = new Error("Network error")
-    mockFetch.mockRejectedValue(networkError)
+    mockFetch.mockRejectedValue(new Error("Network error"))
 
-    const promise = reporter.submitMatchResult(sampleMatchResult)
+    await reporter.submitMatchResult(sampleMatchResult)
 
-    // Attempt 0 fails, wait 1s
-    await flushPromises()
     expect(mockFetch).toHaveBeenCalledTimes(1)
-    jest.advanceTimersByTime(1000)
-
-    // Attempt 1 fails, wait 2s
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-    jest.advanceTimersByTime(2000)
-
-    // Attempt 2 fails, wait 4s
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(3)
-    jest.advanceTimersByTime(4000)
-
-    // Attempt 3 fails, stop
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(4)
-
-    await promise
-    expect(console.error).toHaveBeenCalledTimes(4)
+    expect(console.error).toHaveBeenCalledTimes(1)
   })
 
-  it("should stop retrying if an attempt succeeds", async () => {
+  it("should not retry after a successful submission", async () => {
     const reporter = new ScoreReporter()
-    mockFetch
-      .mockRejectedValueOnce(new Error("Failure 1"))
-      .mockRejectedValueOnce(new Error("Failure 2"))
-      .mockResolvedValueOnce({ ok: true })
+    mockFetch.mockResolvedValueOnce({ ok: true })
 
-    const promise = reporter.submitMatchResult(sampleMatchResult)
+    await reporter.submitMatchResult(sampleMatchResult)
 
-    await flushPromises()
     expect(mockFetch).toHaveBeenCalledTimes(1)
-    jest.advanceTimersByTime(1000)
-
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-    jest.advanceTimersByTime(2000)
-
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(3)
-
-    await promise
-    expect(mockFetch).toHaveBeenCalledTimes(3)
     expect(console.log).toHaveBeenCalledWith(
       "Match result submitted successfully:",
       sampleMatchResult
     )
   })
 
-  it("should not retry on 4xx errors (except 429)", async () => {
+  it.each([
+    [400, "Bad Request", "Validation failed"],
+    [500, "Internal Server Error", "Server error"],
+    [429, "Too Many Requests", "Rate limited"],
+  ])("should not retry on a %i response", async (status, statusText, body) => {
     const reporter = new ScoreReporter()
     mockFetch.mockResolvedValueOnce({
       ok: false,
-      status: 400,
-      statusText: "Bad Request",
-      text: () => Promise.resolve("Validation failed"),
+      status,
+      statusText,
+      text: () => Promise.resolve(body),
     })
 
-    const promise = reporter.submitMatchResult(sampleMatchResult)
-    await flushPromises()
-    jest.runAllTimers()
-    await promise
+    await reporter.submitMatchResult(sampleMatchResult)
 
     expect(mockFetch).toHaveBeenCalledTimes(1)
   })
 
-  it("should retry on 5xx errors", async () => {
-    const reporter = new ScoreReporter()
-    mockFetch
-      .mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        statusText: "Internal Server Error",
-        text: () => Promise.resolve("Server error"),
-      })
-      .mockResolvedValueOnce({ ok: true })
-
-    const promise = reporter.submitMatchResult(sampleMatchResult)
-
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(1)
-    jest.advanceTimersByTime(1000)
-
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-
-    await promise
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-  })
-
-  it("should retry on 429 Too Many Requests", async () => {
-    const reporter = new ScoreReporter()
-    mockFetch
-      .mockResolvedValueOnce({
-        ok: false,
-        status: 429,
-        statusText: "Too Many Requests",
-        text: () => Promise.resolve("Rate limited"),
-      })
-      .mockResolvedValueOnce({ ok: true })
-
-    const promise = reporter.submitMatchResult(sampleMatchResult)
-
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(1)
-    jest.advanceTimersByTime(1000)
-
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-
-    await promise
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-  })
-
-  it("should timeout after 10 seconds", async () => {
+  it("should time out after 15 seconds without retrying", async () => {
     const reporter = new ScoreReporter()
     // Mock fetch that never resolves until aborted
     mockFetch.mockImplementation((url, { signal }) => {
       return new Promise((resolve, reject) => {
-        if (signal?.aborted) {
+        signal.addEventListener("abort", () => {
           const error = new Error("The operation was aborted.")
           error.name = "AbortError"
-          return reject(error)
-        }
-
-        if (signal) {
-          signal.addEventListener("abort", () => {
-            const error = new Error("The operation was aborted.")
-            error.name = "AbortError"
-            reject(error)
-          })
-        }
+          reject(error)
+        })
       })
     })
 
     const promise = reporter.submitMatchResult(sampleMatchResult)
 
-    // Attempt 0
     await flushPromises()
-    jest.advanceTimersByTime(10000) // Trigger timeout
+    expect(mockFetch).toHaveBeenCalledTimes(1)
 
-    // Wait for the catch block and retry delay to start
+    // Still in flight just before the 15s timeout.
+    jest.advanceTimersByTime(14999)
     await flushPromises()
-    jest.advanceTimersByTime(1000)
+    expect(console.error).not.toHaveBeenCalled()
 
-    // Attempt 1
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-
-    // Attempt 1 timeout
-    jest.advanceTimersByTime(10000)
-    await flushPromises()
-    jest.advanceTimersByTime(2000)
-
-    // Attempt 2
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(3)
-
-    // Attempt 2 timeout
-    jest.advanceTimersByTime(10000)
-    await flushPromises()
-    jest.advanceTimersByTime(4000)
-
-    // Attempt 3
-    await flushPromises()
-    expect(mockFetch).toHaveBeenCalledTimes(4)
-
-    // Attempt 3 timeout
-    jest.advanceTimersByTime(10000)
-
+    jest.advanceTimersByTime(1)
     await promise
 
-    expect(mockFetch).toHaveBeenCalledTimes(4)
+    expect(mockFetch).toHaveBeenCalledTimes(1)
     expect(console.error).toHaveBeenCalledWith(
       expect.objectContaining({ name: "AbortError" }),
       "Error submitting match result to",

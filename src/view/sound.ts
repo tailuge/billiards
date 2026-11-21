@@ -48,6 +48,9 @@ export class Sound {
   lastOutcomesRef: any[] | null = null
   loadAssets
   voice?: Map<string, Audio>
+  private voiceQueue: string[] = []
+  private voicePlaying = false
+  private voiceWaiting = false
 
   constructor(loadAssets, ruletype = "") {
     this.loadAssets = loadAssets
@@ -77,7 +80,7 @@ export class Sound {
       for (const id of SAGU_VOICE) {
         const audio = new Audio(this.listener)
         this.voice.set(id, audio)
-        this.load(`tts/${id}.ogg`, audio)
+        this.load(`tts/${id}.ogg`, audio, () => this.playNextVoice())
       }
     }
   }
@@ -86,12 +89,13 @@ export class Sound {
     camera.add(this.listener)
   }
 
-  load(path, audio) {
+  load(path, audio, onLoaded?: () => void) {
     this.audioLoader.load(
       path,
       (buffer) => {
         audio.setBuffer(buffer)
         audio.setLoop(false)
+        onLoaded?.()
       },
       (_) => {},
       (_) => {}
@@ -99,21 +103,23 @@ export class Sound {
   }
 
   play(audio: Audio, volume, detune = 0) {
-    if (this.loadAssets) {
-      const context = this.listener.context
-      if (context?.state === "suspended") {
-        if (navigator?.userActivation?.hasBeenActive) {
-          context.resume()
-        }
-        return
-      }
-      audio.setVolume(volume)
-      if (audio.isPlaying) {
-        audio.stop()
-      }
-      audio.play(MathUtils.randFloat(0, 0.01))
-      audio.setDetune(detune)
+    if (!this.loadAssets) {
+      return false
     }
+    const context = this.listener.context
+    if (context?.state === "suspended") {
+      if (navigator?.userActivation?.hasBeenActive) {
+        context.resume()
+      }
+      return false
+    }
+    audio.setVolume(volume)
+    if (audio.isPlaying) {
+      audio.stop()
+    }
+    audio.play(MathUtils.randFloat(0, 0.01))
+    audio.setDetune(detune)
+    return true
   }
 
   outcomeToSound(outcome) {
@@ -173,9 +179,92 @@ export class Sound {
   }
 
   playVoice(id) {
-    const audio = this.voice?.get(id)
-    if (audio?.buffer) {
-      this.play(audio, 1)
+    this.speak([id])
+  }
+
+  /**
+   * Queues sagu voice lines so a break number and the three-cushion warning
+   * for the same shot are spoken in order instead of talking over each other.
+   * Ids are kept until their sample has loaded and the audio context is
+   * running, so the first line of a game is not lost to either.
+   */
+  speak(ids: string[]) {
+    if (!this.loadAssets || !this.voice) {
+      return
     }
+    this.voiceQueue.push(...ids)
+    this.playNextVoice()
+  }
+
+  private playNextVoice() {
+    if (this.voicePlaying) {
+      return
+    }
+    while (this.voiceQueue.length > 0) {
+      const audio = this.voice?.get(this.voiceQueue[0])
+      if (!audio) {
+        // No tts sample for this id (e.g. a break above 25).
+        this.voiceQueue.shift()
+        continue
+      }
+      if (!audio.buffer) {
+        // Still downloading; load() calls back here once it is ready.
+        return
+      }
+      const context = this.listener.context
+      if (context?.state === "suspended") {
+        if (navigator?.userActivation?.hasBeenActive) {
+          void context.resume()
+        }
+        this.waitForContext()
+        return
+      }
+      this.voicePlaying = true
+      if (!this.play(audio, 0.3)) {
+        this.voicePlaying = false
+        this.waitForContext()
+        return
+      }
+      this.voiceQueue.shift()
+      audio.onEnded = () => {
+        this.voicePlaying = false
+        this.playNextVoice()
+      }
+      return
+    }
+  }
+
+  private waitForContext() {
+    if (this.voiceWaiting) {
+      return
+    }
+    this.voiceWaiting = true
+    const context = this.listener.context
+    // The browser only allows the audio context to start inside a user
+    // gesture, and a sagu game begins before the player clicks anything.
+    const resumeOnGesture = () => {
+      void context.resume()
+    }
+    const stopListeningForGesture = () => {
+      globalThis.removeEventListener("pointerdown", resumeOnGesture, true)
+      globalThis.removeEventListener("keydown", resumeOnGesture, true)
+    }
+    context.addEventListener(
+      "statechange",
+      () => {
+        this.voiceWaiting = false
+        stopListeningForGesture()
+        this.playNextVoice()
+      },
+      { once: true }
+    )
+    globalThis.addEventListener("pointerdown", resumeOnGesture, {
+      once: true,
+      capture: true,
+    })
+    globalThis.addEventListener("keydown", resumeOnGesture, {
+      once: true,
+      capture: true,
+    })
   }
 }

@@ -4,6 +4,9 @@ import { ARENA_BASE_URL } from "./constants"
 import { t } from "../../utils/i18n"
 import { logusage } from "../../utils/usage"
 
+/** Each upload is a single attempt with this timeout. */
+const UPLOAD_TIMEOUT_MS = 15000
+
 export class ScoreReporter {
   private readonly baseURL: string
 
@@ -19,22 +22,31 @@ export class ScoreReporter {
       return
     }
     logusage("complete")
+
     const url = `${this.baseURL}/api/match-results`
-    const maxRetries = 3
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS)
 
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      const completed = await this.attemptSubmission(url, result)
-      if (completed) return
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(result),
+        signal: controller.signal,
+      })
+      clearTimeout(timeoutId)
 
-      if (attempt < maxRetries) {
-        const delay = Math.pow(2, attempt) * 1000
-        console.log(
-          `Retrying match result submission in ${delay}ms... (Attempt ${
-            attempt + 1
-          }/${maxRetries})`
-        )
-        await new Promise((resolve) => setTimeout(resolve, delay))
+      if (response.ok) {
+        console.log("Match result submitted successfully:", result)
+        return
       }
+      await this.handleErrorResponse(response)
+    } catch (error) {
+      clearTimeout(timeoutId)
+      this.handleFetchError(error, url)
     }
   }
 
@@ -48,20 +60,11 @@ export class ScoreReporter {
     const url = `${ARENA_BASE_URL}/api/arena/${encodeURIComponent(
       tournamentId
     )}/result`
-    const payload: {
-      challengeId: string
-      winnerId: string
-      loserId?: string
-      berserk?: boolean
-    } = {
+    const payload = {
       challengeId: tableId,
       winnerId,
-    }
-    if (loserId) {
-      payload.loserId = loserId
-    }
-    if (berserk) {
-      payload.berserk = true
+      ...(loserId ? { loserId } : {}),
+      ...(berserk ? { berserk: true } : {}),
     }
 
     console.log("Uploading tournament arena result:", {
@@ -69,39 +72,8 @@ export class ScoreReporter {
       payload,
     })
 
-    // Retry once on connection failure (network error or timeout) or when
-    // the server looks slow/busy (5xx or 429). A definitive response — 2xx
-    // or a 4xx like 409 (already recorded) — means the result was handled
-    // and no retry is needed.
-    const maxRetries = 1
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      const completed = await this.attemptTournamentSubmission(url, payload)
-      if (completed) return
-
-      if (attempt < maxRetries) {
-        const delay = 1000
-        console.log(
-          `Retrying tournament arena result submission in ${delay}ms... (Attempt ${
-            attempt + 1
-          }/${maxRetries})`
-        )
-        await new Promise((resolve) => setTimeout(resolve, delay))
-      }
-    }
-  }
-
-  private async attemptTournamentSubmission(
-    url: string,
-    payload: {
-      challengeId: string
-      winnerId: string
-      loserId?: string
-      berserk?: boolean
-    }
-  ): Promise<boolean> {
-    const timeoutMs = 10000
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+    const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS)
 
     try {
       const response = await fetch(url, {
@@ -114,6 +86,7 @@ export class ScoreReporter {
         signal: controller.signal,
       })
       clearTimeout(timeoutId)
+
       let responseBody: string
       try {
         responseBody = await response.text()
@@ -129,18 +102,11 @@ export class ScoreReporter {
         body: responseBody,
       })
 
-      // 2xx, or a 4xx other than 429 (e.g. 409 already recorded): the server
-      // handled the result — treat as final, no retry. 5xx and 429 mean the
-      // server was slow/busy, so one retry is worthwhile.
-      const { status } = response
       this.updateArenaResultButton(response.ok)
-      return response.ok || (status >= 400 && status < 500 && status !== 429)
     } catch (error) {
       clearTimeout(timeoutId)
-      // Connection failure or timeout — signal that a retry is worthwhile.
       console.error("Error submitting tournament result to", url, error)
       this.updateArenaResultButton(false)
-      return false
     }
   }
 
@@ -187,71 +153,25 @@ export class ScoreReporter {
     return hasAlice && hasBob
   }
 
-  private async attemptSubmission(
-    url: string,
-    result: MatchResult
-  ): Promise<boolean> {
-    const timeoutMs = 10000
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(result),
-        signal: controller.signal,
-      })
-      clearTimeout(timeoutId)
-
-      if (response.ok) {
-        console.log("Match result submitted successfully:", result)
-        return true
-      }
-
-      await this.handleErrorResponse(response)
-      // If it's a client error (4xx), don't retry, except 429.
-      const { status } = response
-      if (status >= 400 && status < 500 && status !== 429) {
-        return true
-      }
-    } catch (error) {
-      clearTimeout(timeoutId)
-      this.handleFetchError(error, url)
-    }
-    return false
-  }
-
   private async handleErrorResponse(response: Response): Promise<void> {
-    const { status, statusText } = response
     let errorBody: string
     try {
       errorBody = await response.text()
     } catch {
-      errorBody = `Could not read response body (status: ${status})`
+      errorBody = `Could not read response body (status: ${response.status})`
     }
     console.error(
-      new Error(`Failed to submit match result: ${status} ${statusText}`),
-      status,
-      statusText,
+      new Error(
+        `Failed to submit match result: ${response.status} ${response.statusText}`
+      ),
+      response.status,
+      response.statusText,
       errorBody
     )
   }
 
   private handleFetchError(error: unknown, url: string): void {
-    const isTimeout = error instanceof Error && error.name === "AbortError"
-    const message = isTimeout
-      ? "Request timed out"
-      : "Network error or Load failed"
-
-    console.error(
-      error instanceof Error ? error : new Error(message),
-      "Error submitting match result to",
-      url,
-      error
-    )
+    const failure = error instanceof Error ? error : new Error("Network error")
+    console.error(failure, "Error submitting match result to", url, error)
   }
 }
