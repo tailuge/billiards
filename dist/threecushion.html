@@ -606,6 +606,13 @@
         box-shadow: 0 20px 60px rgb(0 0 0 / 50%);
       }
 
+      .hero-visual .hero-run {
+        margin: 14px 0 0;
+        color: var(--text-soft);
+        font-size: 0.82rem;
+        line-height: 1.7;
+      }
+
       .hero-visual figcaption {
         margin-top: 10px;
         color: var(--text-dim);
@@ -1195,6 +1202,16 @@
             height="500"
             fetchpriority="high"
           />
+          <p class="hero-run">
+            Can you beat this
+            <a href="https://scoreboard-tailuge.vercel.app/api/replay/931"
+              >hi run of 20</a
+            >? Try to match the amazing
+            <a href="https://scoreboard-tailuge.vercel.app/api/replay/932"
+              >41 hi run</a
+            >
+            in three-cushion. Share your hi runs with friends at your club.
+          </p>
           <figcaption>
             Three balls, no pockets, three cushions before the second ball
           </figcaption>
@@ -2155,7 +2172,7 @@
       fetch("https://billiards-network.onrender.com/api/usage/threecushion", {
         method: "PUT",
         mode: "cors",
-      }).catch(() => {})
+      }).catch(() => {});
     </script>
   </body>
 </html>

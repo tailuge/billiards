@@ -462,6 +462,13 @@
         transform: rotate(4deg);
       }
 
+      .hero-visual .hero-run {
+        margin: 14px 0 0;
+        color: var(--text-soft);
+        font-size: 0.82rem;
+        line-height: 1.7;
+      }
+
       .hero-visual figcaption {
         margin-top: 10px;
         color: var(--text-dim);
@@ -951,6 +958,15 @@
             loading="lazy"
             decoding="async"
           />
+          <p class="hero-run">
+            당신은 이
+            <a href="https://scoreboard-tailuge.vercel.app/api/replay/931"
+              >하이런 20</a
+            >을 넘어설 수 있나요? 3쿠션에서 나온 놀라운
+            <a href="https://scoreboard-tailuge.vercel.app/api/replay/932"
+              >하이런 41</a
+            >에 도전해 보세요. 당구장에서 친구들과 하이런 기록을 나눠 보세요.
+          </p>
           <figcaption>실제 게임 화면</figcaption>
         </figure>
       </section>
@@ -1239,7 +1255,7 @@
       fetch("https://billiards-network.onrender.com/api/usage/korean", {
         method: "PUT",
         mode: "cors",
-      }).catch(() => {})
+      }).catch(() => {});
     </script>
   </body>
 </html>
