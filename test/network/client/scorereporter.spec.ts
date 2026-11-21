@@ -36,7 +36,9 @@ describe("ScoreReporter", () => {
   const flushPromises = () =>
     new Promise(jest.requireActual("timers").setImmediate)
 
-  it("should use the default base URL if none is provided", async () => {
+  it("should use the shared scheme-aware base URL by default", async () => {
+    // jsdom runs on localhost, where the shared constant points at the local
+    // network stack over http.
     const reporter = new ScoreReporter()
     mockFetch.mockResolvedValueOnce({ ok: true })
     const promise = reporter.submitMatchResult(sampleMatchResult)
@@ -44,13 +46,13 @@ describe("ScoreReporter", () => {
     await promise
 
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://scoreboard-tailuge.vercel.app/api/match-results",
+      "http://localhost/api/match-results",
       expect.any(Object)
     )
   })
 
-  it("should use the provided base URL if specified", async () => {
-    const customBaseURL = "custom-scoreboard.com"
+  it("should use the provided base URL, including its scheme", async () => {
+    const customBaseURL = "https://custom-scoreboard.com"
     const reporter = new ScoreReporter(customBaseURL)
     mockFetch.mockResolvedValueOnce({ ok: true })
     const promise = reporter.submitMatchResult(sampleMatchResult)
@@ -58,7 +60,7 @@ describe("ScoreReporter", () => {
     await promise
 
     expect(mockFetch).toHaveBeenCalledWith(
-      `https://${customBaseURL}/api/match-results`,
+      `${customBaseURL}/api/match-results`,
       expect.any(Object)
     )
   })

@@ -6,11 +6,11 @@ import { logusage } from "../../utils/usage"
 
 export class ScoreReporter {
   private readonly baseURL: string
-  private readonly defaultBaseURL = "scoreboard-tailuge.vercel.app" // Default URL as per SCOREPLAN.md
 
-  constructor(baseURL?: string) {
-    // baseURL is now optional
-    this.baseURL = baseURL || this.defaultBaseURL
+  // A caller-supplied base URL must include its scheme,
+  // e.g. "https://custom-scoreboard.com".
+  constructor(baseURL: string = ARENA_BASE_URL) {
+    this.baseURL = baseURL
   }
 
   async submitMatchResult(result: MatchResult): Promise<void> {
@@ -19,7 +19,7 @@ export class ScoreReporter {
       return
     }
     logusage("complete")
-    const url = `https://${this.baseURL}/api/match-results`
+    const url = `${this.baseURL}/api/match-results`
     const maxRetries = 3
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
