@@ -701,10 +701,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@interactjs/types@npm:1.10.28":
-  version: 1.10.28
-  resolution: "@interactjs/types@npm:1.10.28"
-  checksum: 10c0/abc3295087f2f0a8e32b3d703d53790a161660bd337836a042f0b855588a043808c9f6351ab3015c1fc1236ac75fc90f724e10e33f5903515041a55b99c8971c
+"@interactjs/types@npm:1.10.29":
+  version: 1.10.29
+  resolution: "@interactjs/types@npm:1.10.29"
+  checksum: 10c0/cfbbb687926e7eda933756cec2668dc7038eab86a04177e8850290bc0c2827faece3b7aaf66c815bcb56cda9c51f734eceec41f5ed3c9877da0e745edd762e72
   languageName: node
   linkType: hard
 
@@ -3212,7 +3212,7 @@ __metadata:
     fflate: "npm:^0.8.3"
     html-validate: "npm:11.21.1"
     http-server: "npm:^14.1.1"
-    interactjs: "npm:1.10.28"
+    interactjs: "npm:1.10.29"
     jest: "npm:30.5.2"
     jest-environment-jsdom: "npm:30.5.2"
     jsoncrush: "npm:^1.1.8"
@@ -5110,12 +5110,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"interactjs@npm:1.10.28":
-  version: 1.10.28
-  resolution: "interactjs@npm:1.10.28"
+"interactjs@npm:1.10.29":
+  version: 1.10.29
+  resolution: "interactjs@npm:1.10.29"
   dependencies:
-    "@interactjs/types": "npm:1.10.28"
-  checksum: 10c0/ad6bb86e256fabd90a2ddde21e1c80beee2d30f22bef9f0f29a5372b5e6908e4dbefa6ca25feade2622203378b82627c1f274c9b22bcfbcd37b122215037b069
+    "@interactjs/types": "npm:1.10.29"
+  checksum: 10c0/6bf80aa992c550db7bfebb131c84c26dabde29f7ce2f7786c5382af89ce926999966f00406065238b32f919309d8a6737a183b7a008143336ce98e1567dfd69f
   languageName: node
   linkType: hard
 

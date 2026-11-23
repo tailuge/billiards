@@ -38,7 +38,7 @@
   "dependencies": {
     "@tailuge/messaging": "1.49.0",
     "fflate": "^0.8.3",
-    "interactjs": "1.10.28",
+    "interactjs": "1.10.29",
     "jsoncrush": "^1.1.8",
     "three": "0.187.0"
   },
