@@ -1237,6 +1237,19 @@
         method: "PUT",
         mode: "cors",
       }).catch(() => {})
+
+      try {
+        const ref = new URL(document.referrer)
+        fetch("https://billiards-network.onrender.com/api/referrer", {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({
+            page: location.pathname,
+            ref: ref.origin + ref.pathname,
+          }),
+          keepalive: true,
+        }).catch(() => {})
+      } catch (e) {}
     </script>
   </body>
 </html>
