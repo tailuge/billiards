@@ -521,6 +521,34 @@
         font-size: 0.95rem;
       }
 
+      .section-body {
+        max-width: 560px;
+        margin-bottom: 16px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .tuzul-visual {
+        max-width: 560px;
+        margin: 0 auto 32px;
+      }
+
+      .tuzul-visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+        box-shadow: 0 20px 60px rgb(0 0 0 / 50%);
+      }
+
+      .tuzul-visual figcaption {
+        margin-top: 10px;
+        color: var(--text-dim);
+        font-size: 0.78rem;
+        text-align: center;
+      }
+
       /* ── Games ───────────────────────────── */
 
       .games-section {
@@ -866,19 +894,19 @@
           <div class="hero-actions">
             <a
               class="btn btn-primary"
-              href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
+              href="./?ruletype=threecushion&userName=Sihirbaz&raceTo=7"
               >3 Bant Oyna</a
             >
             <a
               class="btn btn-secondary"
-              href="./?ruletype=eightball&bot=ClawBreak&lod=4&userName=BilarTK"
+              href="./?ruletype=eightball&bot=ClawBreak&lod=4&userName=Semih"
               >8 Top (Amerikan) Oyna</a
             >
           </div>
           <p class="hero-more">
             3 top
-            <a href="./?ruletype=libre&userName=BilarTK">serbest bilardo</a>,
-            <a href="./?ruletype=sagu&userName=BilarTK">dört top (sagu)</a>,
+            <a href="./?ruletype=libre&userName=Semih">serbest bilardo</a>,
+            <a href="./?ruletype=sagu&userName=Semih">dört top (sagu)</a>,
             <a href="https://billiards.tailuge.workers.dev/exam/threecushion"
               >3 bant sınavı (İngilizce)</a
             >
@@ -939,7 +967,7 @@
             </div>
             <a
               class="btn btn-primary"
-              href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
+              href="./?ruletype=threecushion&userName=Sihirbaz&raceTo=7"
               >3 Bant Oyna</a
             >
           </article>
@@ -948,7 +976,7 @@
         <p class="practice-line">
           Yeni başlıyorsanız küçük masalı
           <a
-            href="./?ruletype=threecushion&userName=BilarTK&raceTo=7&tableSize=5"
+            href="./?ruletype=threecushion&userName=Sihirbaz&raceTo=7&tableSize=5"
             >pratik modu</a
           >nda elinizi alıştırın, sonra tam ölçü masaya geçin.
         </p>
@@ -975,7 +1003,7 @@
             </div>
             <a
               class="btn btn-secondary"
-              href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
+              href="./?ruletype=threecushion&userName=Sihirbaz&raceTo=7"
               >3 Bant Oyna</a
             >
           </article>
@@ -987,9 +1015,7 @@
                 kez isteka tutanlar için en kolay başlangıç.
               </p>
             </div>
-            <a
-              class="btn btn-secondary"
-              href="./?ruletype=libre&userName=BilarTK"
+            <a class="btn btn-secondary" href="./?ruletype=libre&userName=Semih"
               >Serbest Oyna</a
             >
           </article>
@@ -1003,7 +1029,7 @@
             </div>
             <a
               class="btn btn-secondary"
-              href="./?ruletype=eightball&bot=ClawBreak&lod=4&userName=BilarTK"
+              href="./?ruletype=eightball&bot=ClawBreak&lod=4&userName=Semih"
               >8 Top Oyna</a
             >
           </article>
@@ -1011,11 +1037,11 @@
 
         <p class="practice-line">
           Amerikan bilardonun sıralı hâli
-          <a href="./?ruletype=nineball&bot=ClawBreak&lod=4&userName=BilarTK"
+          <a href="./?ruletype=nineball&bot=ClawBreak&lod=4&userName=Semih"
             >9 top</a
           >, dört topla oynanan
-          <a href="./?ruletype=sagu&userName=BilarTK">Sagu (dört top)</a> ve
-          <a href="./?ruletype=snooker&userName=BilarTK&tableSize=12"
+          <a href="./?ruletype=sagu&userName=Semih">Sagu (dört top)</a> ve
+          <a href="./?ruletype=snooker&userName=Semih&tableSize=12"
             >12 ft snooker</a
           >
           masaları da bu sayfadan açılıyor.
@@ -1031,28 +1057,57 @@
         <p class="section-lede">
           Tuzul sistemi, Türk 3 bant oyuncusu Murat Tüzül'ün geliştirdiği elmas
           (diamond) sistemlerinden biri. En bilinen hâli, uzun bant boyunca
-          falsosuz oynanan ve varış noktasından geriye doğru hesaplanan
-          versiyonu.
+          falsosuz oynanan ve varış puanından geriye doğru hesaplanan versiyonu.
         </p>
 
-        <p>
-          Hesap şöyle işliyor: üçüncü bantta topun gelmesini istediğiniz elmas
-          değerini belirleyin, bu değeri 1,5 ile çarpın ve çıkış değerinden
-          çıkarın. Kalan sayı, karşı kısa bantta nişan alacağınız elması verir:
-          <strong>Nişan = Çıkış − (Varış × 1,5)</strong>. Örneğin varış 14 ise
-          14 × 1,5 = 21 olur; çıkış 36 ise 36 − 21 = 15 elmasına nişan
-          alırsınız. Varış 10 ve çıkış 25 olduğunda ise 25 − 15 = 10 elması
-          hedeftir.
+        <p class="section-body">
+          Hesap şöyle işliyor: üçüncü bantta topun gelmesini istediğiniz varış
+          puanını belirleyin, bu puanı 1,5 ile çarpın ve çıkış puanından
+          çıkarın. Kalan sayı, karşı kısa bantta atış yapacağınız puanı verir:
+          <strong>Atış Puanı = Çıkış Puanı − (Varış Puanı × 1,5)</strong>.
+          Örneğin varış puanı 14 ise 14 × 1,5 = 21 olur; çıkış puanı 36 ise 36 −
+          21 = 15 puanına atış yaparsınız. Varış puanı 10 ve çıkış puanı 25
+          olduğunda ise 25 − 15 = 10 hedeftir.
         </p>
 
-        <p>
+        <figure class="tuzul-visual">
+          <img
+            src="images/tuzul.png"
+            alt="Tuzul elmas sisteminde masa üzerindeki elmas numaraları, atış ve varış puanları ile beyaz topun çıkış puanı"
+            width="843"
+            height="631"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>
+            Bu masanın Masa Değeri nedir?
+            <strong
+              >Masa Değeri = Atış Puanı + Varış Puanı − Beyaz Topun Çıkış
+              Puanı</strong
+            >
+          </figcaption>
+        </figure>
+
+        <p class="section-body">
+          Masa Değeri masaya göre değişen, ölçümle bulunan bir değerdir. Normal
+          açılarla tepki veren ve ortalama bir vuruş tekniği kullanılan masada
+          yaklaşık 25'tir; eskimiş ya da dik açılı çuhalı masalarda 27–28'e
+          çıkabilir, yeni ve kaygan çuhada 23 civarına iner. Bu yüzden sisteme
+          geçmeden önce kendi masanızın Masa Değeri'ni birkaç deneme vuruşuyla
+          doğrulayın: Tüzül'e göre sistemi etkili kullanmanın en önemli şartı,
+          Masa Değeri'ni tutan vuruşları yapabilmektir.
+        </p>
+
+        <p class="section-body">
           Sistem falsosuz oynanır: isteka olabildiğince yatay tutulur, vuruş
           uzun ve penetre (topu içeri iten) yapılır; topa hafifçe merkezin
           üzerinden vurulur. İkinci topa temas varsa hesap, ikinci topa teğet
           çizgisi üzerinden yapılır.
         </p>
 
-        <p>Bu oyunda Tuzul sistemini şöyle çalışabilirsiniz:</p>
+        <p class="section-body">
+          Bu oyunda Tuzul sistemini şöyle çalışabilirsiniz:
+        </p>
 
         <ul class="feature-list">
           <li>
@@ -1060,7 +1115,7 @@
               <strong>Pratik modunu açın</strong>
               <p>
                 Botsuz, tek başınıza bir masada çalışın:
-                <a href="./?ruletype=threecushion&userName=BilarTK&practice"
+                <a href="./?ruletype=threecushion&userName=Tuzsuz&practice"
                   >3 bant pratik modu</a
                 >
                 her vuruşta yakınlık puanı verir; böylece elmas hesabınızın ne
@@ -1073,8 +1128,8 @@
               <strong>Elmas değerlerini çizgiyle işaretleyin</strong>
               <p>
                 Farenin sağ tuşuyla masaya basıp sürükleyerek çizgi çekin;
-                çıkış, varış ve nişan elmaslarını işaretlemek hesabı gözle
-                kontrol etmeyi kolaylaştırır.
+                çıkış, varış ve atış puanlarını işaretlemek hesabı gözle kontrol
+                etmeyi kolaylaştırır.
               </p>
             </div>
           </li>
@@ -1084,7 +1139,7 @@
               <p>
                 Elmas numaraları standart masa ölçüsüne göre anlam kazandığı
                 için sistemi
-                <a href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
+                <a href="./?ruletype=threecushion&userName=Tuzsuz&raceTo=7"
                   >tam ölçü masada</a
                 >
                 çalışın; küçük masa daha çok vuruş tekrarı içindir.
@@ -1121,10 +1176,10 @@
               botları hazır: bir karambol denemek ya da seri yakalamak için
               pratik maç yapabilirsiniz. Oyun türünü değiştirmek isterseniz aynı
               sayfadan
-              <a href="./?ruletype=sagu&userName=BilarTK">dört top (Sagu)</a>,
-              <a href="./?ruletype=libre&userName=BilarTK">serbest bilardo</a>
+              <a href="./?ruletype=sagu&userName=Semih">dört top (Sagu)</a>,
+              <a href="./?ruletype=libre&userName=Semih">serbest bilardo</a>
               veya
-              <a href="./?ruletype=snooker&userName=BilarTK&tableSize=12"
+              <a href="./?ruletype=snooker&userName=Semih&tableSize=12"
                 >12 ft snooker</a
               >
               masası açabilirsiniz.
@@ -1194,7 +1249,7 @@
 
         <p class="other-modes">
           Aynı masada dört topla oynanan
-          <a href="./?ruletype=sagu&userName=BilarTK">Dört Top (Sagu)</a>
+          <a href="./?ruletype=sagu&userName=Semih">Dört Top (Sagu)</a>
           oyununu da deneyebilirsiniz.
         </p>
       </section>
@@ -1209,12 +1264,12 @@
         <div class="hero-actions">
           <a
             class="btn btn-primary"
-            href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
+            href="./?ruletype=threecushion&userName=Sihirbaz&raceTo=7"
             >3 Bant Oyna</a
           >
           <a
             class="btn btn-secondary"
-            href="./?ruletype=eightball&bot=ClawBreak&lod=4&userName=BilarTK"
+            href="./?ruletype=eightball&bot=ClawBreak&lod=4&userName=Semih"
             >8 Top Oyna</a
           >
           <a class="btn btn-secondary" href="./lobby">Online Lobi</a>
