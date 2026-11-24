@@ -576,6 +576,59 @@
         outline-offset: 2px;
       }
 
+      /* Asked when a run would make the hi-score rail while the player still
+         has a generated `Anon…` name. A native modal <dialog>: it renders in
+         the top layer, so it covers the game overlay, and it brings its own
+         focus handling and Escape dismissal. */
+      .name-dialog {
+        width: min(24rem, calc(100vw - 2rem));
+        padding: 1rem 1.1rem;
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.82rem;
+        line-height: 1.45;
+        box-shadow: 0 6px 24px rgb(0 0 0 / 55%);
+      }
+
+      .name-dialog::backdrop {
+        background: rgb(0 0 0 / 60%);
+      }
+
+      .name-dialog-title {
+        margin: 0 0 0.15rem;
+        color: var(--accent);
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .name-dialog-en {
+        margin: 0 0 0.6rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .name-dialog-text {
+        margin: 0 0 0.5rem;
+      }
+
+      /* The English instructions sit quieter than the Korean ones: the page
+         is Korean first, the translation is there so nobody is stuck. */
+      .name-dialog-text--en {
+        color: var(--muted);
+      }
+
+      .name-dialog strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .name-dialog .play-btn {
+        margin-top: 0.35rem;
+      }
+
       .score {
         flex-shrink: 0;
         text-align: right;
@@ -974,6 +1027,32 @@
         확인
       </button>
     </div>
+
+    <!-- Shown instead of the toast when a run good enough for 하이런 뷔페 was
+         played under a generated `Anon…` name. The score is not uploaded, so
+         the player is sent to the name field in the top-right badge and asked
+         to reload and play again. -->
+    <dialog
+      id="username-dialog"
+      class="name-dialog"
+      aria-labelledby="username-dialog-title"
+    >
+      <h2 id="username-dialog-title" class="name-dialog-title">
+        닉네임을 먼저 정해 주세요
+      </h2>
+      <p class="name-dialog-en">Please choose a username before playing.</p>
+      <p class="name-dialog-text">
+        오른쪽 위 <strong>사용자 배지</strong>를 눌러 이름을 바꾼 뒤, 페이지를
+        새로고침하고 다시 도전해 주세요. 이번 기록은 저장되지 않습니다.
+      </p>
+      <p class="name-dialog-text name-dialog-text--en">
+        Tap the user badge in the top right to change your name, then reload the
+        page and try again. This score will not be saved.
+      </p>
+      <button type="button" id="username-dialog-ok" class="play-btn">
+        확인 · OK
+      </button>
+    </dialog>
 
     <main>
       <!-- Dashboard -->
