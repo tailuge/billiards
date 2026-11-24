@@ -254,7 +254,9 @@ export class BrowserContainer {
     }
 
     if (this.raceTo !== null) {
-      this.container.chat.showMessage(`race to : ${this.raceTo}`)
+      this.container.chat.showMessage(
+        t("Race to: {score}", { score: this.raceTo })
+      )
     }
 
     this.container.broadcast = (e) => {
