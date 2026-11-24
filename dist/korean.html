@@ -564,6 +564,53 @@
         width: fit-content;
       }
 
+      /* ── Player name beside a start button ── */
+
+      .start-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .start-row .btn {
+        flex: 1 1 auto;
+      }
+
+      .start-name {
+        display: inline-flex;
+        flex: 0 1 auto;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        background: rgb(255 255 255 / 5%);
+        color: var(--text-dim);
+        font-size: 0.85rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .start-name input {
+        width: 7em;
+        padding: 2px 6px;
+        border: 1px solid var(--line-strong);
+        border-radius: 2px;
+        background: transparent;
+        color: var(--accent-bright);
+        font: inherit;
+        font-size: 0.95rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+
+      .start-name input:focus-visible {
+        border-color: var(--accent);
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+
       .practice-line {
         margin: 20px 0 0;
         color: var(--text-dim);
@@ -993,11 +1040,22 @@
                 섬세하게 들어가는 물리 엔진 위에서 실력을 펼쳐 보세요.
               </p>
             </div>
-            <a
-              class="btn btn-primary"
-              href="./?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7"
-              >3쿠션 게임 시작하기</a
-            >
+            <div class="start-row">
+              <a
+                class="btn btn-primary"
+                href="./?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7"
+                >3쿠션 게임 시작하기</a
+              >
+              <label class="start-name"
+                >닉네임 정하기
+                <input
+                  type="text"
+                  value="회전마법사"
+                  maxlength="12"
+                  autocomplete="nickname"
+                  spellcheck="false"
+              /></label>
+            </div>
           </article>
 
           <article class="mode-card mode-card-sagu">
@@ -1008,11 +1066,22 @@
                 기본 게임으로, 가볍게 시작하기 딱 맞습니다.
               </p>
             </div>
-            <a
-              class="btn btn-secondary"
-              href="./?ruletype=sagu&userName=%EC%82%AC%EA%B5%AC%EC%8B%A0%EB%8F%99&lod=4"
-              >사구(4구) 게임 시작하기</a
-            >
+            <div class="start-row">
+              <a
+                class="btn btn-secondary"
+                href="./?ruletype=sagu&userName=%EC%82%AC%EA%B5%AC%EC%8B%A0%EB%8F%99&lod=4"
+                >사구(4구) 게임 시작하기</a
+              >
+              <label class="start-name"
+                >닉네임 정하기
+                <input
+                  type="text"
+                  value="사구신동"
+                  maxlength="12"
+                  autocomplete="nickname"
+                  spellcheck="false"
+              /></label>
+            </div>
           </article>
         </div>
 
@@ -1269,6 +1338,23 @@
           keepalive: true,
         }).catch(() => {})
       } catch (e) {}
+
+      // Every .start-row pairs a start button with the player-name field beside
+      // it. The button's own href carries all of the game settings, so only
+      // userName follows what is typed; the markup value is the fallback both
+      // for a cleared field and for browsers that never run this.
+      for (const row of document.querySelectorAll(".start-row")) {
+        const link = row.querySelector("a[href]")
+        const field = row.querySelector("input")
+        if (!link || !field) continue
+
+        const params = new URLSearchParams(link.search)
+
+        field.addEventListener("input", () => {
+          params.set("userName", field.value.trim() || field.defaultValue)
+          link.search = params.toString()
+        })
+      }
     </script>
   </body>
 </html>
