@@ -4,6 +4,25 @@ import { parseShots, parseJsonShots, maxPower } from "../diagrams/dsl.js"
 const R = 0.03275
 
 /**
+ * The exam pages sit outside the lobby, so the name the rest of the site keeps
+ * in localStorage has to be carried into the game by hand. An empty value
+ * leaves the game on its own "Anon" fallback.
+ */
+function storedUserName() {
+  try {
+    return (localStorage.getItem("userName") || "").trim()
+  } catch {
+    return ""
+  }
+}
+
+/** Query-string fragment (&userName=...) for the game URL, or "". */
+function userNameParam() {
+  const userName = storedUserName()
+  return userName ? `&userName=${encodeURIComponent(userName)}` : ""
+}
+
+/**
  * Read the optional tableSize from a shot config's params and return it as a
  * query-string fragment (&tableSize=N). Returns "" for the default 10ft table.
  */
@@ -469,6 +488,8 @@ export function initExam() {
       params.set("analysis", "")
       params.set("init", init)
       params.set("initShot", initShot)
+      const userName = storedUserName()
+      if (userName) params.set("userName", userName)
       link.href = `../index.html?${params}`
       parent.appendChild(link)
     }
@@ -590,7 +611,7 @@ export function initExam() {
           pos: config.balls[config.shot.cueBallId].pos,
         }
 
-        const url = `../index.html?ruletype=${ruleType}&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}${tableSizeParam(config)}`
+        const url = `../index.html?ruletype=${ruleType}&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}${tableSizeParam(config)}${userNameParam()}`
         if (iframe.contentWindow && iframe.src) {
           iframe.contentWindow.location.replace(url)
         } else {
