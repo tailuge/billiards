@@ -2239,12 +2239,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:26.6.6":
-  version: 26.6.6
-  resolution: "@types/node@npm:26.6.6"
+"@types/node@npm:26.6.7":
+  version: 26.6.7
+  resolution: "@types/node@npm:26.6.7"
   dependencies:
     undici-types: "npm:~8.9.0"
-  checksum: 10c0/5cb63f644f6e85a257a9cd2403cbcbe196760e2a35fd3ec9fb8b5cff663e14cc832b198cc17b53f870a2e30900ed45a1fb3f53e6589aba26b8e8c484aa672053
+  checksum: 10c0/54ffee68394be0df0f92405b6df75a2f75041bbbd5386fb88292c5e9947800c109baafbc73cbc75957d8238a9487245e4ed57fd91c3e19bda675f3039a403b4b
   languageName: node
   linkType: hard
 
@@ -3201,7 +3201,7 @@ __metadata:
     "@testing-library/dom": "npm:10.4.2"
     "@types/chai": "npm:5.2.3"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:26.6.6"
+    "@types/node": "npm:26.6.7"
     "@types/three": "npm:0.187.0"
     canvas: "npm:3.2.3"
     chai: "npm:6.3.0"
