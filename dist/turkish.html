@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="tr">
   <head>
-    <title>Online 3 Bant Bilardo Oyunu | Ücretsiz ve Kayıtsız</title>
+    <title>3 Bant Bilardo Oyna — Ücretsiz Online Bilardo (3 Top, 8 Top)</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta
       name="description"
-      content="Ücretsiz online 3 bant bilardo: kurulum ve üyelik yok. Tarayıcıda, PC'de veya mobilde gerçekçi fizik motoruyla oynayın; lobide gerçek rakiplerle maç yapın."
+      content="Ücretsiz online bilardo: 3 bant (3 top) ve 8 top (amerikan) masaları. Kurulum ve üyelik yok; tarayıcıda botlara ya da gerçek rakiplere karşı oynayın."
     />
     <meta
       name="keywords"
-      content="3 bant bilardo, üç bant bilardo, 3 bant bilardo online, ücretsiz 3 bant bilardo, bilardo oyna, online bilardo, bilardo oyunu, karambol bilardo, tuzul sistemi, elmas sistemi, 3 bant bilardo sistemleri, serbest bilardo, dört top, sagu, snooker online, bilardo tarayıcıda, bilardo indirmeden oyna, bilardo pc mobil"
+      content="3 bant bilardo, üç bant bilardo, 3 bant bilardo online, ücretsiz 3 bant bilardo, bilardo oyna, online bilardo, bilardo oyunu, 3 top bilardo, üç top bilardo, 3 top bilardo oyna, 8 top bilardo, 8 top bilardo oyna, 8 top oyna, amerikan bilardo, amerikan bilardo oyna, 9 top bilardo, dokuz top, karambol bilardo, tuzul sistemi, elmas sistemi, 3 bant bilardo sistemleri, serbest bilardo, dört top, sagu, snooker online, bilardo tarayıcıda, bilardo indirmeden oyna, bilardo pc mobil"
     />
     <meta name="robots" content="index,follow" />
     <link
@@ -67,11 +67,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       property="og:title"
-      content="Ücretsiz Online 3 Bant Bilardo Oyunu | Tarayıcıda Hemen Oyna"
+      content="3 Bant Bilardo Oyna — Ücretsiz Online Bilardo (3 Top, 8 Top)"
     />
     <meta
       property="og:description"
-      content="Kurulum gerektirmeden tarayıcıda oynanan ücretsiz 3 bant bilardo. PC ve mobil uyumlu; botlarla pratik ya da lobide gerçek rakiplerle online maç."
+      content="3 bant (3 top) karambol ve 8 top (amerikan) masaları tarayıcıda. PC ve mobil uyumlu; botlarla pratik ya da lobide gerçek rakiplerle online maç."
     />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="tr_TR" />
@@ -88,11 +88,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Ücretsiz Online 3 Bant Bilardo Oyunu | Tarayıcıda Hemen Oyna"
+      content="3 Bant Bilardo Oyna — Ücretsiz Online Bilardo (3 Top, 8 Top)"
     />
     <meta
       name="twitter:description"
-      content="Kurulum gerektirmeden tarayıcıda oynanan ücretsiz 3 bant bilardo. Masayı açın ve oynayın."
+      content="3 bant ve 8 top bilardo tarayıcıda, ücretsiz. Masayı açın ve oynayın."
     />
     <meta
       name="twitter:image"
@@ -110,13 +110,20 @@
           "3 bant bilardo",
           "karambol bilardo",
           "tarayıcı bilardo oyunu",
-          "bilardo online maç"
+          "bilardo online maç",
+          "3 top bilardo",
+          "üç top bilardo",
+          "3 top bilardo oyna",
+          "8 top bilardo",
+          "8 top oyna",
+          "amerikan bilardo",
+          "9 top bilardo"
         ],
         "url": "https://billiards.tailuge.workers.dev/turkish",
         "image": "https://billiards.tailuge.workers.dev/images/three630x500.png",
-        "description": "Kurulum ve üyelik gerektirmeden tarayıcıda oynanan ücretsiz 3 bant bilardo oyunu. Gerçekçi fizik motoru, PC ve mobil desteği, lobide gerçek rakiplere karşı online maç.",
+        "description": "Kurulum ve üyelik gerektirmeden tarayıcıda oynanan ücretsiz bilardo: 3 bant (3 top) karambol ve 8 top (amerikan) masaları. Gerçekçi fizik motoru, PC ve mobil desteği, lobide gerçek rakiplere karşı online maç.",
         "inLanguage": ["tr"],
-        "genre": ["Sports Game", "Simulation Game"],
+        "genre": ["Sports Game", "Simulation Game", "Pool"],
         "applicationCategory": "GameApplication",
         "operatingSystem": "Web",
         "gamePlatform": ["Web Browser", "PC", "Mobile"],
@@ -280,6 +287,16 @@
         border-color: rgb(255 255 255 / 34%);
         background: rgb(255 255 255 / 10%);
         color: #fff;
+      }
+
+      .hero-more {
+        margin: 16px 0 0;
+        color: var(--text-dim);
+        font-size: 0.86rem;
+      }
+
+      .hero-more a {
+        white-space: nowrap;
       }
 
       /* ── Header ──────────────────────────── */
@@ -557,6 +574,14 @@
         width: fit-content;
       }
 
+      .mode-grid-modes .mode-card {
+        padding: 26px;
+      }
+
+      .mode-grid-modes .mode-card h3 {
+        font-size: clamp(1.15rem, 2vw, 1.45rem);
+      }
+
       .practice-line {
         margin: 20px 0 0;
         color: var(--text-dim);
@@ -748,6 +773,14 @@
         .final-cta .hero-actions {
           justify-content: center;
         }
+
+        .mode-grid-modes {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .mode-grid-modes .mode-card:last-child {
+          grid-column: 1 / -1;
+        }
       }
 
       @media (width >= 900px) {
@@ -809,6 +842,7 @@
       </a>
       <nav class="site-nav" aria-label="Ana menü">
         <a href="#ucbant">3 Bant</a>
+        <a href="#modlar">8 Top</a>
         <a href="#tuzul">Tuzul Sistemi</a>
         <a href="#multiplayer">Online Maç</a>
         <a href="#features">Özellikler</a>
@@ -825,8 +859,9 @@
             Kurulum gerektirmeyen <em>ücretsiz online 3 bant bilardo</em>
           </h1>
           <p class="hero-desc">
-            Üyelik ve indirme yok. Sayfayı açtığınızda masa hazır: tek başınıza
-            çalışabilir ya da lobide gerçek bir rakiple oynayabilirsiniz.
+            Üyelik ve indirme yok. Sayfayı açtığınızda masa hazır: 3 bant
+            karambol, 3 top serbest bilardo ya da 8 top (amerikan) — tek
+            başınıza çalışın veya lobide gerçek bir rakiple oynayın.
           </p>
           <div class="hero-actions">
             <a
@@ -836,21 +871,19 @@
             >
             <a
               class="btn btn-secondary"
-              href="./?ruletype=sagu&userName=BilarTK"
-              >Dört Top (Sagu) Oyna</a
+              href="./?ruletype=eightball&bot=ClawBreak&lod=4&userName=BilarTK"
+              >8 Top (Amerikan) Oyna</a
             >
-            <a
-              class="btn btn-secondary"
-              href="./?ruletype=libre&userName=BilarTK"
-              >Serbest Bilardo Oyna</a
-            >
-            <a
-              class="btn btn-secondary"
-              href="https://billiards.tailuge.workers.dev/exam/threecushion"
-              >3 Bant Sınavı</a
-            >
-            <a class="btn btn-secondary" href="./lobby">Online Lobi</a>
           </div>
+          <p class="hero-more">
+            3 top
+            <a href="./?ruletype=libre&userName=BilarTK">serbest bilardo</a>,
+            <a href="./?ruletype=sagu&userName=BilarTK">dört top (sagu)</a>,
+            <a href="https://billiards.tailuge.workers.dev/exam/threecushion"
+              >3 bant sınavı (İngilizce)</a
+            >
+            ve <a href="./lobby">online lobi</a>.
+          </p>
           <p class="hero-note">
             <span>PC ve mobil destekli</span>
             <span>Fare · dokunmatik kontrol</span>
@@ -889,7 +922,9 @@
         <h2 id="ucbant-title">Gerçek masa hissiyle, 3 bant simülasyonu</h2>
         <p class="section-lede">
           Falso, ince açılar ve bant sekmeleri gerçek masada olduğu gibi
-          hesaplanır. Karambol 3 bantı tarayıcıda, kurulum yapmadan oynayın.
+          hesaplanır. 3 bant, üç topla oynanan karambolün (halk arasında “3 top
+          bilardo”) en bilinen dalıdır; karambol 3 bantı tarayıcıda, kurulum
+          yapmadan oynayın.
         </p>
 
         <div class="mode-grid">
@@ -916,6 +951,74 @@
             href="./?ruletype=threecushion&userName=BilarTK&raceTo=7&tableSize=5"
             >pratik modu</a
           >nda elinizi alıştırın, sonra tam ölçü masaya geçin.
+        </p>
+      </section>
+
+      <!-- ── Game modes ─────────────────────────── -->
+      <section class="section" id="modlar" aria-labelledby="modlar-title">
+        <p class="section-label">Oyun türleri</p>
+        <h2 id="modlar-title">3 top, 3 bant ve 8 top: hangisi hangisi?</h2>
+        <p class="section-lede">
+          Türkçede “3 top” üç topla oynanan karambol oyunlarının genel adıdır;
+          “3 bant” bunun bir dalıdır. “8 top” ise Amerikan bilardo (pool)
+          masasıdır. Hepsi burada, aynı sayfada açılıyor.
+        </p>
+
+        <div class="mode-grid mode-grid-modes">
+          <article class="mode-card">
+            <div>
+              <h3>3 Bant <small>karambol</small></h3>
+              <p>
+                Üç topla oynanır, her sayı için üç bant zorunlu. Turnuva
+                karambolu; Tuzul elmas sistemi bu masada çalışılır.
+              </p>
+            </div>
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
+              >3 Bant Oyna</a
+            >
+          </article>
+          <article class="mode-card">
+            <div>
+              <h3>3 Top Serbest <small>karambol</small></h3>
+              <p>
+                Üç top, bant şartı yok. Elmas ve çizgi çalışması, ısınma ve ilk
+                kez isteka tutanlar için en kolay başlangıç.
+              </p>
+            </div>
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=libre&userName=BilarTK"
+              >Serbest Oyna</a
+            >
+          </article>
+          <article class="mode-card">
+            <div>
+              <h3>8 Top <small>amerikan pool</small></h3>
+              <p>
+                On beş top, dolu ve çizgili. Kendi grubunuzu bitirip siyah 8'i
+                en son cebe sokuyorsunuz.
+              </p>
+            </div>
+            <a
+              class="btn btn-secondary"
+              href="./?ruletype=eightball&bot=ClawBreak&lod=4&userName=BilarTK"
+              >8 Top Oyna</a
+            >
+          </article>
+        </div>
+
+        <p class="practice-line">
+          Amerikan bilardonun sıralı hâli
+          <a href="./?ruletype=nineball&bot=ClawBreak&lod=4&userName=BilarTK"
+            >9 top</a
+          >, dört topla oynanan
+          <a href="./?ruletype=sagu&userName=BilarTK">Sagu (dört top)</a> ve
+          <a href="./?ruletype=snooker&userName=BilarTK&tableSize=12"
+            >12 ft snooker</a
+          >
+          masaları da bu sayfadan açılıyor.
         </p>
       </section>
 
@@ -1099,12 +1202,20 @@
       <!-- ── Final CTA ──────────────────────────── -->
       <section class="final-cta" aria-labelledby="final-title">
         <h2 id="final-title">Masa hazır, sıra sizde</h2>
-        <p>Kurulum ve ücret yok. 3 bant masasını açın, ilk vuruşu yapın.</p>
+        <p>
+          Kurulum ve ücret yok. 3 bant ya da 8 top masasını açın, ilk vuruşu
+          yapın.
+        </p>
         <div class="hero-actions">
           <a
             class="btn btn-primary"
             href="./?ruletype=threecushion&userName=BilarTK&raceTo=7"
             >3 Bant Oyna</a
+          >
+          <a
+            class="btn btn-secondary"
+            href="./?ruletype=eightball&bot=ClawBreak&lod=4&userName=BilarTK"
+            >8 Top Oyna</a
           >
           <a class="btn btn-secondary" href="./lobby">Online Lobi</a>
         </div>
