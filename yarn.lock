@@ -595,6 +595,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint-community/regexpp@npm:^4.12.3":
+  version: 4.12.3
+  resolution: "@eslint-community/regexpp@npm:4.12.3"
+  checksum: 10c0/9b123d7298be2935097a1dc620373b4e9b3861123ba542de86bc4e941428bfb10a0a8dd1ae236b853c5b704f263faf318f8b5e23563b9f70405c7a388fcdf42f
+  languageName: node
+  linkType: hard
+
 "@eslint/config-array@npm:^0.23.6":
   version: 0.23.6
   resolution: "@eslint/config-array@npm:0.23.6"
@@ -2239,12 +2246,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:26.6.7":
-  version: 26.6.7
-  resolution: "@types/node@npm:26.6.7"
+"@types/node@npm:26.6.10":
+  version: 26.6.10
+  resolution: "@types/node@npm:26.6.10"
   dependencies:
     undici-types: "npm:~8.9.0"
-  checksum: 10c0/54ffee68394be0df0f92405b6df75a2f75041bbbd5386fb88292c5e9947800c109baafbc73cbc75957d8238a9487245e4ed57fd91c3e19bda675f3039a403b4b
+  checksum: 10c0/d249c40c72ee1e61aeb9633263e5ebf428359206926a2ca12435cf7112e09a49aa5ef7a787e413fdf66b9ad8f41fb474eeb4e18e31e9b49a64033393e888ce56
   languageName: node
   linkType: hard
 
@@ -3029,6 +3036,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"aria-query@npm:^5.3.2":
+  version: 5.3.2
+  resolution: "aria-query@npm:5.3.2"
+  checksum: 10c0/003c7e3e2cff5540bf7a7893775fc614de82b0c5dde8ae823d47b7a28a9d4da1f7ed85f340bdb93d5649caa927755f0e31ecc7ab63edfdfc00c8ef07e505e03e
+  languageName: node
+  linkType: hard
+
 "asn1js@npm:^3.0.10, asn1js@npm:^3.0.6":
   version: 3.0.10
   resolution: "asn1js@npm:3.0.10"
@@ -3201,16 +3215,16 @@ __metadata:
     "@testing-library/dom": "npm:10.4.2"
     "@types/chai": "npm:5.2.3"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:26.6.7"
+    "@types/node": "npm:26.6.10"
     "@types/three": "npm:0.187.0"
     canvas: "npm:3.2.3"
     chai: "npm:6.3.0"
     concurrently: "npm:10.0.7"
     eslint: "npm:10.15.0"
     eslint-plugin-html: "npm:8.2.1"
-    eslint-plugin-sonarjs: "npm:4.2.2"
+    eslint-plugin-sonarjs: "npm:4.2.3"
     fflate: "npm:^0.8.3"
-    html-validate: "npm:11.21.1"
+    html-validate: "npm:11.22.1"
     http-server: "npm:^14.1.1"
     interactjs: "npm:1.10.29"
     jest: "npm:30.5.2"
@@ -4148,27 +4162,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-sonarjs@npm:4.2.2":
-  version: 4.2.2
-  resolution: "eslint-plugin-sonarjs@npm:4.2.2"
+"eslint-plugin-sonarjs@npm:4.2.3":
+  version: 4.2.3
+  resolution: "eslint-plugin-sonarjs@npm:4.2.3"
   dependencies:
-    "@eslint-community/regexpp": "npm:^4.12.2"
+    "@eslint-community/regexpp": "npm:^4.12.3"
     "@sonarsource/analyzer-commons-configurations": "npm:^2.31.0-5284"
+    aria-query: "npm:^5.3.2"
     builtin-modules: "npm:^3.3.0"
     bytes: "npm:^3.1.2"
     functional-red-black-tree: "npm:^1.0.1"
-    globals: "npm:^17.12.0"
+    globals: "npm:^17.14.0"
     jsx-ast-utils-x: "npm:^0.1.0"
     lodash.merge: "npm:^4.6.2"
-    minimatch: "npm:^10.2.6"
+    minimatch: "npm:^11.0.9"
     scslre: "npm:^0.3.0"
-    semver: "npm:^7.8.5"
+    semver: "npm:^7.8.6"
     ts-api-utils: "npm:^2.5.0"
     typescript: "npm:>=5 <6.1.0"
     yaml: "npm:^2.9.1"
   peerDependencies:
     eslint: ^8.0.0 || ^9.0.0 || ^10.0.0
-  checksum: 10c0/045ce3aab95a317e1a878a03b3299d81ce71e9ba521c4f71ca7dafeea802272173363aeb7a631abd86bf8a35086b8948033d3f3cb4b81f009ad3111c6b52ea27
+  checksum: 10c0/75e30dbfec6c45a6d4852144d499f4ec097264c8c44ceabdcf0c6dc1782de728ae9f85bdfcaf2d74e12f263bfc60b28d7f2478b71248833c6413b45b9f70e68d
   languageName: node
   linkType: hard
 
@@ -4734,10 +4749,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^17.12.0":
-  version: 17.12.0
-  resolution: "globals@npm:17.12.0"
-  checksum: 10c0/8325cf8818c848871d17c32974c2c74e9c5f09c1b0e04421886f64f21e77c3e95f3ba25586743895a73acd860ada151132481d87d44a1f12993ae7758a694d03
+"globals@npm:^17.14.0":
+  version: 17.14.0
+  resolution: "globals@npm:17.14.0"
+  checksum: 10c0/422d17c24e87170d4aa566b97a53339ae451c2f4d78512594a7ca951cdb939bc4a85c10071e6dcf77ca63de48713a77f2e71eb9214e44880233dff2090e92731
   languageName: node
   linkType: hard
 
@@ -4853,9 +4868,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-validate@npm:11.21.1":
-  version: 11.21.1
-  resolution: "html-validate@npm:11.21.1"
+"html-validate@npm:11.22.1":
+  version: 11.22.1
+  resolution: "html-validate@npm:11.22.1"
   dependencies:
     "@html-validate/stylish": "npm:^6.0.0"
     "@sidvind/better-ajv-errors": "npm:7.0.0"
@@ -4882,7 +4897,7 @@ __metadata:
       optional: true
   bin:
     html-validate: bin/html-validate.mjs
-  checksum: 10c0/a82c3ce60d72168227ae4a072994c0977df083e987fb73733b861c0093aeba3f5733b5d594255a3c9ea027611fff4b8ba6cefad660b7dc0d66c203fbe4ba1917
+  checksum: 10c0/881c892dc7ceae0c783ef4ca7de5d4efb11bdc575fa2e07bbb9f7bf4b0671a914dd4514599373c0fa67bdb62e754d013af7ebb9dc414c6e34a6a1852c0467122
   languageName: node
   linkType: hard
 
@@ -6318,7 +6333,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^10.2.2, minimatch@npm:^10.2.6":
+"minimatch@npm:^10.2.2":
   version: 10.2.6
   resolution: "minimatch@npm:10.2.6"
   dependencies:
@@ -6327,7 +6342,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^11.0.1":
+"minimatch@npm:^11.0.1, minimatch@npm:^11.0.9":
   version: 11.0.9
   resolution: "minimatch@npm:11.0.9"
   dependencies:
@@ -7370,6 +7385,15 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/b1f3127a5be8125a94f37188b361c212466c292c6910adce3ec106cff5dc211ccaedc4739c11bb70fda59d6fc1f040a9bca289f4e093451521a2372e5231fe0c
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.8.6":
+  version: 7.8.6
+  resolution: "semver@npm:7.8.6"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/bf0a4d16eb067e5391323649e46b4a268644d7f8ee88e37c7668d35e861ec145b6e7df576d898007fc0d9a2cedcbc33f71460aa3bbea18eedfa5af58c064d7fe
   languageName: node
   linkType: hard
 

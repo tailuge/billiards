@@ -426,6 +426,22 @@
         font-size: 0.68rem;
       }
 
+      /* Why a scored run is missing from the rail, e.g. it did not beat the
+         player's own lowest row. A plain line under the title — not a dialog,
+         the run needs no answer — that clears itself after three seconds, so
+         nothing is left to dismiss. */
+      .rail-note {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.68rem;
+        text-align: center;
+        word-break: keep-all;
+      }
+
+      .rail-note:empty {
+        display: none;
+      }
+
       /* Score dashboard: the launch control takes the free space and the score
          stays a fixed block on the right. */
       .dashboard {
@@ -1012,6 +1028,7 @@
          this page's presence instead of the bare sagu ④. The `eat` suffix is
          what getEmoji spots (../utils.js), the way the map uses `-map`/`-club`. -->
     <app-topbar rule-type="eat"></app-topbar>
+    <remote-inbox></remote-inbox>
 
     <header>
       <h1>한국 음식 탐험 🍜</h1>
@@ -1150,6 +1167,14 @@
            the collection. -->
       <aside class="panel rail" aria-label="하이런 뷔페">
         <h2 class="rail-title">하이런 뷔페</h2>
+        <!-- Non-modal notice for a run that scored but missed the rail. A live
+             region, so the reason is read out without interrupting the game. -->
+        <p
+          id="hiscore-note"
+          class="rail-note"
+          role="status"
+          aria-live="polite"
+        ></p>
         <ol id="break-list" class="break-list"></ol>
         <p id="break-status" class="rail-status">불러오는 중…</p>
       </aside>

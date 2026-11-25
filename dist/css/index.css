@@ -103,9 +103,11 @@ canvas {
   align-items: flex-end;
   gap: 0;
   padding: 0;
-  background: linear-gradient(rgb(0 64 94), #000214);
+
+  /* No background: the surface and its grain belong to .wood-texture in
+     wood.css, which this element always carries. */
   border-radius: 0;
-  border-top: 1px solid #2d1e16;
+  border-top: 1px solid var(--wood-edge);
   box-sizing: border-box;
   position: relative;
 }
