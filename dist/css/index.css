@@ -428,6 +428,9 @@ body.analysis-mode #panel {
   grid-area: controls;
   background: transparent;
   border-top: 0;
+
+  /* No board here, so no bevel rims either. */
+  box-shadow: none;
 }
 
 body.analysis-mode .outerMenu,

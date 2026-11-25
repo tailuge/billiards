@@ -1,26 +1,51 @@
 /*
- * The wood surface: the control panel here, and the two cue inputs in
- * aiminputs.css. One grain definition, three users (it used to be pasted into
- * each rule).
+ * The wood surface: the control panel here, the two cue inputs in
+ * aiminputs.css and the power channel in powerinput.css.
+ *
+ * One grain, one light direction. The board is lit from above, so every wooden
+ * surface paints --wood-sheen (highlight at the top, shadow at the bottom) over
+ * --wood-grain and adds a 1px inset highlight along its top rim. A bevel here
+ * is shadow only: no size, radius, border width or offset changes, so the
+ * layout is exactly what it was.
  *
  * feTurbulence's baseFrequency is per user unit and the SVG is 100% of its
- * element, so every surface gets the same ~200px x ~20px waves at any size;
+ * element, so every surface gets the same ~250px x ~22px waves at any size;
  * background-size 100% 100% rebuilds the grain to fit rather than scaling a
  * fixed tile.
  *
- * feColorMatrix paints a constant #664026 and keeps the noise as alpha, laid
- * at 0.5 over --wood-dark: a #3d2b1f..#523624 ramp. Edit the matrix rows and
- * --wood-dark together.
+ * feColorMatrix paints a constant #140d06 and keeps the noise as alpha, laid at
+ * 0.55 over --wood-base: a #4a3322..#2f1f14 ramp with the pore lines darker
+ * than the timber. Edit the matrix rows and --wood-base together.
  */
 :root {
+  /* Lit timber. --wood-dark is the same board in shadow: recess floors and the
+     power channel. --wood-edge is the rim the bevel turns away from the light. */
+  --wood-base: #4a3322;
   --wood-dark: #3d2b1f;
-  --wood-edge: #2d1e16;
-  --wood-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005 0.05' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  --wood-edge: #2a1c12;
+  --wood-hi: rgb(255 231 196 / 22%);
+
+  /* The wash over the grain, kept separate so a surface can leave it out (the
+     power channel is a groove, not a face) without redefining the grain. */
+  --wood-sheen: linear-gradient(
+    180deg,
+    rgb(255 231 196 / 14%) 0%,
+    rgb(255 231 196 / 3%) 22%,
+    rgb(0 0 0 / 0%) 50%,
+    rgb(0 0 0 / 22%) 100%
+  );
+  --wood-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.045' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0 0.02 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
 .wood-texture {
-  background-color: var(--wood-dark);
-  background-image: var(--wood-grain);
+  background-color: var(--wood-base);
+  background-image: var(--wood-sheen), var(--wood-grain);
   background-size: 100% 100%;
   background-repeat: no-repeat;
+
+  /* Front face of the bevel: a lit top rim, and the shadow gathering along the
+     bottom edge where the board meets the canvas. */
+  box-shadow:
+    inset 0 1px 0 var(--wood-hi),
+    inset 0 -10px 14px -10px rgb(0 0 0 / 55%);
 }

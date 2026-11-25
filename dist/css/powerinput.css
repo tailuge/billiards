@@ -8,9 +8,19 @@
   position: relative;
   padding: 0;
   margin: 6px auto;
-  background: #25180a;
-  border: 2px solid #4c2f15;
+
+  /* The same timber in shadow: a channel routed into the rail rather than a
+     separate brown box. The front face's wash is left off here, and the rim
+     shadows turn the other way, so the groove reads as cut in. */
+  background-color: var(--wood-dark);
+  background-image: var(--wood-grain);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border: 2px solid var(--wood-edge);
   border-radius: 2px;
+  box-shadow:
+    inset 0 2px 5px rgb(0 0 0 / 55%),
+    inset 0 -1px 0 rgb(255 231 196 / 10%);
   overflow: hidden;
   box-sizing: border-box;
   flex: 1 1 auto;
