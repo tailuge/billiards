@@ -36,6 +36,21 @@
   --wood-shade: rgb(0 0 0 / 55%);
   --wood-lit: #c48e64;
 
+  /* The fittings: nickel steel, the metal the table's own corner castings use
+     (Material.001 in the model - rgb 163 163 168, roughness .19), warmed a hair
+     so it sits beside the timber rather than over it. Satin, not mirror: one
+     light from above, no bloom. The ramp stays narrow - lit and shade sit
+     within about twenty levels of the face - so the plate reads matte instead
+     of polished. --steel-rim sits one step above that ramp: the top edge of the
+     frame is a machined edge, and edges catch light the flat cannot. Only the
+     menu column wears the metal: the hit button's edge is the countdown ring,
+     not a rim, so it keeps its own face. */
+  --steel-rim: #d4cfc4;
+  --steel-lit: #c2bdb4;
+  --steel-lit-hover: #cdc8bf;
+  --steel-face: #a5a099;
+  --steel-shade: #928d86;
+
   /* The wash over the grain, kept separate so a surface can leave it out (the
      power channel is a groove, not a face) without redefining the grain. */
   --wood-sheen: linear-gradient(
