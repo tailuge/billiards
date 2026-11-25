@@ -23,14 +23,25 @@
   --wood-base: #4a3322;
   --wood-dark: #3d2b1f;
   --wood-edge: #2a1c12;
-  --wood-hi: rgb(255 231 196 / 22%);
+
+  /* One light source for every wooden surface: --wood-warm is the warm light
+     that falls on rims and faces, --wood-shade where a face turns away from it,
+     and --wood-lit for timber catching it directly. Channels are mixed here so
+     a tune of the light reaches the rail, the cue inputs and the channel at
+     once, and no surface paints its own timber colour. */
+  --wood-warm: 255 231 196;
+  --wood-hi: rgb(var(--wood-warm) / 22%);
+  --wood-rim: rgb(var(--wood-warm) / 14%);
+  --wood-rim-dim: rgb(var(--wood-warm) / 10%);
+  --wood-shade: rgb(0 0 0 / 55%);
+  --wood-lit: #c48e64;
 
   /* The wash over the grain, kept separate so a surface can leave it out (the
      power channel is a groove, not a face) without redefining the grain. */
   --wood-sheen: linear-gradient(
     180deg,
-    rgb(255 231 196 / 14%) 0%,
-    rgb(255 231 196 / 3%) 22%,
+    rgb(var(--wood-warm) / 14%) 0%,
+    rgb(var(--wood-warm) / 3%) 22%,
     rgb(0 0 0 / 0%) 50%,
     rgb(0 0 0 / 22%) 100%
   );
@@ -47,5 +58,5 @@
      bottom edge where the board meets the canvas. */
   box-shadow:
     inset 0 1px 0 var(--wood-hi),
-    inset 0 -10px 14px -10px rgb(0 0 0 / 55%);
+    inset 0 -10px 14px -10px var(--wood-shade);
 }
