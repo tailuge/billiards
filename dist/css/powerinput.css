@@ -39,14 +39,32 @@
   z-index: 3;
 }
 
-/* Flat Power Triangle (Sits behind the cue) */
+/* Power Ramp (Sits behind the cue)
+
+   The ramp is the floor of the channel, not a ribbon laid over it, so it wears
+   the channel's light. The upper lip cuts the ramp's top edge into shadow, the
+   floor falls away again at the lower lip, and the crown of the ramp is left
+   clear for the power colour itself. That is the same bevel the timber beside
+   it and the cue tip above it already paint, which is what makes the panel read
+   as one continuous groove rather than a red sticker on a brown box. */
 .power-track {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 1;
   clip-path: polygon(0 100%, 100% 100%, 100% 0);
-  background: linear-gradient(to right, rgb(255 0 0 / 90%) 0%, #ff0 100%);
+  background:
+    linear-gradient(
+      180deg,
+      rgb(0 0 0 / 48%) 0%,
+      rgb(0 0 0 / 16%) 13%,
+      rgb(0 0 0 / 3%) 34%,
+      rgb(0 0 0 / 0%) 50%,
+      rgb(0 0 0 / 3%) 68%,
+      rgb(0 0 0 / 16%) 88%,
+      rgb(0 0 0 / 42%) 100%
+    ),
+    linear-gradient(to right, rgb(255 0 0 / 90%) 0%, #ff0 100%);
 }
 
 input[type="range"].powerSlider {
