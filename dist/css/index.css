@@ -1004,60 +1004,51 @@ body.chromeless #panel .powerSliderContainer {
   color: #8ab6f8;
 }
 
+/* The close button and the Play chips are one button in two sizes: the same
+   face, rim, inner light, press and focus ring. Size, radius and type are set
+   per element below. */
+.about-close,
+.mode-nav a {
+  position: relative;
+  box-sizing: border-box;
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 15%) 0%,
+    rgb(255 255 255 / 5%) 100%
+  );
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-bottom-color: rgb(0 0 0 / 40%);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 30%),
+    inset 0 1px 0 rgb(255 255 255 / 15%);
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.1s,
+    box-shadow 0.15s;
+}
+
 .about-close {
   position: absolute;
   top: 6px;
   right: 6px;
   z-index: 1;
-  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 24px;
   height: 24px;
-
-  /* The × ink in Exo sits above the line box centre; flex centring then
-     leaves it looking high. Padding the top pushes the centred line down by
-     half the padding, so 2px nudges the glyph down 1px. */
-  padding: 2px 0 0;
-  background: linear-gradient(
-    180deg,
-    rgb(255 255 255 / 16%) 0%,
-    rgb(255 255 255 / 6%) 100%
-  );
-  border: 1px solid rgb(255 255 255 / 25%);
   border-radius: 6px;
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 40%),
-    inset 0 1px 0 rgb(255 255 255 / 20%);
-  color: #eee;
-  font-family: inherit;
-  font-size: 1.1rem;
-  line-height: 1;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    transform 0.1s,
-    box-shadow 0.15s;
 }
 
-.about-close:hover {
-  background: linear-gradient(
-    180deg,
-    rgb(255 255 255 / 24%) 0%,
-    rgb(255 255 255 / 12%) 100%
-  );
-  border-color: rgb(255 255 255 / 40%);
-  box-shadow:
-    0 2px 4px rgb(0 0 0 / 50%),
-    inset 0 1px 0 rgb(255 255 255 / 30%);
-}
-
-.about-close:active {
-  transform: translateY(1px);
-  box-shadow:
-    0 1px 1px rgb(0 0 0 / 60%),
-    inset 0 1px 2px rgb(0 0 0 / 40%);
+/* The button is 24px; its hit area is 44px, without moving the corner chrome. */
+.about-close::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
 }
 
 .about-panel section,
@@ -1349,59 +1340,55 @@ body.chromeless #panel .powerSliderContainer {
 }
 
 .mode-nav a {
-  position: relative;
-  box-sizing: border-box;
   width: 5rem;
   height: 2rem;
   padding: 0 2px;
+  border-radius: 5px;
 
   /* One line centred in the fixed height (the 2px accounts for the top and
      bottom border), so the label stays a block box and can still ellipsis. */
   line-height: calc(2rem - 2px);
   text-align: center;
-  background: linear-gradient(
-    180deg,
-    rgb(255 255 255 / 15%) 0%,
-    rgb(255 255 255 / 5%) 100%
-  );
-  border: 1px solid rgb(255 255 255 / 20%);
-  border-bottom-color: rgb(0 0 0 / 40%);
-  border-radius: 5px;
-  color: white;
   text-decoration: none;
   font-size: 12px;
   font-weight: 400;
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 30%),
-    inset 0 1px 0 rgb(255 255 255 / 15%);
-  transition:
-    background 0.15s,
-    border-color 0.15s,
-    transform 0.1s,
-    box-shadow 0.15s;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.mode-nav a:hover {
-  background: linear-gradient(
-    180deg,
-    rgb(255 255 255 / 25%) 0%,
-    rgb(255 255 255 / 10%) 100%
-  );
-  border-color: rgb(255 255 255 / 40%);
-  border-bottom-color: rgb(0 0 0 / 50%);
-  box-shadow:
-    0 2px 4px rgb(0 0 0 / 40%),
-    inset 0 1px 0 rgb(255 255 255 / 25%);
+/* Hover is pointer-only: on a touch screen the last tapped chip would
+   otherwise keep its lit face and read as the selected game. */
+@media (hover: hover) and (pointer: fine) {
+  .about-close:hover,
+  .mode-nav a:hover {
+    background: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 25%) 0%,
+      rgb(255 255 255 / 10%) 100%
+    );
+    border-color: rgb(255 255 255 / 40%);
+    border-bottom-color: rgb(0 0 0 / 50%);
+    box-shadow:
+      0 2px 4px rgb(0 0 0 / 40%),
+      inset 0 1px 0 rgb(255 255 255 / 25%);
+  }
 }
 
+.about-close:active,
 .mode-nav a:active {
   transform: translateY(1px);
   box-shadow:
     0 1px 1px rgb(0 0 0 / 50%),
     inset 0 1px 2px rgb(0 0 0 / 40%);
+}
+
+/* The tray's buttons ring in white; the panel's ring borrows its link blue so
+   the focus ring never disappears into the glass. */
+.about-close:focus-visible,
+.mode-nav a:focus-visible {
+  outline: 2px solid #8ab6f8;
+  outline-offset: 2px;
 }
 
 /* The rim glint of an incoming challenge (.challenge-pill::after in
@@ -1436,9 +1423,11 @@ body.chromeless #panel .powerSliderContainer {
   pointer-events: none;
 }
 
-.about-close:hover::after,
-.mode-nav a:hover::after {
-  animation: challenge-glint 0.5s ease-out 1;
+@media (hover: hover) and (pointer: fine) {
+  .about-close:hover::after,
+  .mode-nav a:hover::after {
+    animation: challenge-glint 0.5s ease-out 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

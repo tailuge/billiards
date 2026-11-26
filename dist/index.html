@@ -142,7 +142,20 @@
           id="aboutClose"
           aria-label="Close"
         >
-          ×
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M2.5 2.5 9.5 9.5M9.5 2.5 2.5 9.5"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
         </button>
         <div class="about-scroll">
           <section class="play-section" aria-labelledby="playLabel">
@@ -158,11 +171,7 @@
                 href="https://billiards.tailuge.workers.dev/nineball"
                 >9-ball</a
               >
-              <a
-                class="game-mode"
-                href="https://billiards.tailuge.workers.dev?ruletype=threecushion"
-                >3-cushion</a
-              >
+              <a class="game-mode" href="./threecushion">3-cushion</a>
               <a
                 class="game-mode"
                 href="https://billiards.tailuge.workers.dev/snooker"
@@ -178,6 +187,8 @@
                 href="https://billiards.tailuge.workers.dev?ruletype=libre"
                 >Libre</a
               >
+              <a class="game-mode" href="./exam/">Exam</a>
+              <a class="game-mode" href="./speedrun/">Run</a>
               <a href="https://billiards.tailuge.workers.dev/challenge/">Eat</a>
               <a href="https://billiards.tailuge.workers.dev/map/">Map</a>
               <a href="https://billiards.tailuge.workers.dev/reveal/">Reveal</a>
