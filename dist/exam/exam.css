@@ -21,9 +21,40 @@ body {
   padding: 0.5rem;
 }
 
+/*
+ * Headings had no rules of their own, so they took the UA sizes (2em / 1.5em /
+ * 1.17em) on the loose leading set for body copy: the title read as one more
+ * block of prose, and short Korean section headings (초급 / 중급 / 고급) sat
+ * almost a line clear of their own shots. One scale, one leading, and balance
+ * so a long title breaks into even lines instead of a widow.
+ */
+h1,
+h2,
+h3 {
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/*
+ * Links were still on the UA's #0000EE, a second blue competing with every
+ * button on the page. #1d4ed8 is the play-button blue and clears 6.4:1.
+ */
+a {
+  color: #1d4ed8;
+}
+
 header {
   text-align: center;
   margin-bottom: 1rem;
+}
+
+/* Frames the running head on wide screens instead of one long line. */
+header h1 {
+  font-size: 1.6rem;
+  max-width: 34em;
+  margin: 0 auto;
+  padding: 0 0.5rem;
 }
 
 header h1 a {
@@ -35,10 +66,18 @@ header h1 a:hover {
   opacity: 0.7;
 }
 
+/*
+ * Wraps rather than overflows. Once a few shots are played the three labels
+ * read "Assessment: Novice / completion: 45% / score: 38%", which is wider
+ * than a 320px phone - without wrapping, the Reset button is clipped and the
+ * page gains a horizontal scrollbar.
+ */
 .assessment-line {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 0.25rem 0.5rem;
   position: sticky;
   top: 0.5rem;
   z-index: 100;
@@ -46,7 +85,7 @@ header h1 a:hover {
   padding: 0.25rem 0.3rem;
   margin: 0 auto 0.5rem;
   max-width: 800px;
-  border: 1px solid #000;
+  border: 1px solid #d4d4d4;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
@@ -54,6 +93,7 @@ header h1 a:hover {
 .assessment-item {
   font-weight: bold;
   font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .summary {
@@ -74,11 +114,18 @@ main > h2 {
   max-width: 1200px;
   margin: 1rem auto 0.5rem;
   padding: 0 0.75rem;
+  font-size: 1.2rem;
   text-align: center;
 }
 
 .summary h2 {
   margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+}
+
+/* The reset box holds several paragraphs; the global reset left them flush. */
+.summary p + p {
+  margin-top: 0.6rem;
 }
 
 .assessment {
@@ -158,28 +205,34 @@ main > h2 {
   /*
    * buildSummaryList() appends one <li> per .question-block, and it runs from
    * a deferred module script, so it lands after first paint. Without a
-   * reserved height the Shot List card grows by ~513px and pushes every
-   * question block down the page, which is the whole of this page's CLS.
-   * Sized for the 20 blocks in threecushion.html:
-   * 20 x (0.85rem x 1.6 + 0.4rem padding + 1px border) = 20 x 25.64px.
-   * Update these if a page gains shots.
+   * reserved height the Shot List card grows by the full list height and
+   * pushes every question block down the page, which is this page's CLS.
+   *
+   * A row is 0.85rem x 1.6 line-height + 0.4rem padding + 1px border. Each
+   * paper states its own row count with --shot-rows in its own style block;
+   * 20 rows is threecushion.html, the longest paper, so it is the default.
+   * Update a page's number when it gains shots.
    */
-  min-height: 520px;
+  --shot-row-height: 25.64px;
+  --shot-rows: 20;
+
+  min-height: calc(var(--shot-rows) * var(--shot-row-height));
 }
 
 @media (width >= 600px) {
   #shotList {
+    /* Two columns, so the same list is half as tall. */
+    --shot-rows: 10;
+
     columns: 2;
     column-gap: 8rem;
-
-    /* Two columns, so 10 rows instead of 20. */
-    min-height: 265px;
   }
 }
 
 #shotList li {
   display: flex;
   justify-content: space-between;
+  gap: 0.5rem;
   padding: 0.2rem 0;
   border-bottom: 1px solid #eee;
   break-inside: avoid;
@@ -265,7 +318,13 @@ main > h2 {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  scroll-margin-top: 4rem;
+
+  /*
+   * Clears the sticky bar, which is two rows tall on a narrow phone once a
+   * shot has been scored - a link from the shot list would otherwise land
+   * with the shot name tucked under the bar.
+   */
+  scroll-margin-top: 5.5rem;
 }
 
 @media (width >= 768px) {
@@ -281,6 +340,12 @@ main > h2 {
   .question-diagram {
     flex: 2;
   }
+}
+
+/* Shot name first in the block, so it needs less room than the h3 default. */
+.question-text h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
 }
 
 .question-diagram svg.billiards-table {
@@ -353,6 +418,14 @@ main > h2 {
   outline-offset: 2px;
 }
 
+/* Attempt stats sit beside the button; the class carries what the script
+ * used to set as inline styles. */
+.q-stats {
+  display: inline-block;
+  margin-left: 0.75rem;
+  font-weight: 700;
+}
+
 @keyframes ring-expand-green {
   0% {
     box-shadow: 0 0 0 0 rgb(34 197 94 / 80%);
@@ -419,7 +492,6 @@ main > h2 {
 /* Background darkened so the white label clears 4.5:1. */
 .reset-btn {
   background-color: #e81414;
-  margin-left: 0.25rem;
 }
 
 .reset-btn:hover {
@@ -444,6 +516,19 @@ main > h2 {
  */
 .assessment-line > div {
   position: relative;
+
+  /* Keeps Guide/Lobby/Reset hard right when the bar wraps onto two lines. */
+  margin-left: auto;
+
+  /*
+   * The three controls used to be spaced by whatever whitespace happened to
+   * sit between them in the markup, plus a margin-left on Reset alone, so the
+   * gaps came out uneven (Guide-Lobby tight, Lobby-Reset wide). One flex row
+   * and one gap, and whitespace text nodes stop being flex items.
+   */
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 /* `<details>` is display: block in the UA stylesheet, which would put the
@@ -463,6 +548,14 @@ main > h2 {
 
 .guide summary:hover {
   background-color: #374151;
+}
+
+/* The bar's controls were the only buttons without a visible focus ring. */
+.reset-btn:focus-visible,
+.lobby-btn:focus-visible,
+.guide summary:focus-visible {
+  outline: 2px solid #1e3a8a;
+  outline-offset: 2px;
 }
 
 .guide-panel {
@@ -536,4 +629,23 @@ main > h2 {
   cursor: pointer;
   border-radius: 4px;
   font-weight: bold;
+}
+
+/*
+ * The ring on a scored shot answers a click, but it is decoration; anyone who
+ * has asked for less motion gets the score without the animation.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .play-btn {
+    transition: none;
+  }
+
+  .play-btn:active {
+    transform: none;
+  }
+
+  .q-stats.updated.q-pass,
+  .q-stats.updated.q-fail {
+    animation: none;
+  }
 }

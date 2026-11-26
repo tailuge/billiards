@@ -666,40 +666,38 @@
       }
 
       .score {
-        position: relative;
         flex-shrink: 0;
         text-align: right;
         line-height: 1.1;
       }
 
       /* Why a scored run is missing from the rail, e.g. it did not beat the
-         player's own lowest row: a small card over the score it failed to
-         lift, rather than a line down in the rail, so the reason sits next to
-         the number the player is looking at. Not a dialog — the run needs no
-         answer — and it clears itself after five seconds. Only opacity hides
+         player's own lowest row: a centred fixed card, so the reason reads
+         clearly wherever the player is scrolled. Not a dialog — the run needs
+         no answer — and it clears itself after five seconds. Only opacity hides
          it, so the live region stays in the accessibility tree while closed. */
       .score-popover {
-        position: absolute;
-        right: 0;
-        bottom: calc(100% + 0.4rem);
+        position: fixed;
+        top: 50%;
+        left: 50%;
         z-index: 20;
         display: flex;
         align-items: flex-start;
-        gap: 0.35rem;
+        gap: 0.5rem;
         width: max-content;
-        max-width: min(16rem, calc(100vw - 2rem));
-        padding: 0.4rem 0.55rem;
+        max-width: min(22rem, calc(100vw - 2rem));
+        padding: 0.75rem 1rem;
         border: 1px solid var(--accent);
         border-radius: 6px;
         background: var(--surface);
         color: var(--text);
         box-shadow: 0 4px 16px rgb(0 0 0 / 45%);
-        font-size: 0.78rem;
-        line-height: 1.45;
+        font-size: 0.9rem;
+        line-height: 1.5;
         text-align: left;
         word-break: keep-all;
         opacity: 0;
-        transform: translateY(0.3rem);
+        transform: translate(-50%, calc(-50% + 0.4rem));
         transition:
           opacity 0.2s ease,
           transform 0.2s ease;
@@ -708,7 +706,7 @@
 
       .score-popover.show {
         opacity: 1;
-        transform: translateY(0);
+        transform: translate(-50%, -50%);
       }
 
       .score-popover-icon {
@@ -724,8 +722,8 @@
       }
 
       /* The card is a notice, not a control, but it carries one link: only the
-         shown card takes pointer input, so a closed one never blocks the score
-         it floats over. */
+         shown card takes pointer input, so a closed one does not intercept
+         clicks on the page beneath it. */
       .score-popover.show {
         pointer-events: auto;
       }
@@ -1316,10 +1314,10 @@
           <span class="score-label">현재 점수</span>
           <span id="score-display" class="score-num">0</span>
           <span id="score-max" class="score-max">/ 32</span>
-          <!-- Shown when a run scored but missed the rail: the reason floats
-               over the score it failed to lift, so it is read where the
-               player is already looking. `role="status"` reads the line out
-               without interrupting, and the timer closes it. -->
+          <!-- Shown when a run scored but missed the rail: a centred card over
+               the page so it reads clearly wherever the player is scrolled.
+               `role="status"` reads the line out without interrupting, and
+               the timer closes it. -->
           <div
             id="hiscore-popover"
             class="score-popover"

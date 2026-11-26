@@ -313,7 +313,7 @@ function buildSummaryList() {
     const li = document.createElement("li")
     const qId = qIdForBlock(block)
     li.dataset.qid = qId
-    li.innerHTML = `<a href="#${qId}">${h3 ? h3.textContent : `Shot ${qId}`}</a> <span class="status-unknown">❓ Unknown</span>`
+    li.innerHTML = `<a href="#${qId}">${h3 ? h3.textContent : `Shot ${qId}`}</a> <span class="status-unknown">🎓 Unknown</span>`
     shotList.appendChild(li)
   })
 
@@ -344,7 +344,7 @@ export function updateUI() {
 
       let statusClass = "status-unknown"
       let statusText = "Unknown"
-      let icon = "❓"
+      let icon = "🎓"
 
       if (result.attempted > 0) {
         const displayPct =
@@ -377,7 +377,7 @@ export function updateUI() {
     const qId = qIdForBlock(qBlock)
     const result = results[qId] || { totalPoints: 0, totalMax: 0, attempted: 0 }
 
-    let icon = "❓"
+    let icon = "🎓"
     let statText = ""
     if (result.attempted > 0) {
       const displayPct =
@@ -394,8 +394,6 @@ export function updateUI() {
     if (!statsSpan || !statsSpan.classList.contains("q-stats")) {
       statsSpan = document.createElement("span")
       statsSpan.classList.add("q-stats")
-      statsSpan.style.marginLeft = "1rem"
-      statsSpan.style.fontWeight = "bold"
       btn.parentNode.insertBefore(statsSpan, btn.nextSibling)
     }
 

@@ -65,12 +65,19 @@
     <link rel="stylesheet" href="exam.css" />
     <style>
       /*
-       * exam.css reserves room for the 20 shot rows of threecushion.html so
-       * buildSummaryList() cannot shift the page after first paint. This paper
-       * has two shots, so reserve their two rows instead of twenty.
+       * exam.css reserves room for the shot list so buildSummaryList() cannot
+       * shift the page after first paint. This paper has 17 shots: 17 rows in
+       * one column, 9 once the list splits in two. One spare row covers a long
+       * Korean title wrapping on a narrow phone.
        */
       #shotList {
-        min-height: 3.6rem;
+        --shot-rows: 18;
+      }
+
+      @media (width >= 600px) {
+        #shotList {
+          --shot-rows: 9;
+        }
       }
 
       /*
@@ -90,7 +97,8 @@
       h2,
       h3,
       .question-text p,
-      .guide-panel p {
+      .guide-panel p,
+      .summary p {
         word-break: keep-all;
       }
     </style>

@@ -56,6 +56,21 @@
       .billiards-table .ball {
         --ball-fill: var(--ball-stroke);
       }
+
+      /*
+       * exam.css reserves room for the shot list so buildSummaryList() cannot
+       * shift the page after first paint. This paper has 12 shots: 12 rows in
+       * one column, 6 once the list splits in two.
+       */
+      #shotList {
+        --shot-rows: 12;
+      }
+
+      @media (width >= 600px) {
+        #shotList {
+          --shot-rows: 6;
+        }
+      }
     </style>
     <link
       rel="icon"
