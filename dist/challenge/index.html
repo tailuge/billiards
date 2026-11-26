@@ -426,22 +426,6 @@
         font-size: 0.68rem;
       }
 
-      /* Why a scored run is missing from the rail, e.g. it did not beat the
-         player's own lowest row. A plain line under the title — not a dialog,
-         the run needs no answer — that clears itself after three seconds, so
-         nothing is left to dismiss. */
-      .rail-note {
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.68rem;
-        text-align: center;
-        word-break: keep-all;
-      }
-
-      .rail-note:empty {
-        display: none;
-      }
-
       /* Score dashboard: the launch control takes the free space and the score
          stays a fixed block on the right. */
       .dashboard {
@@ -646,9 +630,53 @@
       }
 
       .score {
+        position: relative;
         flex-shrink: 0;
         text-align: right;
         line-height: 1.1;
+      }
+
+      /* Why a scored run is missing from the rail, e.g. it did not beat the
+         player's own lowest row: a small card over the score it failed to
+         lift, rather than a line down in the rail, so the reason sits next to
+         the number the player is looking at. Not a dialog — the run needs no
+         answer — and it clears itself after five seconds. Only opacity hides
+         it, so the live region stays in the accessibility tree while closed. */
+      .score-popover {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 0.4rem);
+        z-index: 20;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.35rem;
+        width: max-content;
+        max-width: min(16rem, calc(100vw - 2rem));
+        padding: 0.4rem 0.55rem;
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 4px 16px rgb(0 0 0 / 45%);
+        font-size: 0.7rem;
+        line-height: 1.35;
+        text-align: left;
+        word-break: keep-all;
+        opacity: 0;
+        transform: translateY(0.3rem);
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+        pointer-events: none;
+      }
+
+      .score-popover.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .score-popover-icon {
+        flex: 0 0 auto;
       }
 
       .score-label {
@@ -870,7 +898,8 @@
           animation: none;
         }
 
-        .toast {
+        .toast,
+        .score-popover {
           transition: none;
         }
       }
@@ -1090,6 +1119,19 @@
           <span class="score-label">현재 점수</span>
           <span id="score-display" class="score-num">0</span>
           <span id="score-max" class="score-max">/ 32</span>
+          <!-- Shown when a run scored but missed the rail: the reason floats
+               over the score it failed to lift, so it is read where the
+               player is already looking. `role="status"` reads the line out
+               without interrupting, and the timer closes it. -->
+          <div
+            id="hiscore-popover"
+            class="score-popover"
+            role="status"
+            aria-live="polite"
+          >
+            <span class="score-popover-icon" aria-hidden="true">🥃</span>
+            <span id="hiscore-popover-text"></span>
+          </div>
         </div>
       </section>
 
@@ -1167,14 +1209,6 @@
            the collection. -->
       <aside class="panel rail" aria-label="하이런 뷔페">
         <h2 class="rail-title">하이런 뷔페</h2>
-        <!-- Non-modal notice for a run that scored but missed the rail. A live
-             region, so the reason is read out without interrupting the game. -->
-        <p
-          id="hiscore-note"
-          class="rail-note"
-          role="status"
-          aria-live="polite"
-        ></p>
         <ol id="break-list" class="break-list"></ol>
         <p id="break-status" class="rail-status">불러오는 중…</p>
       </aside>
