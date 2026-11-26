@@ -1,5 +1,36 @@
+/*
+ * Speedrun board: ten fixed layouts, a stopwatch and a score sheet.
+ *
+ * The room is unlit and the tables are the only bright things, so the ground is
+ * a near-black carrying a trace of baize, and the single accent the UI spends is
+ * the cushion blue the diagrams already draw. Times are set in a fixed-width
+ * face with tabular figures so the clock holds still and the leaderboard's
+ * seconds line up down the column.
+ */
+
+:root {
+  --room-950: #0b100f;
+  --room-900: #121a18;
+  --room-850: #17211f;
+  --room-line: #26332f;
+  --room-line-lit: #35463f;
+  --text: #e6ece8;
+  --text-dim: #9daba4;
+  --chalk-400: #6fb9e3;
+  --chalk-500: #2b739e;
+  --chalk-600: #2d7ba8;
+  --ok: #5fbf7f;
+  --fail: #e06c5e;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --font-num:
+    ui-monospace, "SFMono-Regular", "Cascadia Mono", "Roboto Mono", "Menlo",
+    "Consolas", monospace;
+}
+
 html {
   font-size: 87.5%;
+  color-scheme: dark;
 }
 
 *,
@@ -11,91 +42,118 @@ html {
 }
 
 body {
-  font-family: Exo, sans-serif;
-  font-weight: 200;
-  background: #1a1a1a;
-  color: #e2e8f0;
-  line-height: 1.4;
+  font-family: Exo, "Segoe UI", system-ui, sans-serif;
+  font-weight: 300;
+  background-color: var(--room-950);
+  background-image: radial-gradient(
+    120% 60% at 50% 0%,
+    #16211f,
+    transparent 70%
+  );
+  color: var(--text);
+  line-height: 1.5;
   padding: 0.25rem;
 }
 
 header {
   position: relative;
-  text-align: center;
   max-width: 1200px;
-  margin: 0 auto 0.5rem;
+  margin: 0 auto 0.6rem;
+  padding: 0.15rem 0 0.4rem;
+  text-align: center;
 }
 
+/* The inline padding keeps the title clear of the corner Lobby button, and the
+   min-height makes that row taller than the button so the tagline below never
+   runs under it on a narrow screen. */
 header h1 {
-  font-size: 1.5rem;
-  font-weight: 200;
+  min-height: 2.4rem;
+  padding-inline: 4.5rem;
+  font-size: clamp(1.05rem, 4.5vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-wrap: balance;
 }
 
+/* One sentence of orientation, and the only prose a crawler can quote. */
+.tagline {
+  max-width: 46ch;
+  margin: 0.25rem auto 0;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* Navigation is quiet; the Play buttons own the accent. */
 .lobby-btn {
   position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  padding: 0.25rem 0.75rem;
-  background: linear-gradient(135deg, #6366f1, #2563eb, #1d4ed8);
-  color: #fff;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 0.9rem;
+  top: 0.15rem;
+  right: 0.15rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--room-line);
+  border-radius: var(--radius-md);
+  background-color: var(--room-850);
+  color: var(--text);
+  font-size: 0.85rem;
   font-weight: 600;
-  transition: box-shadow 0.2s;
-  box-shadow:
-    0 1px 3px rgb(0 0 0 / 30%),
-    inset 0 1px 0 rgb(255 255 255 / 15%);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
 }
 
 .lobby-btn:hover {
-  box-shadow:
-    0 4px 14px rgb(99 102 241 / 45%),
-    inset 0 1px 0 rgb(255 255 255 / 20%);
+  border-color: var(--room-line-lit);
+  background-color: #1f2b28;
+}
+
+.lobby-btn:focus-visible {
+  outline: 2px solid var(--chalk-400);
+  outline-offset: 2px;
 }
 
 /* Card grid */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 0.3rem;
+  gap: 0.5rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 /* Single card */
 .speedrun-card {
-  background: #1e293b;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 30%);
-  padding: 0.4rem;
   display: flex;
   flex-direction: column;
-  border: 1px solid #334155;
+  padding: 0.55rem 0.55rem 0.45rem;
+  border: 1px solid var(--room-line);
+  border-radius: var(--radius-md);
+  background-color: var(--room-900);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 40%);
   transition:
-    border-color 0.2s,
-    box-shadow 0.2s,
-    transform 0.2s;
-}
-
-.speedrun-card:hover {
-  border-color: #6366f1;
-  box-shadow: 0 4px 16px rgb(99 102 241 / 25%);
-  transform: translateY(-2px);
+    border-color 0.15s,
+    background-color 0.15s;
 }
 
 .card-title {
+  margin: 0.05rem 0 0.3rem;
   font-size: 1rem;
-  margin: 0.15rem 0;
+  font-weight: 600;
+  letter-spacing: 0.005em;
   text-align: center;
-  font-weight: 200;
+  text-wrap: balance;
 }
 
 .card-desc {
-  font-size: 0.85rem;
-  color: #cbd5e1;
   margin-bottom: 0.3rem;
+  color: var(--text-dim);
+  font-size: 0.85rem;
 }
 
 /* SVG table preview */
@@ -104,6 +162,17 @@ header h1 {
   height: auto;
   background: transparent;
   display: block;
+}
+
+/*
+ * The cue speed under each diagram is set by the simulation as SVG text with a
+ * grey fill that sat too close to the card. It is the one caption on the card,
+ * so it takes the body face and the muted ink instead.
+ */
+.speedrun-card .worker-status {
+  fill: var(--text-dim);
+  font-family: inherit;
+  font-weight: 500;
 }
 
 /* Pool Table Coloring */
@@ -154,108 +223,100 @@ header h1 {
 
 .play-rank-wrapper {
   display: flex;
-  gap: 0.3rem;
-  margin-top: 0.25rem;
   align-items: stretch;
+  gap: 0.5rem;
+  margin-top: 0.45rem;
 }
 
-/* Play button */
-.play-btn {
-  display: block;
-  padding: 0.35rem 0.75rem;
-  background: linear-gradient(135deg, #6366f1, #2563eb, #1d4ed8);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition:
-    box-shadow 0.2s,
-    transform 0.15s;
+/* Play button (and the result modal's OK, which is the same control) */
+.play-btn,
+#resultOkBtn {
   flex: 0 0 auto;
-  box-shadow:
-    0 1px 3px rgb(0 0 0 / 30%),
-    inset 0 1px 0 rgb(255 255 255 / 15%);
-  position: relative;
-  overflow: hidden;
+  min-height: 2.75rem;
+  padding: 0.35rem 1rem;
+  border: 1px solid #24688f;
+  border-radius: var(--radius-md);
+  background-color: var(--chalk-500);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
   letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%);
+  transition:
+    background-color 0.15s,
+    transform 0.08s;
 }
 
-.play-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgb(255 255 255 / 25%),
-    transparent
-  );
-  transform: skewX(-20deg);
-  transition: left 0.5s ease;
+#resultOkBtn {
+  min-width: 6rem;
+  padding: 0.4rem 1.4rem;
 }
 
-.play-btn:hover {
-  box-shadow:
-    0 4px 14px rgb(99 102 241 / 45%),
-    inset 0 1px 0 rgb(255 255 255 / 20%);
-  transform: translateY(-1px);
+.play-btn:hover,
+#resultOkBtn:hover {
+  background-color: var(--chalk-600);
 }
 
-.play-btn:hover::before {
-  left: 150%;
+.play-btn:active,
+#resultOkBtn:active {
+  background-color: #256386;
+  transform: translateY(1px);
+}
+
+.play-btn:focus-visible,
+#resultOkBtn:focus-visible {
+  outline: 2px solid var(--chalk-400);
+  outline-offset: 2px;
 }
 
 /* Rankings */
 .rankings {
   flex: 1;
-  border-left: 1px solid #334155;
-  padding-left: 0.3rem;
+  min-width: 0;
   min-height: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--room-line);
 }
 
 .rankings h4 {
-  font-size: 0.7rem;
-  margin-bottom: 0.05rem;
-  color: #cbd5e1;
+  margin-bottom: 0.15rem;
+  color: var(--text-dim);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  letter-spacing: 0.05rem;
-  font-weight: 200;
 }
 
 .rankings-empty {
+  color: var(--text-dim);
   font-size: 0.8rem;
-  color: #cbd5e1;
   font-style: italic;
 }
 
 .rankings-list {
-  list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .rankings-list li {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.05rem 0.15rem;
-  font-size: 0.85rem;
-  border-bottom: 1px solid #1e293b;
-  border-radius: 4px;
+  gap: 0.35rem;
+  padding: 0.1rem 0.25rem;
+  border-bottom: 1px solid var(--room-line);
+  font-size: 0.82rem;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background-color 0.12s;
 }
 
 .rankings-list li:hover {
-  background: rgb(255 255 255 / 6%);
+  background-color: var(--room-850);
 }
 
 .rankings-list li:last-child {
@@ -263,46 +324,50 @@ header h1 {
 }
 
 .rank {
-  font-weight: 700;
-  color: #2563eb;
-  min-width: 1.2rem;
+  flex: 0 0 1.1rem;
+  color: var(--chalk-400);
+  font-size: 0.8rem;
+  font-weight: 600;
   text-align: center;
 }
 
 .rank-name {
   flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .rank-time {
-  font-family: Exo, monospace;
-  color: #cbd5e1;
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--text);
+  font-family: var(--font-num);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 .rank-replay {
-  color: #2563eb;
-  font-size: 0.85rem;
-  padding: 0 0.15rem;
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  padding: 0 0.1rem;
+  color: var(--chalk-400);
+  font-size: 0.75rem;
 }
 
 /* Iframe overlay */
 #gameOverlay {
-  display: flex;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgb(26 26 26 / 90%);
-  z-index: 1000;
-  justify-content: center;
+  inset: 0;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  background-color: rgb(8 12 11 / 92%);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
 }
 
 #gameOverlay.active {
@@ -311,23 +376,26 @@ header h1 {
 }
 
 .iframe-container {
+  position: relative;
   width: 90%;
   height: 90%;
-  background: #1a1a1a;
-  position: relative;
-  border-radius: 8px;
   overflow: hidden;
+  border: 1px solid var(--room-line);
+  border-radius: var(--radius-lg);
+  background-color: var(--room-950);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 60%);
   transition:
-    transform 0.3s ease-in,
-    opacity 0.3s ease-in;
+    transform 0.25s ease-in,
+    opacity 0.25s ease-in;
 }
 
 #gameOverlay.closing .iframe-container {
-  transform: scale(0);
+  transform: scale(0.96);
   opacity: 0;
 }
 
 .iframe-container iframe {
+  display: block;
   width: 100%;
   height: 100%;
   border: none;
@@ -336,55 +404,69 @@ header h1 {
 /* Timer display */
 .timer-display {
   position: absolute;
-  top: 50px;
+  top: 2.75rem;
   left: 50%;
-  transform: translateX(-50%);
+  padding: 0.1rem 0.7rem;
+  border-radius: 999px;
+  background-color: rgb(8 12 11 / 60%);
   color: #fff;
-  font-family: "Courier New", monospace;
-  font-size: 2.2rem;
-  font-weight: bold;
-  z-index: 10;
-  text-shadow: 0 0 8px rgb(0 0 0 / 60%);
+  font-family: var(--font-num);
+  font-size: 1.9rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 70%);
+  transform: translateX(-50%);
   pointer-events: none;
+  z-index: 10;
 }
 
 /* Close button */
 .close-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #fff;
-  color: #000;
-  border: none;
-  width: 32px;
-  height: 32px;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid rgb(255 255 255 / 18%);
   border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.1rem;
-  font-weight: bold;
+  background-color: rgb(18 26 24 / 88%);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
   line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
   z-index: 1010;
 }
 
 .close-btn:hover {
-  background: #ddd;
+  border-color: rgb(255 255 255 / 30%);
+  background-color: #1f2b28;
+}
+
+.close-btn:focus-visible {
+  outline: 2px solid var(--chalk-400);
+  outline-offset: 2px;
 }
 
 /* Result modal (shared fail + success) */
 #resultModal {
-  display: flex;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  backdrop-filter: blur(2px);
-  z-index: 2000;
-  justify-content: center;
+  inset: 0;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  background-color: rgb(8 12 11 / 55%);
+  backdrop-filter: blur(3px);
   opacity: 0;
   pointer-events: none;
+  transition: opacity 0.18s ease;
+  z-index: 2000;
 }
 
 #resultModal.active {
@@ -393,98 +475,98 @@ header h1 {
 }
 
 .result-card {
-  background: #2a2420;
-  border: 1px solid #6b5743;
-  color: #fff;
-  border-radius: 10px;
-  padding: 1rem;
-  text-align: center;
-  box-shadow: 0 8px 16px rgb(0 0 0 / 90%);
-  max-width: 320px;
   width: 90%;
+  max-width: 320px;
+  padding: 1.1rem 1.1rem 1rem;
+  border: 1px solid var(--room-line);
+  border-radius: var(--radius-lg);
+  background-color: var(--room-900);
+  color: var(--text);
+  text-align: center;
+  box-shadow: 0 18px 50px rgb(0 0 0 / 60%);
+  transform: translateY(6px);
+  transition: transform 0.18s ease;
+}
+
+#resultModal.active .result-card {
+  transform: none;
 }
 
 .result-card h2 {
-  font-size: 1.3rem;
   margin-bottom: 0.3rem;
-  font-weight: 200;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .result-card p {
-  font-size: 1rem;
-  color: #d4ccc0;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.9rem;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
 }
 
 #resultModal.fail .result-card h2 {
-  color: #dc2626;
+  color: var(--fail);
 }
 
 #resultModal.success .result-card h2 {
-  color: #16a34a;
+  color: var(--ok);
 }
 
-#resultOkBtn {
-  padding: 0.35rem 1.25rem;
-  background: linear-gradient(135deg, #6366f1, #2563eb, #1d4ed8);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: box-shadow 0.2s;
-  box-shadow:
-    0 1px 3px rgb(0 0 0 / 30%),
-    inset 0 1px 0 rgb(255 255 255 / 15%);
-  position: relative;
-  overflow: hidden;
-  letter-spacing: 0.02em;
-}
-
-#resultOkBtn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgb(255 255 255 / 25%),
-    transparent
-  );
-  transform: skewX(-20deg);
-  transition: left 0.5s ease;
-}
-
-#resultOkBtn:hover {
-  box-shadow:
-    0 4px 14px rgb(99 102 241 / 45%),
-    inset 0 1px 0 rgb(255 255 255 / 20%);
-}
-
-#resultOkBtn:hover::before {
-  left: 150%;
-}
-
-/* ?run=id filtering — hide all cards except the matching one */
+/*
+ * ?run=id filtering. display: none rather than a zero-sized absolute box: the
+ * hidden cards' Play buttons would otherwise stay in the tab order.
+ */
 html[data-run] .card-grid > .speedrun-card:not(.active-run) {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  box-shadow: none;
+  display: none;
 }
 
-/* Icon buttons on card SVGs */
+/* Icon buttons on card SVGs (positioned inline by speedrun.js) */
+.icon-btn {
+  border-radius: var(--radius-md);
+  line-height: 1;
+}
+
 .icon-btn:hover {
   opacity: 0.9 !important;
   filter: none !important;
+}
+
+.icon-btn:active {
+  opacity: 1 !important;
+}
+
+.icon-btn:focus-visible {
+  outline: 2px solid var(--chalk-400);
+  outline-offset: 3px;
+}
+
+/* Hover only where a pointer can hover: no stuck states on touch. */
+@media (hover: hover) {
+  .speedrun-card:hover {
+    border-color: var(--room-line-lit);
+    background-color: #141d1b;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lobby-btn,
+  .speedrun-card,
+  .play-btn,
+  #resultOkBtn,
+  #gameOverlay,
+  .iframe-container,
+  #resultModal,
+  .result-card,
+  .rankings-list li,
+  .close-btn {
+    transition-duration: 0.01ms;
+  }
+
+  .play-btn:active,
+  #resultOkBtn:active {
+    transform: none;
+  }
 }
