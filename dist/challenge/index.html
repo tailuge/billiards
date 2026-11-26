@@ -715,6 +715,36 @@
         flex: 0 0 auto;
       }
 
+      /* The reason and the training-course hint share the card's free column,
+         stacked so the hint sits under the reason instead of beside it. */
+      .score-popover-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+
+      /* The card is a notice, not a control, but it carries one link: only the
+         shown card takes pointer input, so a closed one never blocks the score
+         it floats over. */
+      .score-popover.show {
+        pointer-events: auto;
+      }
+
+      .score-popover-hint {
+        color: var(--text-muted);
+      }
+
+      .score-popover-link {
+        color: var(--accent);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      .score-popover-link:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 1px;
+      }
+
       .score-label {
         display: block;
         color: var(--text-muted);
@@ -1297,7 +1327,22 @@
             aria-live="polite"
           >
             <span class="score-popover-icon" aria-hidden="true">🥃</span>
-            <span id="hiscore-popover-text"></span>
+            <div class="score-popover-body">
+              <span id="hiscore-popover-text"></span>
+              <!-- The way out of a missed run: a run only improves by playing,
+                   and the training course drills the same break. Kept in the
+                   markup rather than in the message, which is plain text. -->
+              <span class="score-popover-hint">
+                실력을 키우고 싶다면
+                <a
+                  class="score-popover-link"
+                  href="https://billiards.tailuge.workers.dev/exam/sagu"
+                  target="_blank"
+                  rel="noopener"
+                  >사구 트레이닝 코스</a
+                >를 해보세요.
+              </span>
+            </div>
           </div>
         </div>
       </section>
