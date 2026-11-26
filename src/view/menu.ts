@@ -124,6 +124,28 @@ export class Menu {
     if (closeBtn) {
       closeBtn.onclick = () => this.setHelpOpen(false)
     }
+    // The About copy runs long, so the two lower disclosures behave as an
+    // accordion: opening one folds the other away. Play stays put, since it is
+    // the way out of the page.
+    const helpSections = [
+      document.getElementById("controls"),
+      document.getElementById("aboutSection"),
+    ].filter(
+      (section): section is HTMLDetailsElement =>
+        section instanceof HTMLDetailsElement
+    )
+    helpSections.forEach((section) => {
+      section.addEventListener("toggle", () => {
+        if (!section.open) {
+          return
+        }
+        helpSections.forEach((other) => {
+          if (other !== section) {
+            other.open = false
+          }
+        })
+      })
+    })
     if (this.concede) {
       this.concede.onclick = (_) => {
         this.container.notification.show(

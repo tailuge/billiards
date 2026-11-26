@@ -1338,11 +1338,10 @@ body.chromeless #panel .powerSliderContainer {
   margin: 4px auto;
 }
 
-/* Play and Controls are UI labels, not content headings: keeping them
-   out of the heading outline leaves the About h1 as the first heading
-   on the page. */
-.play-section .panel-title,
-#controls .panel-title {
+/* Play is a UI label, not a content heading: keeping it out of the heading
+   outline leaves the About h1 as the first heading on the page. Controls and
+   About are summaries, which the outline ignores anyway. */
+.play-section .panel-title {
   margin: 0 0 6px;
   font-size: 15px;
   font-weight: 700;
