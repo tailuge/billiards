@@ -551,18 +551,49 @@
           format("truetype");
       }
 
-      /* Palette, radii and spacing follow the lobby's dark theme: a #1a1a1a
-         page, #2a2a2a surfaces outlined with a 1px #444 border, a subtle 6px
-         radius and 2px gutters between the rounded panels. */
+      /* Palette: the table at night. Slate rather than neutral grey (a
+         billiard bed is slate), ivory for text (the cue ball), chalk blue for
+         anything you can act on, and brass for the challenge goal and a
+         completed star. The green on the map stays the Yamanote line's own.
+
+         --bg is kept within a hair of the top bar's #1a1a1a, which the shared
+         <app-topbar> paints from its own tokens in styles.js, so the sticky
+         bar does not read as a separate coloured band. Foregrounds clear
+         4.5:1 on --surface: --text 12.6:1, --text-soft 9.3:1, --muted 6.6:1,
+         --accent 6.6:1, --gold 8.6:1. */
       :root {
-        --bg: #1a1a1a;
-        --surface: #2a2a2a;
-        --border: #444;
-        --border-light: #333;
-        --hover: #444;
-        --text: #e0e0e0;
-        --muted: #aaa;
-        --accent: #6ba3f5;
+        --bg: #191c1e;
+        --surface: #1f2427;
+        --surface-2: #262c30;
+        --border: #343b3f;
+        --border-light: #2a3033;
+        --hover: #2c3235;
+        --text: #eae6dd;
+        --text-soft: #cfcbc2;
+        --muted: #a8aeab;
+        --accent: #7db0f5;
+        --accent-hover: #9cc6ff;
+        --gold: #e3c07b;
+
+        /* Latin copy and numerals; Japanese headings fall back to the system's
+           mincho, which gives the title and the directory their editorial
+           voice without a second webfont request. */
+        --serif: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, "Noto Serif JP",
+          serif;
+
+        /* Everything around the map panel, in one number: the 40px top bar,
+           the three 0.2rem gaps of the body column, the masthead's two line
+           boxes plus its padding and rule, main's own 0.4rem top margin, the
+           directory line at the foot and the page's bottom gutter. main is
+           capped to the rest of the viewport from this (see its max-height),
+           so the map can never run past the bottom of the window and the
+           directory line stays reachable — the hall list scrolls inside the
+           panel instead of setting the page's height.
+
+           Kept a few pixels generous on purpose: slack reads as page
+           background, while being a few pixels short reads as a cut map. The
+           mobile layout overrides it below, where the masthead is smaller. */
+        --chrome: 12rem;
 
         color-scheme: dark;
       }
@@ -598,61 +629,92 @@
 
         /* Gutter between the panel and the viewport, matching the lobby's
            inset content column. */
-        padding: 0 1rem 1rem;
+        padding: 0 1rem 1.25rem;
         background: var(--bg);
         color: var(--text);
         font-family: Exo, system-ui, sans-serif;
         font-weight: 200;
         font-size: 15px;
+        line-height: 1.45;
       }
 
-      /* Title and tagline share one shallow row; the tagline stays quiet (and
-         wraps under the title on narrow screens) so it never crowds the map. */
+      /* Anything the page has taken out of the visual flow but kept for
+         screen readers, such as the list's heading. */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* The masthead: title and tagline on the left, help on the right, over
+         the console's own left edge. The hairline under it is what separates
+         the page's identity from the tool below, so the two do not run
+         together into one stack of grey boxes. */
       header {
         flex: 0 0 auto;
         display: flex;
-        justify-content: center;
-        align-items: baseline;
-        flex-wrap: wrap;
-        gap: 0 0.5rem;
-        padding: 0;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.4rem 0 0.55rem;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .masthead {
+        min-width: 0;
       }
 
       h1 {
         margin: 0;
-        font-size: 1.15rem;
+        font-family: var(--serif);
+        font-size: clamp(1.3rem, 3.4vw, 1.7rem);
         font-weight: 600;
+        letter-spacing: 0.05em;
+        line-height: 1.2;
       }
 
+      /* The tagline stays quiet and wraps under the title on narrow screens,
+         so it never crowds the map. */
       header p {
-        margin: 0;
+        margin: 0.25rem 0 0;
         color: var(--muted);
-        font-size: 0.72rem;
+        font-size: 0.75rem;
+        line-height: 1.4;
       }
 
       /* The tagline's help button. The instructions live inside the folded
          directory, so this is the one visible route to them; it is kept small
-         and muted so it sits beside the tagline without competing with the
-         title for attention. */
-
-      /* min-height 24px and the wider padding give this a tap target of at
-         least 24x24, the WCAG minimum Lighthouse checks for; inline-flex keeps
-         the label centred in the taller pill. */
+         and outlined so it sits beside the tagline without competing with the
+         title. min-height 28px gives a tap target past the 24px WCAG minimum,
+         and inline-flex keeps the label centred in the taller pill. */
       .help {
         display: inline-flex;
+        flex: 0 0 auto;
         align-items: center;
-        min-height: 24px;
-        padding: 0 12px;
+        min-height: 28px;
+        padding: 0 14px;
         border: 1px solid var(--border);
         border-radius: 999px;
         background: none;
         color: var(--muted);
         font-family: inherit;
-        font-size: 0.68rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.04em;
         cursor: pointer;
+        transition:
+          color 0.15s ease,
+          border-color 0.15s ease,
+          background-color 0.15s ease;
       }
 
       .help:hover {
+        border-color: var(--accent);
         background: var(--hover);
         color: var(--text);
       }
@@ -684,16 +746,25 @@
       main {
         flex: 1 1 auto;
         display: flex;
-        gap: 2px;
+        gap: 0;
 
-        /* A floor under the map: the directory below grows the page rather than
-           squeezing the map flat, and the map still keeps 70vh of screen. */
-        min-height: 70vh;
-        padding: 2px;
+        /* The panel is one screen tall at most: it grows into the space the
+           masthead and the directory line leave, and the hall list scrolls
+           inside it. The cap is what keeps the map above the window's bottom
+           edge on a desktop — without it the list's rows set the panel's
+           height and push the directory line below the fold. It is a maximum
+           rather than a height so a short list still lets the panel fill the
+           screen. */
+        min-height: 0;
+        max-height: calc(100vh - var(--chrome));
+        max-height: calc(100dvh - var(--chrome));
+        margin-top: 0.4rem;
+        padding: 0;
         overflow: hidden;
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 6px;
+        border-radius: 12px;
+        box-shadow: 0 18px 36px -30px #000;
       }
 
       /* The hall directory: every club the map plots, kept in the page as real
@@ -713,14 +784,16 @@
       /* The disclosure marker goes: the line is centred, and the ▾/▴ arrow
          below carries the open state instead of a triangle at the margin. */
       .clubs-more summary {
-        /* Tall enough (about 28px) that the disclosure line clears the 24px
+        /* Tall enough (about 32px) that the disclosure line clears the 24px
            minimum tap-target size. */
-        padding: 0.4rem 0.2rem;
+        padding: 0.55rem 0.2rem;
         color: var(--muted);
         font-size: 0.78rem;
+        letter-spacing: 0.02em;
         text-align: center;
         list-style: none;
         cursor: pointer;
+        transition: color 0.15s ease;
       }
 
       .clubs-more summary::-webkit-details-marker {
@@ -743,35 +816,49 @@
          wall to scroll; they balance themselves with no height set. */
       .clubs-panel {
         column-count: 2;
-        column-gap: 1rem;
-        margin-top: 0.4rem;
-        padding: 0.6rem 0.7rem;
+        column-gap: 1.15rem;
+        margin-top: 0.2rem;
+        padding: 1rem 1.1rem;
         border: 1px solid var(--border);
-        border-radius: 6px;
-        background: var(--bg);
+        border-radius: 12px;
+        background: var(--surface);
       }
 
+      /* Section headings inside the directory (遊び方, スリークッションの遊び方,
+         最後に, the language list, Mentions). These open prose, so they take
+         the masthead's mincho at reading size rather than the muted label
+         treatment the index heading below uses — otherwise every section of
+         the sheet looks like the same kind of thing. */
       .clubs-panel h2 {
-        /* Spans both columns, so it heads the index instead of opening the
-           first column. */
-        column-span: all;
-        margin: 0 0 0.5rem;
-        color: var(--muted);
-        font-size: 0.78rem;
+        margin: 0 0 0.45rem;
+        color: var(--text);
+        font-family: var(--serif);
+        font-size: 1.02rem;
         font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* The directory's own heading, directly above the entries. It spans both
+         columns, so it heads the index instead of opening the first column. */
+      .clubs-panel > h2 {
+        column-span: all;
+        margin: 0 0 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-light);
+        color: var(--muted);
+        font-size: 0.8rem;
+        letter-spacing: 0.06em;
       }
 
       .club {
-        margin: 0 0 0.5rem;
+        margin: 0 0 0.6rem;
 
         /* An entry never splits across the two columns. */
         break-inside: avoid;
-        padding: 0.5rem 0.6rem;
+        padding: 0.65rem 0.75rem;
         border: 1px solid var(--border-light);
-        border-radius: 4px;
-        background: var(--surface);
+        border-radius: 8px;
+        background: var(--surface-2);
       }
 
       .club:last-child {
@@ -779,28 +866,35 @@
       }
 
       .club h3 {
-        margin: 0 0 0.3rem;
-        color: var(--accent);
-        font-size: 0.82rem;
+        margin: 0 0 0.4rem;
+        color: var(--text);
+        font-size: 0.86rem;
         font-weight: 600;
+        line-height: 1.3;
       }
 
+      /* The Japanese name rides beside the English one as a second voice:
+         lighter in weight and colour, so the pair reads as one line rather
+         than as a title with a subtitle. */
       .club .club-ja {
-        color: var(--text);
+        color: var(--muted);
+        font-size: 0.82rem;
         font-weight: 200;
       }
 
       .club dl {
         display: grid;
         grid-template-columns: auto 1fr;
-        gap: 1px 0.6rem;
+        gap: 2px 0.7rem;
         margin: 0;
+        color: var(--text-soft);
         font-size: 0.75rem;
-        line-height: 1.4;
+        line-height: 1.45;
       }
 
       .club dt {
         color: var(--muted);
+        font-size: 0.73rem;
       }
 
       .club dd {
@@ -810,10 +904,15 @@
         overflow-wrap: anywhere;
       }
 
+      /* The story is the reason the entry exists, so it is set off by a rule
+         and given the looser leading Japanese prose needs. */
       .clubs-panel .club-story {
-        margin: 0.4rem 0 0;
-        font-size: 0.75rem;
-        line-height: 1.4;
+        margin: 0.55rem 0 0;
+        padding-top: 0.55rem;
+        border-top: 1px solid var(--border-light);
+        color: var(--text-soft);
+        font-size: 0.76rem;
+        line-height: 1.7;
       }
 
       /* The instructions that open the directory: same prose size as the
@@ -822,27 +921,28 @@
          below them, since they now come before the halls rather than after. */
       .clubs-note {
         column-span: all;
-        margin-bottom: 0.6rem;
-        padding-bottom: 0.6rem;
+        margin-bottom: 0.9rem;
+        padding-bottom: 0.9rem;
         border-bottom: 1px solid var(--border-light);
       }
 
-      /* Japanese reads better with looser leading than the stories' 1.4, and
+      /* Japanese reads better with looser leading than the stories' 1.7, and
          the measure is capped because the note spans both columns. */
       .clubs-note p,
       .clubs-note ol {
         max-width: 42rem;
         margin: 0;
-        font-size: 0.75rem;
-        line-height: 1.6;
+        color: var(--text-soft);
+        font-size: 0.78rem;
+        line-height: 1.8;
       }
 
       .clubs-note ol {
-        padding-left: 1.3rem;
+        padding-left: 1.4rem;
       }
 
       .clubs-note li + li {
-        margin-top: 0.2rem;
+        margin-top: 0.35rem;
       }
 
       /* The "how to play three-cushion" primer that follows the challenge
@@ -853,19 +953,20 @@
       .clubs-howto {
         display: flow-root;
         column-span: all;
-        margin-bottom: 0.6rem;
-        padding-bottom: 0.6rem;
+        margin-bottom: 0.9rem;
+        padding-bottom: 0.9rem;
         border-bottom: 1px solid var(--border-light);
       }
 
-      /* Japanese reads better with looser leading than the stories' 1.4, and
+      /* Japanese reads better with looser leading than the stories' 1.7, and
          the measure is capped because the note spans both columns. */
       .clubs-howto p,
       .clubs-howto ol {
         max-width: 42rem;
         margin: 0;
-        font-size: 0.75rem;
-        line-height: 1.6;
+        color: var(--text-soft);
+        font-size: 0.78rem;
+        line-height: 1.8;
       }
 
       .clubs-howto ol {
@@ -873,7 +974,7 @@
       }
 
       .clubs-howto li + li {
-        margin-top: 0.2rem;
+        margin-top: 0.35rem;
       }
 
       /* The game's own screenshot, served from the same host as the game the
@@ -907,18 +1008,19 @@
          mirror of .clubs-note's rule under its preface. */
       .clubs-help {
         column-span: all;
-        margin-top: 0.6rem;
-        padding-top: 0.6rem;
+        margin-top: 0.9rem;
+        padding-top: 0.9rem;
         border-top: 1px solid var(--border-light);
       }
 
-      /* Japanese reads better with looser leading than the stories' 1.4, and
+      /* Japanese reads better with looser leading than the stories' 1.7, and
          the measure is capped because the note spans both columns. */
       .clubs-help p {
         max-width: 42rem;
         margin: 0;
-        font-size: 0.75rem;
-        line-height: 1.6;
+        color: var(--text-soft);
+        font-size: 0.78rem;
+        line-height: 1.8;
       }
 
       /* The language list that closes the index: the note's measure and size,
@@ -927,9 +1029,14 @@
       .clubs-help ul {
         max-width: 42rem;
         margin: 0;
-        padding-left: 1rem;
-        font-size: 0.75rem;
-        line-height: 1.6;
+        padding-left: 1.1rem;
+        color: var(--text-soft);
+        font-size: 0.78rem;
+        line-height: 1.8;
+      }
+
+      .clubs-help li + li {
+        margin-top: 0.35rem;
       }
 
       /* The help button scrolls the instructions to the top of the viewport,
@@ -944,19 +1051,19 @@
         display: flex;
         flex: 0 0 auto;
         flex-direction: column;
-        gap: 2px;
-        width: 16rem;
+        gap: 3px;
+        width: 16.5rem;
         margin: 0;
-        padding: 2px;
+        padding: 8px;
 
-        /* The 14 halls overflow the column, so it scrolls — but without a
+        /* The halls overflow the column, so it scrolls — but without a
            scrollbar: the bar would sit inside the panel's border and eat the
            row padding. Wheel, touch, keyboard and scrolling still work. */
         overflow-y: auto;
         scrollbar-width: none;
         -ms-overflow-style: none;
+        border-right: 1px solid var(--border-light);
         list-style: none;
-        background: var(--surface);
       }
 
       #list::-webkit-scrollbar {
@@ -968,12 +1075,15 @@
         flex-wrap: wrap;
         align-items: center;
         gap: 0.4rem;
-        padding: 6px;
-        border: 1px solid var(--border-light);
-        border-radius: 4px;
+        padding: 8px 9px;
+        border: 1px solid transparent;
+        border-radius: 8px;
         color: var(--muted);
         font-size: 0.82rem;
         cursor: pointer;
+        transition:
+          background-color 0.15s ease,
+          border-color 0.15s ease;
       }
 
       #list li:hover {
@@ -981,9 +1091,12 @@
         color: var(--text);
       }
 
+      /* The chosen hall keeps a chalk-blue spine, so the row, the star on the
+         map and the story panel all point at the same place. */
       #list li.active {
-        background: var(--hover);
-        box-shadow: inset 3px 0 0 var(--accent);
+        background: var(--surface-2);
+        border-color: var(--border);
+        box-shadow: inset 2px 0 0 var(--accent);
         color: var(--text);
       }
 
@@ -1017,12 +1130,13 @@
         line-height: 1.1;
       }
 
-      /* Progress star: hollow by default, filled once the hall is marked
+      /* Progress star: hollow and dim by default, so it reads as an empty slot
+         rather than a control; it fills with brass once the hall is marked
          visited, which the localStorage record below applies on load. */
       #list li .star {
         flex: 0 0 auto;
-        color: var(--muted);
-        font-size: 1rem;
+        color: #4e585c;
+        font-size: 0.95rem;
         line-height: 1;
       }
 
@@ -1032,7 +1146,7 @@
 
       #list li.is-visited .star::before {
         content: "★";
-        color: var(--accent);
+        color: var(--gold);
       }
 
       /* Selected halls unfold to reveal the rest of the entry. Basis 100%
@@ -1041,12 +1155,12 @@
         display: none;
         flex: 1 0 100%;
         grid-template-columns: auto 1fr;
-        gap: 2px 0.5rem;
+        gap: 3px 0.6rem;
         margin: 0;
-        padding-top: 4px;
+        padding-top: 6px;
         border-top: 1px solid var(--border-light);
         font-size: 0.75rem;
-        line-height: 1.35;
+        line-height: 1.45;
       }
 
       #list li.active .details {
@@ -1091,7 +1205,7 @@
         flex: 1 1 auto;
         min-height: 0;
         overflow: hidden;
-        border-radius: 4px;
+        border-radius: 0 11px 11px 0;
       }
 
       .leaflet-container {
@@ -1112,7 +1226,7 @@
          deepest shadow is pushed down. Measured on the same tile, the land goes
          #09 -> #11, the roads #1e -> #48 and the brightest pixels #44 -> #ac,
          with no pixel clipped to black; the base stays darker than this page's
-         #1a1a1a panel, so the map still reads as an inset rather than a glowing
+         #1f2427 panel, so the map still reads as an inset rather than a glowing
          slab. brightness is the overall lift — raise it to lift the whole tile,
          lower it to sink it — and contrast is the separation on top; past about
          1.1 the land starts clipping to black (16% of the tile by 1.1).
@@ -1131,7 +1245,7 @@
       /* Permanent name labels beside the markers. Leaflet's tooltip defaults to
          a white chip; recolour it to sit on the dark tiles. The halls are what
          the page is about, so their labels carry the same accent blue as the
-         hall dots. On the label background that is 6.78:1, comfortably above
+         hall dots. On the label background that is 7.6:1, comfortably above
          the 4.5:1 WCAG AA threshold for body text.
 
          The labels share the tooltip pane (650, above the line's overlay pane)
@@ -1139,15 +1253,23 @@
          on top of station names wherever the two overlap. */
       .leaflet-tooltip.hall-label {
         /* The chip is clickable (interactive tooltip), so its padding is set
-           to bring it to about 24px tall for the same tap-target audit. */
-        padding: 4px 8px;
+           to bring it to about 26px tall for the same tap-target audit. */
+        padding: 5px 9px;
         border: 1px solid var(--border);
-        border-radius: 4px;
+        border-radius: 6px;
         background: var(--bg);
         color: var(--accent);
-        box-shadow: none;
-        font-size: 0.75rem;
+        box-shadow: 0 2px 10px -2px #000;
+        font-size: 0.73rem;
+        letter-spacing: 0.01em;
         z-index: 1;
+      }
+
+      /* The chip is part of the hall's click target, so it answers the
+         pointer the same way its dot and its row do. */
+      .leaflet-tooltip.hall-label:hover {
+        border-color: var(--accent);
+        color: var(--accent-hover);
       }
 
       /* The line's stations are context rather than the point of the page, so
@@ -1160,7 +1282,13 @@
         background: none;
         color: #9acd32;
         box-shadow: none;
-        font-size: 0.7rem;
+        font-size: 0.68rem;
+
+        /* A bare glyph pair over live tiles needs a shadow to stay legible
+           where the tile below it is bright. */
+        text-shadow:
+          0 1px 2px #000,
+          0 0 6px rgb(0 0 0 / 70%);
       }
 
       /* direction:auto flips labels left or right, so recolour both arrows. */
@@ -1181,8 +1309,8 @@
          scales a vector renderer's container during the zoom animation, so a
          SVG shape balloons on the way to max zoom and snaps back at the end. A
          marker icon is only repositioned, so the star keeps its size the whole
-         way. The box is the largest star, so the anchor stays centred while
-         the star grows from 18px to 21px.
+         way. The box is sized for the largest star, so the anchor stays
+         centred while the star grows from 26px to 30px.
 
          The star is the same ☆/★ progress pair as the side list: hollow until
          the club has been visited. Filled is reserved for a completed
@@ -1192,6 +1320,10 @@
         display: grid;
         place-items: center;
         color: var(--accent);
+
+        /* The star sits on live map tiles, so it carries its own shadow to
+           stay readable over a bright patch of street. */
+        text-shadow: 0 1px 3px rgb(0 0 0 / 85%);
       }
 
       .hall-dot::before {
@@ -1204,13 +1336,28 @@
         content: "☆";
         color: #fff;
         font-size: 30px;
+        text-shadow:
+          0 0 10px rgb(125 176 245 / 70%),
+          0 1px 3px #000;
       }
 
-      /* Filled star, the same is-visited hook the side list uses. Both rules
-         are listed so the filled glyph cannot depend on rule order. */
+      /* Filled star, the same is-visited hook the side list uses, and the same
+         brass. Both rules are listed so the filled glyph cannot depend on
+         rule order. */
       .hall-dot.is-visited::before,
       .hall-dot.is-visited.is-chosen::before {
         content: "★";
+      }
+
+      .hall-dot.is-visited::before {
+        color: var(--gold);
+      }
+
+      .hall-dot.is-visited.is-chosen::before {
+        color: var(--gold);
+        text-shadow:
+          0 0 12px rgb(227 192 123 / 70%),
+          0 1px 3px #000;
       }
 
       /* Station dots reuse the constant-size divIcon trick the hall dots use,
@@ -1228,19 +1375,22 @@
       #story {
         position: absolute;
         right: 10px;
-        bottom: 26px;
+        bottom: 28px;
         z-index: 810;
         display: none;
-        width: 22rem;
+        width: 22.5rem;
         max-width: calc(100% - 20px);
         max-height: 55%;
         overflow-y: auto;
         scrollbar-width: none;
         -ms-overflow-style: none;
-        padding: 8px 10px;
+        padding: 12px 14px;
         border: 1px solid var(--border);
-        border-radius: 6px;
-        background: rgb(26 26 26 / 92%);
+        border-radius: 10px;
+        background: rgb(25 28 30 / 94%);
+        box-shadow:
+          0 18px 40px -20px #000,
+          0 1px 0 rgb(255 255 255 / 4%) inset;
       }
 
       #story::-webkit-scrollbar {
@@ -1248,57 +1398,68 @@
       }
 
       #story h2 {
-        margin: 0 0 3px;
-        color: var(--accent);
-        font-size: 0.82rem;
+        margin: 0 0 4px;
+        color: var(--text);
+        font-size: 0.92rem;
         font-weight: 600;
+        letter-spacing: 0.01em;
+        line-height: 1.3;
       }
 
       #story p {
         margin: 0;
-        color: var(--text);
-        font-size: 0.78rem;
-        line-height: 1.4;
+        color: var(--text-soft);
+        font-size: 0.79rem;
+        line-height: 1.55;
       }
 
       /* The hall's target: the points to score there for its star. A pill that
          spans the panel, so it reads as a badge on the panel rather than one
          more line of prose, and it sits between the story and the button it
-         applies to. The gold is the rating gold the reveal deck's stars use;
-         #f5c451 on the pill's #1a1a1a measures 10.7:1, so both the label and
-         the outline clear the 4.5:1 text and 3:1 non-text WCAG AA bars. */
+         applies to. The brass is the same --gold the cleared stars use, and
+         measures 8.6:1 on the panel, so both the label and the outline clear
+         the 4.5:1 text and 3:1 non-text WCAG AA bars. */
       #story .goal {
         display: block;
-        margin: 6px 0 0;
-        padding: 3px 10px;
-        border: 1px solid #f5c451;
+        margin: 8px 0 0;
+        padding: 4px 10px;
+        border: 1px solid rgb(227 192 123 / 55%);
         border-radius: 999px;
-        background: var(--bg);
-        color: #f5c451;
-        font-size: 0.72rem;
+        background: rgb(227 192 123 / 8%);
+        color: var(--gold);
+        font-size: 0.73rem;
         font-weight: 600;
+        letter-spacing: 0.04em;
         text-align: center;
       }
 
       /* The panel's one call to action, so it takes the accent fill and the
-         panel's full width. Measured 7.1:1 for the dark label on the accent
+         panel's full width. Measured 8.3:1 for the dark label on the accent
          blue, well clear of the 4.5:1 WCAG AA threshold. */
       #story-play {
         display: block;
-        margin-top: 8px;
-        padding: 7px 10px;
-        border-radius: 6px;
+        margin-top: 9px;
+        padding: 8px 10px;
+        border-radius: 8px;
         background: var(--accent);
-        color: #0f1620;
-        font-size: 0.78rem;
+        color: #10161a;
+        font-size: 0.79rem;
         font-weight: 600;
+        letter-spacing: 0.01em;
         text-align: center;
         text-decoration: none;
+        transition:
+          background-color 0.15s ease,
+          transform 0.15s ease;
       }
 
       #story-play:hover,
       #story-play:focus-visible {
-        background: #8ab6f8;
+        background: var(--accent-hover);
+      }
+
+      #story-play:active {
+        transform: translateY(1px);
       }
 
       /* Bezier link from the panel back to the club's dot. It draws above the
@@ -1329,22 +1490,35 @@
          attribution` — a white 80% box — so a bare `.leaflet-control-
          attribution` here would never out-specify it. */
       .leaflet-container .leaflet-control-attribution {
-        background: rgb(26 26 26 / 80%);
+        border-top-left-radius: 6px;
+        background: rgb(25 28 30 / 78%);
         color: var(--muted);
+        font-size: 0.68rem;
       }
 
       .leaflet-control-attribution a {
         color: var(--accent);
       }
 
+      /* The zoom buttons are the map's only chrome, so they get the panel's
+         own radius and shadow instead of Leaflet's square default. */
+      .leaflet-bar {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 0 4px 14px -4px #000;
+      }
+
       .leaflet-bar a {
-        background: var(--surface);
-        border-bottom-color: var(--border);
+        background: rgb(31 36 39 / 94%);
+        border-bottom-color: var(--border-light);
         color: var(--text);
       }
 
-      .leaflet-bar a:hover {
+      .leaflet-bar a:hover,
+      .leaflet-bar a:focus-visible {
         background: var(--hover);
+        color: #fff;
       }
 
       /* The directory's three links join the sheet's `a` ladder here, between
@@ -1356,9 +1530,20 @@
         color: var(--accent);
 
         /* Underlined because a link beside prose must not rely on colour alone
-           to be distinguishable (WCAG 1.4.1). */
+           to be distinguishable (WCAG 1.4.1). The rule under a long URL is
+           drawn faint and fills in on hover, so a column of addresses does
+           not turn into a wall of blue lines. */
         text-decoration: underline;
+        text-decoration-color: rgb(125 176 245 / 40%);
+        text-decoration-thickness: 1px;
         text-underline-offset: 2px;
+      }
+
+      .clubs-panel .club-meta a:hover,
+      .clubs-panel .club-story a:hover,
+      .clubs-panel .clubs-help a:hover {
+        color: var(--accent-hover);
+        text-decoration-color: currentcolor;
       }
 
       /* Scoped to the prose: the play button above is a link too, and must not
@@ -1369,29 +1554,64 @@
         color: var(--accent);
       }
 
+      /* One ring for everything a keyboard can land on: rows and labels are
+         mostly colour changes on hover, so focus needs a shape of its own. */
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      ::selection {
+        background: rgb(125 176 245 / 35%);
+        color: var(--text);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .help,
+        #list li,
+        #story-play,
+        .clubs-more summary {
+          transition: none;
+        }
+      }
+
       @media (width <= 700px) {
         body {
           padding: 0 0.5rem 0.5rem;
         }
 
-        /* On a narrow screen the two panels stack; main is sized to fit the
-           viewport height so the map stays fully on screen and the list uses
-           less vertical space. */
+        header {
+          padding: 0.3rem 0 0.45rem;
+        }
+
+        h1 {
+          font-size: 1.2rem;
+        }
+
+        /* On a narrow screen the two panels stack, and the chrome above and
+           below is smaller, so main gets its own cap. Same contract as on a
+           desktop: the map is fully on screen and the list scrolls inside
+           the panel. */
+        :root {
+          --chrome: 10.75rem;
+        }
+
         main {
           flex-direction: column;
-          height: calc(100vh - 6.5rem);
-          height: calc(100dvh - 6.5rem);
-          min-height: 0;
         }
 
         #list {
           width: 100%;
           max-height: 25vh;
+          border-right: none;
+          border-bottom: 1px solid var(--border-light);
+          border-radius: 11px 11px 0 0;
         }
 
         #map {
           flex: 1 1 auto;
           min-height: 0;
+          border-radius: 0 0 11px 11px;
         }
 
         .clubs-panel {
@@ -1414,8 +1634,10 @@
     <remote-inbox></remote-inbox>
 
     <header>
-      <h1>東京ビリヤード場めぐり</h1>
-      <p>東京のビリヤード場をすべて訪ねられますか？</p>
+      <div class="masthead">
+        <h1>東京ビリヤード場めぐり</h1>
+        <p>東京のビリヤード場をすべて訪ねられますか？</p>
+      </div>
       <!-- Opens the directory at the instructions (see the click handler).
            title, not aria-label, so the visible ヘルプ stays the accessible
            name (WCAG 2.5.3). -->
@@ -1431,6 +1653,9 @@
     </header>
 
     <main>
+      <!-- Names the hall list for screen-reader navigation. Hidden: on screen
+           the rows speak for themselves. -->
+      <h2 class="sr-only">ビリヤード場</h2>
       <ul id="list"></ul>
       <div id="map">
         <div id="story">
@@ -1457,7 +1682,7 @@
          it from here. -->
     <footer>
       <details class="clubs-more" id="clubs">
-        <summary>東京のビリヤード場 — 住所・営業時間・思い出</summary>
+        <summary>東京のビリヤード場 一覧（住所・営業時間）</summary>
         <div class="clubs-panel">
           <h2>ビリヤード場一覧</h2>
 

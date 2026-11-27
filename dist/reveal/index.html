@@ -93,6 +93,9 @@
           document.documentElement.getAttribute("theme")
       } catch (_e) {
         document.documentElement.setAttribute("theme", "dark")
+        // Keep color-scheme in step with the attribute: the card shadows and the star
+        // colour resolve through light-dark(), which reads color-scheme, not the attribute.
+        document.documentElement.style.colorScheme = "dark"
       }
     </script>
     <style>
