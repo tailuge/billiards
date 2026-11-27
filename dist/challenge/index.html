@@ -536,10 +536,12 @@
         outline-offset: 2px;
       }
 
-      /* The one control worth a full finger: the launch button is the page's
-         only call to action, so a coarse pointer gets at least 40px of it. */
+      /* The launch button is the page's main call to action, so a coarse
+         pointer gets at least 40px of it; the card's exit link gets the same,
+         since it is the way out for a player who has had enough. */
       @media (pointer: coarse) {
-        .play-btn {
+        .play-btn,
+        .score-popover-rest {
           min-height: 40px;
         }
       }
@@ -673,8 +675,9 @@
 
       /* Why a scored run is missing from the rail, e.g. it did not beat the
          player's own lowest row: a centred fixed card, so the reason reads
-         clearly wherever the player is scrolled. Not a dialog — the run needs
-         no answer — and it clears itself after five seconds. Only opacity hides
+         clearly wherever the player is scrolled. It offers the next run, or the
+         way out to the lobby for a player who has had enough, rather than a
+         confirmation, and clears itself after five seconds. Only opacity hides
          it, so the live region stays in the accessibility tree while closed. */
       .score-popover {
         position: fixed;
@@ -704,9 +707,9 @@
         pointer-events: none;
       }
 
-      /* The card is a notice, not a control, but it carries one link: only the
-         shown card takes pointer input, so a closed one does not intercept
-         clicks on the page beneath it. */
+      /* The card is a notice, not a control, but it carries a hint, a replay
+         button and the exit link: only the shown card takes pointer input, so
+         a closed one does not intercept clicks on the page beneath it. */
       .score-popover.show {
         opacity: 1;
         transform: translate(-50%, -50%);
@@ -727,6 +730,48 @@
 
       .score-popover-hint {
         color: var(--text-muted);
+      }
+
+      /* The hint, the replay button and the exit link, in one element so all
+         of them can be made inert while the card is closed: opacity alone
+         leaves links and buttons in the tab order even when nobody can see
+         them. */
+      .score-popover-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+
+      .score-popover .play-btn {
+        margin-top: 0.35rem;
+      }
+
+      /* The card's off-ramp, for a player who is done rather than retrying:
+         quieter than the replay button, so it reads as leaving and not as the
+         recommended next step. A real link, so it navigates like any other and
+         the browser can back out of it. */
+      .score-popover-rest {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .score-popover-rest:hover {
+        background: var(--hover);
+        color: var(--text);
+      }
+
+      .score-popover-rest:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
       }
 
       .score-popover-link {
@@ -1325,19 +1370,45 @@
             <span class="score-popover-icon" aria-hidden="true">🥃</span>
             <div class="score-popover-body">
               <span id="hiscore-popover-text"></span>
-              <!-- The way out of a missed run: a run only improves by playing,
-                   and the training course drills the same break. Kept in the
-                   markup rather than in the message, which is plain text. -->
-              <span class="score-popover-hint">
-                실력을 키우고 싶다면
-                <a
-                  class="score-popover-link"
-                  href="https://billiards.tailuge.workers.dev/exam/sagu"
-                  target="_blank"
-                  rel="noopener"
-                  >사구 트레이닝 코스</a
-                >를 해보세요.
-              </span>
+              <!-- Held inert until the card is shown, because the card is only
+                   made invisible: the live region has to stay in the
+                   accessibility tree for its line to be announced. -->
+              <div
+                id="hiscore-popover-actions"
+                class="score-popover-actions"
+                inert
+              >
+                <!-- The way out of a missed run: a run only improves by
+                     playing, and the training course drills the same break.
+                     Kept in the markup rather than in the message, which is
+                     plain text. -->
+                <span class="score-popover-hint">
+                  실력을 키우고 싶다면
+                  <a
+                    class="score-popover-link"
+                    href="https://billiards.tailuge.workers.dev/exam/sagu"
+                    target="_blank"
+                    rel="noopener"
+                    >사구 트레이닝 코스</a
+                  >를 해보세요.
+                </span>
+                <!-- The card's answer: the same run the launch button starts,
+                     so a missed score leads straight into the next attempt. -->
+                <button
+                  type="button"
+                  id="hiscore-popover-play"
+                  class="play-btn"
+                >
+                  한 판 더 시키기
+                </button>
+                <!-- The way out when the player has had enough: a plain link,
+                     so it navigates like any other page link and the browser
+                     can back out of it. The page sends its leave on unload,
+                     and the lobby picks the player up from there. -->
+                <a class="score-popover-rest" href="../lobby.html">
+                  로비에서 쉬어가기
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -2041,7 +2112,9 @@
       >
         ✕
       </button>
-      <iframe id="sagu-frame" title="사구 게임" allow="fullscreen"></iframe>
+      <!-- The game iframe is created per launch by challenge.js. Reusing one
+           frame would put every run into the page's session history and
+           swallow the back button. -->
     </div>
 
     <script type="module" src="challenge.js"></script>
