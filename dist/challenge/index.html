@@ -704,9 +704,13 @@
         pointer-events: none;
       }
 
+      /* The card is a notice, not a control, but it carries one link: only the
+         shown card takes pointer input, so a closed one does not intercept
+         clicks on the page beneath it. */
       .score-popover.show {
         opacity: 1;
         transform: translate(-50%, -50%);
+        pointer-events: auto;
       }
 
       .score-popover-icon {
@@ -719,13 +723,6 @@
         display: flex;
         flex-direction: column;
         gap: 0.2rem;
-      }
-
-      /* The card is a notice, not a control, but it carries one link: only the
-         shown card takes pointer input, so a closed one does not intercept
-         clicks on the page beneath it. */
-      .score-popover.show {
-        pointer-events: auto;
       }
 
       .score-popover-hint {
@@ -753,6 +750,7 @@
         color: var(--accent);
         font-size: 2rem;
         font-weight: 600;
+
         /* Fixed-width digits, so the block does not shift as the score grows. */
         font-variant-numeric: tabular-nums;
       }
