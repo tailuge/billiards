@@ -139,7 +139,7 @@ export class LobbyIndicator {
     }
 
     this.element.addEventListener("click", (e) => {
-      // Two-player games stay put; only the status emoji (above) is clickable.
+      // Two-player games stay put; only the status light (above) is clickable.
       if (this.isTwoPlayerGame()) {
         e.preventDefault()
         e.stopPropagation()
@@ -349,15 +349,24 @@ export class LobbyIndicator {
     const session = Session.getInstance()
     const isTwoPlayer = this.isTwoPlayerGame()
 
-    let status = "⚪"
+    // The status light is a drawn dot (see .lobby-count::after), and this
+    // attribute is what colours it. The state lives on the count element rather
+    // than in markup because that is the element the dot is painted on and the
+    // one that survives the innerHTML rebuild below.
+    //
+    // "unknown" is the neutral grey third state: no opponent id, a bot, replay
+    // or spectate, or a two-player game whose first presence snapshot has not
+    // landed yet. Kept rather than omitted so the dot is always present and the
+    // pill cannot change width when a real state arrives.
+    let opponent = "unknown"
     if (isTwoPlayer) {
       if (this.opponentOnline === true) {
-        status = "🟢"
+        opponent = "online"
       } else if (this.opponentOnline === false) {
-        status = "🔴"
+        opponent = "offline"
       }
     }
-    const statusEmoji = ` <span class="status-emoji">${status}</span>`
+    this.countElement.dataset.opponent = opponent
     // Own element so .lobby-count (a flex row) centers it separately from the
     // name; bare text would be glued to the name in one anonymous flex item.
     const lobbyIcon = `<span class="lobby-icon">${this.isSpectator ? "👀" : "👥"}</span>`
@@ -370,7 +379,7 @@ export class LobbyIndicator {
     // Not session.playername: in replay that has already been overwritten with
     // the footage's player 1 (see the userName field).
     const name = this.userName
-    this.countElement.innerHTML = `${this.ruleBadge()}${name} ${lobbyIcon}${total}${statusEmoji}`
+    this.countElement.innerHTML = `${this.ruleBadge()}${name} ${lobbyIcon}${total}`
 
     // One entry per name; a name playing a game carries its rule emoji so the
     // tooltip shows e.g. "veli ④" for a sagu player. ruleType is absent for

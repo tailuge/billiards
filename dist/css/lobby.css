@@ -93,8 +93,34 @@
   margin-inline: -1px;
 }
 
-.status-emoji {
-  font-size: 0.5em;
+/* The opponent status light, drawn on the row instead of a colour emoji. At
+   this size the emoji is a system bitmap with its own bearing and weight, so
+   the gap either side of it was not ours to set, its fill could not be tinted,
+   and it printed as "green circle" in the accessible name. A pseudo-element
+   adds no markup and no second element to keep in sync with the count.
+
+   The neutral grey is a state of its own, not an absent dot: the light is then
+   always present, so the pill's width cannot change when a real state arrives
+   (or goes away again). */
+.lobby-count::after {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 45%);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 35%);
+}
+
+/* Sampled from the accept button's fill, so the two greens agree. */
+.lobby-count[data-opponent="online"]::after {
+  background: #7cb342;
+}
+
+/* Brighter than the decline button's dark red: 6px of ink on dark glass needs
+   it, where that button is a filled background and can be deeper. */
+.lobby-count[data-opponent="offline"]::after {
+  background: #e05252;
 }
 
 .lobby-icon {

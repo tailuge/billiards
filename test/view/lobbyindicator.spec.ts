@@ -346,48 +346,57 @@ describe("LobbyIndicator", () => {
     await indicator.stop()
   })
 
-  it("updates opponent status emoji correctly", async () => {
+  it("reports the opponent state that colours the status dot", async () => {
     Session.init("p1", "Player 1", "table-1", false)
     Session.getInstance().setOpponentClientId("p2")
 
     const mockRules = { rulename: "nineball" } as any
     const indicator = new LobbyIndicator(false, false, mockRules)
 
-    const element = document.getElementById("lobbyOverlay")
-    const countElement = element?.querySelector(".lobby-count") as HTMLElement
+    const countElement = document
+      .getElementById("lobbyOverlay")
+      ?.querySelector(".lobby-count") as HTMLElement
 
     await indicator.init()
     expect(countElement?.textContent).toContain("Player 1")
+    // No presence snapshot yet: neutral, which must not read as either state.
+    expect(countElement.dataset.opponent).toBe("unknown")
 
     // Access the mock lobby to trigger onUsersChange callback
     const mockLobby = (indicator as any).lobby
     const onUsersChangeCallback = mockLobby.onUsersChange.mock.calls[0][0]
 
-    // Simulate opponent connected at the same table
+    // Opponent connected at the same table
     onUsersChangeCallback([
       { userId: "p1", tableId: "table-1" },
       { userId: "p2", tableId: "table-1" },
     ])
-    expect(countElement?.textContent).toContain("Player 1")
+    expect(countElement.dataset.opponent).toBe("online")
 
-    // Simulate opponent disconnected (not in list)
+    // Opponent disconnected (not in list)
     onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
-    expect(countElement?.textContent).toContain("Player 1")
+    expect(countElement.dataset.opponent).toBe("offline")
 
-    // Simulate opponent at a different table
+    // Present, but at another table: away from this game, not at it.
     onUsersChangeCallback([
       { userId: "p1", tableId: "table-1" },
       { userId: "p2", tableId: "other-table" },
     ])
-    expect(countElement?.textContent).toContain("Player 1")
+    expect(countElement.dataset.opponent).toBe("offline")
 
     await indicator.stop()
   })
 
-  it("hides opponent status emoji in non-multiplayer modes", async () => {
+  it("keeps the status dot neutral outside a multiplayer game", async () => {
     const mockRules = { rulename: "nineball" } as any
+    const dotState = () =>
+      (
+        document
+          .getElementById("lobbyOverlay")
+          ?.querySelector(".lobby-count") as HTMLElement
+      )?.dataset.opponent
 
-    // Bot mode
+    // Bot mode: there is no opponent to report on.
     Session.init("p1", "Player 1", "table-1", false, true)
     const indicator = new LobbyIndicator(true, false, mockRules)
     await indicator.init()
@@ -395,16 +404,28 @@ describe("LobbyIndicator", () => {
     const element = document.getElementById("lobbyOverlay")
     const countElement = element?.querySelector(".lobby-count") as HTMLElement
     expect(countElement?.textContent).toContain("Player 1")
+    expect(dotState()).toBe("unknown")
     await indicator.stop()
 
     // Replay mode: the chip shows the watcher's own name (session.playername at
-    // construction), which is seeded from ?userName= ("Anon" when absent).
+    // construction), which is seeded from ?userName= ("Anon" when absent). A
+    // name that would light the dot in a real game stays neutral here.
     Session.reset()
     Session.init("p1", "Player 1", "table-1", false)
+    Session.getInstance().setOpponentClientId("p2")
     const indicator2 = new LobbyIndicator(false, true, mockRules)
     await indicator2.init()
+
     const countElement2 = element?.querySelector(".lobby-count") as HTMLElement
     expect(countElement2?.textContent).toContain("Player 1")
+
+    const onUsersChangeCallback2 = (indicator2 as any).lobby.onUsersChange.mock
+      .calls[0][0]
+    onUsersChangeCallback2([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "table-1" },
+    ])
+    expect(dotState()).toBe("unknown")
     await indicator2.stop()
   })
 
