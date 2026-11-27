@@ -1,16 +1,4 @@
-/* ==========================================================================
-   NOTIFICATION SYSTEM
-   Refactored CSS for better maintainability and coherence.
-   Sections:
-   1. Design Tokens (Variables)
-   2. Layout & Keyframes
-   3. Base Components
-   4. Theme Variants (States)
-   5. Interaction & Extras
-   ========================================================================== */
-
 :root {
-  /* --- Colors --- */
   --notification-clr-primary: #1464c8;
   --notification-clr-secondary: #00b4a0;
   --notification-clr-winner-start: #ffd700;
@@ -19,8 +7,6 @@
   --notification-clr-loser-end: #a0a0a0;
   --notification-clr-upload-ok: #1f9d55;
   --notification-clr-upload-fail: #c0392b;
-
-  /* Neutrals & Opacity Layers */
   --notification-white: #fff;
   --notification-black: #000;
   --notification-white-10: rgb(255 255 255 / 10%);
@@ -38,8 +24,6 @@
   --notification-black-20: rgb(0 0 0 / 20%);
   --notification-black-30: rgb(0 0 0 / 30%);
   --notification-black-40: rgb(0 0 0 / 40%);
-
-  /* --- Spacing (4px based) --- */
   --notification-space-1: 4px;
   --notification-space-2: 8px;
   --notification-space-3: 12px;
@@ -49,8 +33,6 @@
   --notification-space-8: 32px;
   --notification-space-10: 40px;
   --notification-space-12: 48px;
-
-  /* --- Typography --- */
   --notification-font-family: var(--font-family-primary);
   --notification-size-xs: 12px;
   --notification-size-s: 16px;
@@ -61,26 +43,18 @@
   --notification-weight-semi: 600;
   --notification-weight-bold: 700;
   --notification-weight-heavy: 800;
-
-  /* --- Radii --- */
   --notification-radius-s: 4px;
   --notification-radius-m: 8px;
   --notification-radius-l: 12px;
   --notification-radius-full: 9999px;
-
-  /* --- Shadows --- */
   --notification-shadow-sm: 0 2px 8px var(--notification-black-15);
   --notification-shadow-md: 0 8px 24px var(--notification-black-20);
   --notification-shadow-lg: 0 15px 40px var(--notification-black-30);
   --notification-shadow-glow: 0 0 16px var(--notification-white-20);
-
-  /* --- Animations --- */
   --notification-dur-fast: 0.2s;
   --notification-dur-main: 0.3s;
   --notification-ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --notification-ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-  /* --- Semantic Tokens (Default) --- */
   --notification-bg: var(--notification-clr-primary);
   --notification-bg-gradient: linear-gradient(
     135deg,
@@ -96,10 +70,6 @@
   --notification-score-label-clr: var(--notification-white-60);
   --notification-score-value-clr: var(--notification-white);
 }
-
-/* ==========================================================================
-   2. Layout & Keyframes
-   ========================================================================== */
 
 #notificationOverlay {
   position: absolute;
@@ -117,7 +87,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--notification-space-3); /* Exactly half of previous 24px */
+  gap: var(--notification-space-3);
   user-select: none;
   filter: drop-shadow(var(--notification-shadow-lg));
   pointer-events: auto;
@@ -137,11 +107,6 @@
   }
 }
 
-/* ==========================================================================
-   3. Base Components
-   ========================================================================== */
-
-/* 3.1 Banner */
 .notification-banner {
   position: relative;
   display: flex;
@@ -157,7 +122,6 @@
   box-shadow: var(--notification-shadow-md);
 }
 
-/* 3.3 Content Structure */
 .notification-content-wrapper {
   display: flex;
   flex-direction: column;
@@ -169,16 +133,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--notification-space-2); /* Reduced gap */
+  gap: var(--notification-space-2);
   width: 100%;
-  padding: var(--notification-space-1) var(--notification-space-4); /* Tight padding */
+  padding: var(--notification-space-1) var(--notification-space-4);
 }
 
 .notification-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem; /* Slightly smaller icon */
+  font-size: 1.6rem;
 }
 
 .notification-text-group {
@@ -210,10 +174,9 @@
   opacity: 0.85;
 }
 
-/* 3.4 Match Score */
 .notification-match-score {
   width: 100%;
-  padding: var(--notification-space-1) var(--notification-space-6); /* Extremely tight vertical padding */
+  padding: var(--notification-space-1) var(--notification-space-6);
   background: var(--notification-score-bg);
   border-top: 1px solid var(--notification-score-border);
 }
@@ -251,11 +214,6 @@
   letter-spacing: 0.5px;
 }
 
-/* ==========================================================================
-   4. Theme Variants (States)
-   ========================================================================== */
-
-/* 4.1 Winner State */
 #notification.is-winner {
   --notification-bg: var(--notification-clr-winner-start);
   --notification-bg-gradient: linear-gradient(
@@ -272,7 +230,6 @@
   --notification-score-value-clr: var(--notification-text-clr-inv);
 }
 
-/* 4.2 Loser State */
 #notification.is-loser {
   --notification-bg: var(--notification-clr-loser-start);
   --notification-bg-gradient: linear-gradient(
@@ -289,11 +246,6 @@
   --notification-score-value-clr: var(--notification-text-clr-inv);
 }
 
-/* ==========================================================================
-   5. Interaction & Extras
-   ========================================================================== */
-
-/* 5.1 Badge Style (Simple extra info) */
 .notification-badge {
   display: inline-block;
   padding: var(--notification-space-1) var(--notification-space-4);
@@ -308,7 +260,6 @@
   box-shadow: var(--notification-shadow-sm);
 }
 
-/* 5.2 High Breaks */
 .notification-high-breaks {
   display: flex;
   flex-direction: column;
@@ -350,7 +301,6 @@
   color: var(--notification-white);
 }
 
-/* 5.3 Action Buttons */
 .notification-actions {
   display: flex;
   flex-wrap: wrap;
@@ -363,7 +313,7 @@
 .notification-actions button,
 .notification-actions .button {
   display: inline-block;
-  padding: var(--notification-space-1) var(--notification-space-2); /* 4px 8px */
+  padding: var(--notification-space-1) var(--notification-space-2);
   cursor: pointer;
   color: var(--notification-white);
   text-decoration: none;
@@ -403,8 +353,6 @@
   border-color: var(--notification-black-30);
 }
 
-/* Arena result upload outcome on the "Back to Arena" button. Scoped with
-   #notification so it outranks the is-winner/is-loser button background. */
 #notification #arenabutton.is-upload-ok,
 #notification #arenabutton.is-upload-ok:hover {
   background: var(--notification-clr-upload-ok);
@@ -417,21 +365,16 @@
   border-color: var(--notification-clr-upload-fail);
 }
 
-/* Inert while the arena result upload is in flight. */
 #notification #arenabutton:disabled {
   cursor: progress;
   opacity: 0.6;
 }
 
-/* The losing player in a 2-player match never uploads the arena result, so
-   their "Back to Arena" button keeps the success colour instead of the muted
-   default that reads as disabled. Upload outcome classes still take over. */
 #notification.is-loser #arenabutton:not(.is-upload-ok, .is-upload-fail) {
   background: var(--notification-clr-upload-ok);
   border-color: var(--notification-clr-upload-ok);
 }
 
-/* 5.4 Share Button (GameOver banner, top-right corner) */
 .notification-share {
   position: absolute;
   right: var(--notification-space-2);
@@ -459,7 +402,6 @@
   height: 15px;
 }
 
-/* Spent after the first press: same look, no longer interactive. */
 .notification-share:disabled {
   cursor: default;
 }

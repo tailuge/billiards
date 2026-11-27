@@ -16,9 +16,6 @@
   width: var(--ball-size-base);
   height: var(--ball-size-base);
   padding: 0;
-
-  /* The right rim must sit inside the 140px like .ballContainer's, or this box
-     renders 1px wider than the spin input below it. */
   box-sizing: border-box;
   border: 1px solid var(--wood-edge);
   border-left: none;
@@ -27,9 +24,6 @@
   background-image: var(--wood-sheen), var(--wood-grain);
   background-size: 100% 100%;
   background-repeat: no-repeat;
-
-  /* The panel's bevel, continued round the right rim this flap shares with it,
-     with the shadow gathering at the bottom edge. */
   box-shadow:
     inset 0 1px 0 var(--wood-hi),
     inset -1px 0 0 var(--wood-rim),
@@ -176,9 +170,6 @@ angle-input .butt {
   background-repeat: no-repeat;
   box-sizing: border-box;
   overflow: hidden;
-
-  /* Same lit top rim as the rail, on the rim shared with the panel's top
-     edge, and a soft shade so the block sits proud of the board. */
   box-shadow:
     inset 0 1px 0 var(--wood-hi),
     inset -1px 0 0 var(--wood-rim),

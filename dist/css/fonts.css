@@ -1,17 +1,8 @@
-/* Global Font Configuration */
-
-/*
- * Exo font is loaded directly in index.html and plot.html using <link rel="preconnect"> and <link rel="stylesheet">.
- * This avoids the render-blocking @import CSS network waterfall and improves Time-to-First-Paint.
- */
-
-/* Central font custom property - change --font-family-primary to update fonts globally */
 :root {
   --font-family-primary: "Exo", sans-serif;
   --font-family-mono: "Exo", monospace;
 }
 
-/* Apply primary font to body and common elements */
 body,
 html,
 button,

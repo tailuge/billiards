@@ -8,10 +8,6 @@
   position: relative;
   padding: 0;
   margin: 6px auto;
-
-  /* The same timber in shadow: a channel routed into the rail rather than a
-     separate brown box. The front face's wash is left off here, and the rim
-     shadows turn the other way, so the groove reads as cut in. */
   background-color: var(--wood-dark);
   background-image: var(--wood-grain);
   background-size: 100% 100%;
@@ -39,14 +35,6 @@
   z-index: 3;
 }
 
-/* Power Ramp (Sits behind the cue)
-
-   The ramp is the floor of the channel, not a ribbon laid over it, so it wears
-   the channel's light. The upper lip cuts the ramp's top edge into shadow, the
-   floor falls away again at the lower lip, and the crown of the ramp is left
-   clear for the power colour itself. That is the same bevel the timber beside
-   it and the cue tip above it already paint, which is what makes the panel read
-   as one continuous groove rather than a red sticker on a brown box. */
 .power-track {
   position: absolute;
   inset: 0;
@@ -89,7 +77,6 @@ input[type="range"].powerSlider:disabled {
   cursor: not-allowed;
 }
 
-/* Track - Webkit (Chrome/Safari) */
 input[type="range"].powerSlider::-webkit-slider-runnable-track {
   width: 100%;
   height: 100%;
@@ -107,7 +94,6 @@ input[type="range"].powerSlider::-webkit-slider-runnable-track {
     linear-gradient(to right, transparent var(--p), var(--wood-lit) var(--p));
 }
 
-/* Track - Firefox */
 input[type="range"].powerSlider::-moz-range-track {
   width: 100%;
   height: 100%;
@@ -125,7 +111,6 @@ input[type="range"].powerSlider::-moz-range-track {
     linear-gradient(to right, transparent var(--p), var(--wood-lit) var(--p));
 }
 
-/* Thumb - Webkit (Cue Tip) */
 input[type="range"].powerSlider::-webkit-slider-thumb {
   appearance: none;
   height: 100%;
@@ -146,7 +131,6 @@ input[type="range"].powerSlider::-webkit-slider-thumb {
   cursor: grab;
 }
 
-/* Thumb - Firefox (Cue Tip) */
 input[type="range"].powerSlider::-moz-range-thumb {
   height: 100%;
   width: 36px;

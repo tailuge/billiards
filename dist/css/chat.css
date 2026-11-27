@@ -1,4 +1,3 @@
-/* Chat Overlay */
 .chatarea {
   position: absolute;
   top: 44px;
@@ -28,11 +27,6 @@
   overflow-wrap: anywhere;
 }
 
-/* Set by shareReplayLink() once the replay link is posted. The end-of-game /
-   replay banner keeps #notificationOverlay (pointer-events: auto, z-index 2000)
-   across the top of the chat column, which would swallow clicks on the link;
-   lifting the chat above it also restores the text selection and cursor that
-   .view3d disables. */
 .chatarea.is-link {
   z-index: 2500;
   cursor: auto;
@@ -61,11 +55,9 @@
 }
 
 #inputTextDiv {
-  /* Corridor shell: defines the safe zone between aim inputs (left) and
-     menu buttons (right). The inner div is centered within this corridor. */
   position: absolute;
   width: auto;
-  inset: auto 78px 4px 148px; /* 3px up from original 1px */ /* tightened to preserve emoji width */ /* button column */
+  inset: auto 78px 4px 148px;
   z-index: 1000;
   display: none;
   align-items: center;
@@ -111,7 +103,6 @@
 }
 
 #inputText {
-  /* Fill the available space between the spin column and the buttons */
   flex: 1;
   min-width: 0;
   font-size: 15px;
@@ -121,8 +112,6 @@
   background: transparent;
   border: none;
   outline: none;
-
-  /* .view3d sets cursor: none, which would hide the text caret over the input */
   cursor: text;
 }
 

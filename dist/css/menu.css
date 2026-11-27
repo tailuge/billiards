@@ -1,4 +1,3 @@
-/* Static top-down minimap (D key), pinned to the top-left of the screen. */
 #minimap {
   position: fixed;
   top: 10px;
@@ -11,7 +10,6 @@
   display: none;
 }
 
-/* Outer Menu */
 .outerMenu {
   display: flex;
   flex-direction: column;
@@ -37,12 +35,6 @@
   height: 68px;
   border-radius: 6px;
   border-width: 3px;
-
-  /* The frame is ours, not the UA's. outset lit the top and left from the one
-     author colour at 45 degrees, and at several times the contrast of the
-     plate below it, so the bevel read as bolted on. Each side now takes a stop
-     from the same ramp, and the light falls straight down as it does on the
-     face. */
   border-style: solid;
   border-color: var(--steel-rim) var(--steel-face) var(--steel-shade)
     var(--steel-face);
@@ -124,9 +116,6 @@
   transform: scale(0.97);
 }
 
-/* Same subtle lightening the hit button gets from .timeout-btn:hover, so the
-   menu items and the view button answer the pointer before a press. Fill only:
-   the rim and the press scale stay as they are. */
 .menuButton:not(:disabled):hover {
   background-image: linear-gradient(
     180deg,

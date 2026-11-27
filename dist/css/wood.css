@@ -1,58 +1,18 @@
-/*
- * The wood surface: the control panel here, the two cue inputs in
- * aiminputs.css and the power channel in powerinput.css.
- *
- * One grain, one light direction. The board is lit from above, so every wooden
- * surface paints --wood-sheen (highlight at the top, shadow at the bottom) over
- * --wood-grain and adds a 1px inset highlight along its top rim. A bevel here
- * is shadow only: no size, radius, border width or offset changes, so the
- * layout is exactly what it was.
- *
- * feTurbulence's baseFrequency is per user unit and the SVG is 100% of its
- * element, so every surface gets the same ~250px x ~22px waves at any size;
- * background-size 100% 100% rebuilds the grain to fit rather than scaling a
- * fixed tile.
- *
- * feColorMatrix paints a constant #140d06 and keeps the noise as alpha, laid at
- * 0.55 over --wood-base: a #4a3322..#2f1f14 ramp with the pore lines darker
- * than the timber. Edit the matrix rows and --wood-base together.
- */
 :root {
-  /* Lit timber. --wood-dark is the same board in shadow: recess floors and the
-     power channel. --wood-edge is the rim the bevel turns away from the light. */
   --wood-base: #4a3322;
   --wood-dark: #3d2b1f;
   --wood-edge: #2a1c12;
-
-  /* One light source for every wooden surface: --wood-warm is the warm light
-     that falls on rims and faces, --wood-shade where a face turns away from it,
-     and --wood-lit for timber catching it directly. Channels are mixed here so
-     a tune of the light reaches the rail, the cue inputs and the channel at
-     once, and no surface paints its own timber colour. */
   --wood-warm: 255 231 196;
   --wood-hi: rgb(var(--wood-warm) / 22%);
   --wood-rim: rgb(var(--wood-warm) / 14%);
   --wood-rim-dim: rgb(var(--wood-warm) / 10%);
   --wood-shade: rgb(0 0 0 / 55%);
   --wood-lit: #c48e64;
-
-  /* The fittings: nickel steel, the metal the table's own corner castings use
-     (Material.001 in the model - rgb 163 163 168, roughness .19), warmed a hair
-     so it sits beside the timber rather than over it. Satin, not mirror: one
-     light from above, no bloom. The ramp stays narrow - lit and shade sit
-     within about twenty levels of the face - so the plate reads matte instead
-     of polished. --steel-rim sits one step above that ramp: the top edge of the
-     frame is a machined edge, and edges catch light the flat cannot. Only the
-     menu column wears the metal: the hit button's edge is the countdown ring,
-     not a rim, so it keeps its own face. */
   --steel-rim: #d4cfc4;
   --steel-lit: #c2bdb4;
   --steel-lit-hover: #cdc8bf;
   --steel-face: #a5a099;
   --steel-shade: #928d86;
-
-  /* The wash over the grain, kept separate so a surface can leave it out (the
-     power channel is a groove, not a face) without redefining the grain. */
   --wood-sheen: linear-gradient(
     180deg,
     rgb(var(--wood-warm) / 14%) 0%,
@@ -68,9 +28,6 @@
   background-image: var(--wood-sheen), var(--wood-grain);
   background-size: 100% 100%;
   background-repeat: no-repeat;
-
-  /* Front face of the bevel: a lit top rim, and the shadow gathering along the
-     bottom edge where the board meets the canvas. */
   box-shadow:
     inset 0 1px 0 var(--wood-hi),
     inset 0 -10px 14px -10px var(--wood-shade);

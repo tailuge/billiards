@@ -1,4 +1,3 @@
-/* Lobby Overlay */
 #lobbyContainer {
   position: absolute;
   top: 10px;
@@ -13,11 +12,6 @@
 #lobbyOverlay {
   display: flex;
   align-items: center;
-
-  /* Tighter than the shared a.pill's 8px (index.css): the name and the count
-     carry their own spacing, and this chip hangs in the corner over the cloth,
-     so it reads better compact. Matches the incoming challenge pill, which is
-     deliberately tighter than a.pill for the same reason. */
   padding-inline: 4px;
 }
 
@@ -26,12 +20,6 @@
   align-items: center;
 }
 
-/* Decorative crossed swords sitting between the incoming challenge pill and the
-   username pill. A real element (see dist/index.html) rather than generated
-   content, so it can be hidden from assistive tech, and it has no background:
-   it reads directly over the table. A hard 2px drop shadow (zero blur) keeps
-   the light glyph legible over bright cloth. The sibling rule keeps it out of
-   the way whenever no challenge is pending. */
 .challenge-vs {
   position: relative;
   margin-right: 3px;
@@ -41,15 +29,6 @@
   text-shadow: 0 2px 0 rgb(0 0 0 / 60%);
 }
 
-/* Caption under the crossed swords, naming the action the ✅ beside them takes.
-   Absolutely positioned so it hangs below the glyph without adding to the row's
-   height -- in flow it would stretch .challenge-row past the 30px username pill
-   and drag that pill out of line. Smaller than the 16px of the lobby name and
-   the challenge pill, and, like the swords, no background: it reads straight
-   over the table with a hard drop shadow keeping it legible on bright cloth --
-   a shorter one than the swords', since their inherited 2px is too far for text
-   this small. Translated in src/view/lobbyindicator.ts, and hidden with its
-   parent when no challenge is pending (the sibling rule above). */
 .challenge-hint {
   position: absolute;
   top: calc(100% + 6px);
@@ -74,34 +53,13 @@
   font-size: 16px;
 }
 
-/* The online count. #lobbyContainer is pinned to the right edge and sized by
-   its children, so one extra digit used to widen this pill leftwards and drag
-   the challenge row with it. A two-digit floor means 0 through 99 all occupy
-   the same box, so nothing moves when the tenth user joins. Centred rather
-   than right-aligned so the extra space of a single digit is split either side
-   of it instead of opening one gap; tabular figures make both digits as wide
-   as the "0" that sets the ch floor. A count past 99 just widens once, which
-   min-width (not width) allows. */
 .lobby-total {
   min-width: 2ch;
   text-align: center;
   font-variant-numeric: tabular-nums;
-
-  /* Half a digit of slack either side of a single-digit count is dead air. A
-     negative inline margin reclaims 1px of it on each side without touching
-     the 2ch floor, so the box still cannot change size between 9 and 10. */
   margin-inline: -1px;
 }
 
-/* The opponent status light, drawn on the row instead of a colour emoji. At
-   this size the emoji is a system bitmap with its own bearing and weight, so
-   the gap either side of it was not ours to set, its fill could not be tinted,
-   and it printed as "green circle" in the accessible name. A pseudo-element
-   adds no markup and no second element to keep in sync with the count.
-
-   The neutral grey is a state of its own, not an absent dot: the light is then
-   always present, so the pill's width cannot change when a real state arrives
-   (or goes away again). */
 .lobby-count::after {
   content: "";
   flex: none;
@@ -112,45 +70,33 @@
   box-shadow: 0 0 0 1px rgb(0 0 0 / 35%);
 }
 
-/* Sampled from the accept button's fill, so the two greens agree. */
 .lobby-count[data-opponent="online"]::after {
   background: #7cb342;
 }
 
-/* Brighter than the decline button's dark red: 6px of ink on dark glass needs
-   it, where that button is a filled background and can be deeper. */
 .lobby-count[data-opponent="offline"]::after {
   background: #e05252;
 }
 
 .lobby-icon {
-  /* The color emoji glyph is drawn low inside its em box, so flex centring of
-     the line box still leaves it a couple of pixels below the text. Optical
-     nudge; transform avoids shifting the rest of the row. */
   transform: translateY(-2px);
 }
 
 .lobby-rule {
-  /* The game mark left of the name: its own flex item, so the row centres it
-     against the name instead of sharing the name's line box, and a size of its
-     own -- smaller than the name -- with no line box of its own to add. A
-     circled digit is a symbol-font glyph whose metrics are taller than the
-     text's, which is what would push the name down with it. */
-  font-size: 0.8em;
+  font-family:
+    "Noto Sans Symbols 2", "Noto Sans Symbols", "Segoe UI Symbol",
+    "Apple Symbols", sans-serif;
+  font-size: 14px;
   line-height: 1;
+}
 
-  /* Optical nudge down: flex centring leaves the mark a pixel high against
-     the name. transform keeps it off the rest of the row's layout. */
-  transform: translateY(1px);
+@supports (-moz-appearance: none) {
+  .lobby-rule {
+    transform: translateY(-1px);
+  }
 }
 
 .challenge-pill {
-  /* Matches the adjacent username pill (a.pill in index.css) on height (30px),
-     radius (8px), fill (rgb(0 0 0 / 40%)) and rim (rgb(255 255 255 / 15%)),
-     so an incoming challenge reads as the same neutral chip rather than a
-     coloured badge. Horizontal padding is intentionally tighter than that
-     pill's 8px, keeping the content 4px from the rim. margin-right lifts the
-     pill 4px clear of its separator and the username pill. */
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -172,17 +118,6 @@
   display: none;
 }
 
-/* One-off diagonal glint along the pill's rim when a challenge arrives.
-   A second copy of the border is painted by the pseudo-element and masked to
-   leave only the 1px ring (mask-composite hides its content box), so the
-   highlight never washes over the fill or the accept/decline buttons. The
-   pseudo-element is pulled out by 1px, since an absolutely positioned box is
-   laid out against the padding box and would otherwise sit inside the rim.
-   The animation runs once and has no fill mode: removing `hidden` takes the
-   pill from display:none, which restarts it for the next challenger, and the
-   base opacity leaves nothing behind after the 2s sweep. Shifting the
-   oversized gradient from 100% to 0% drags the highlight from the top-left
-   corner of the rim to the bottom-right. */
 .challenge-pill::after {
   content: "";
   position: absolute;
@@ -233,9 +168,6 @@
 }
 
 .challenge-pill button {
-  /* Inline-flex centres the ✅/❌ glyphs in their own box, which keeps them
-     aligned with the text despite the uneven metrics of Unicode symbols. Dark
-     green/red fills keep the accept/decline meaning without the old glare. */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -253,11 +185,6 @@
 }
 
 #challengeAccept {
-  /* Sampled from the installed colour-emoji font (Noto Color Emoji, U+2705):
-     the tick's flat green is #7cb342, so the button disappears into the glyph
-     and only the tick reads. The dark green `color` is the monochrome-fallback
-     ink and keeps text/background contrast (~5.5:1) above AA if a platform
-     draws the tick from the font colour instead of its colour bitmap. */
   background: #7cb342;
   color: #15330b;
 }

@@ -103,9 +103,6 @@ canvas {
   align-items: flex-end;
   gap: 0;
   padding: 0;
-
-  /* No background: the surface and its grain belong to .wood-texture in
-     wood.css, which this element always carries. */
   border-radius: 0;
   border-top: 1px solid var(--wood-edge);
   box-sizing: border-box;
@@ -174,7 +171,6 @@ label {
   width: 9ch;
 }
 
-/* Bot Debug Overlay */
 #botDebugOverlay {
   position: absolute;
   top: 10px;
@@ -256,7 +252,6 @@ label {
   border-radius: 4px;
 }
 
-/* Compact mode */
 #botDebugOverlay.compact {
   width: 50px;
   height: 30px;
@@ -275,8 +270,6 @@ label {
   display: none;
 }
 
-/* Lobster emoji in header. Addressed by class rather than by the #botDebugToggle
-   id so this early rule stays low in the cascade order. */
 .bot-debug-emoji {
   cursor: pointer;
   font-size: 16px;
@@ -326,22 +319,14 @@ label {
 
 .drill-panel-right {
   inset: auto 10px 49px auto;
-
-  /* .outerMenu (hamburger/camera buttons) overflows 39px above #panel's top
-     edge, i.e. above #viewP1's bottom edge; clear that plus a small gap. */
   transform: none;
 }
 
-/* When the elevation panel is open the Hit button shifts up; the drill buttons
-   are lifted above it. DrillPanel sets `bottom` inline at runtime by measuring
-   the Hit button's actual top; here we just switch to bottom-anchoring. */
 .drill-panel.elevation-open {
   top: auto;
   transform: none;
 }
 
-/* The 44px spacer aligns Preview with the Hit button when centered; it is not
-   needed once the stack is lifted above the elevation panel. */
 .drill-gap {
   height: 44px;
 }
@@ -380,17 +365,6 @@ label {
   transform: scale(0.96);
 }
 
-/* ===========================================================================
-   Shot analysis split-screen mode (?ruletype=threecushion&practice&analysis)
-   Left: live 3D table (#viewP1). Right: results panel (#analysisPanel). The
-   table pane is responsively sized so CameraTop orients it (upright in a
-   narrow pane, horizontal in a wide one) automatically.
-   =========================================================================== */
-
-/* Grid: table top-left, the game's control panel bottom-left, analysis panel
-   down the right. Using grid (not flex) keeps #panel's own internal layout
-   (cue-ball spin widget, hit button, power slider) intact — we just hand it the
-   bottom-left cell and hide the menu buttons. */
 body.analysis-mode {
   display: grid;
   grid-template: "table panel" 1fr "controls panel" auto / 72% 28%;
@@ -400,14 +374,10 @@ body.analysis-mode #viewP1 {
   grid-area: table;
   width: auto;
   height: 100%;
-
-  /* Let the table cell shrink: the WebGL canvas carries an explicit pixel size,
-     which would otherwise become the cell's min-content size and overflow. */
   min-width: 0;
   min-height: 0;
 }
 
-/* The renderer sets an explicit pixel size on its canvas; cap it to the cell. */
 .analysis-content canvas {
   background: #0d0d10;
   border-radius: 6px;
@@ -421,15 +391,10 @@ body.analysis-mode #viewP1 > canvas {
   max-width: 100%;
 }
 
-/* Keep the control panel, but show only the aim controls the analysis view
-   wants (cue-ball spin + elevation, hit button, speed slider). Hide the game
-   menu/share/concede/comment buttons; the camera toggle is the floating button. */
 body.analysis-mode #panel {
   grid-area: controls;
   background: transparent;
   border-top: 0;
-
-  /* No board here, so no bevel rims either. */
   box-shadow: none;
 }
 
@@ -470,7 +435,6 @@ body.analysis-mode #commentMenu {
   padding: 14px;
 }
 
-/* Floating camera-toggle, lower-right of the table pane (only active control). */
 .analysis-camera-btn {
   position: absolute;
   right: 12px;
@@ -490,21 +454,10 @@ body.analysis-mode #commentMenu {
   background: rgb(0 60 110 / 85%);
 }
 
-/* Camera state classes set dynamically via JS */
-.menuButton.aim {
-  /* default aim view - no extra styling needed */
-}
-
 .menuButton.aimz {
-  /* zoomed-out aim view - slightly larger emoji */
   font-size: 28px;
 }
 
-.menuButton.topview {
-  /* top-down view */
-}
-
-/* Stack table / controls / analysis vertically on portrait/narrow screens. */
 @media (orientation: portrait) {
   body.analysis-mode {
     grid-template: "table" 1fr "controls" auto "panel" 45% / 100%;
@@ -516,11 +469,6 @@ body.analysis-mode #commentMenu {
   }
 }
 
-/* Chromeless mode (L key toggles body.chromeless): collapse the lower control
-   panel while keeping the right-hand menu column (hamburger/submenu + camera
-   button) visible. .outerMenu is taller than #panel and overflows above its
-   top edge, so overflow must stay visible; the panel's visibility:hidden and
-   pointer-events:none are re-asserted on .outerMenu to bring it back. */
 body.chromeless #panel {
   height: 0;
   min-height: 0;
@@ -536,16 +484,11 @@ body.chromeless #panel .outerMenu {
   pointer-events: auto;
 }
 
-/* AimInputs sets an inline visibility:visible on the spin-area overlap ball,
-   which would override #panel's inherited visibility:hidden and leak the spin
-   widget back onto the table. display:none hides it (and the hit button,
-   tilt/elevation and power slider) regardless of inline styles. */
 body.chromeless #panel .aimControlColumn,
 body.chromeless #panel .powerSliderContainer {
   display: none;
 }
 
-/* --- analysis results (ported from the former standalone page) --- */
 .analysis-content h2 {
   font-size: 14px;
   text-transform: uppercase;
@@ -611,7 +554,6 @@ body.chromeless #panel .powerSliderContainer {
   margin-bottom: 2px;
 }
 
-/* Header row of a 1-D bar: the on-demand "Show" button left of the label. */
 .bar-head {
   display: flex;
   align-items: center;
@@ -643,7 +585,6 @@ body.chromeless #panel .powerSliderContainer {
   background: #3a988e;
 }
 
-/* The bar whose 1-D sweep is currently shown (blue = the live/active accent). */
 .bar-row.active .bar-show {
   background: #4aa3ff;
 }
@@ -674,11 +615,6 @@ body.chromeless #panel .powerSliderContainer {
   padding-left: calc(6px + 3ch);
 }
 
-/* Row containing the track+ruler column flanked by the two step buttons.
-   flex-start (not center) — .bar-trackcol holds the track AND the taller
-   ruler below it, so centering against the whole column would push the
-   buttons below the track; flex-start aligns them with the track itself,
-   the column's first/top child. */
 .bar-trackrow {
   display: flex;
   align-items: flex-start;
@@ -703,11 +639,6 @@ body.chromeless #panel .powerSliderContainer {
   flex: 1;
 }
 
-/* A small colored patch under the marker, showing the live point's result
-   (red/green, matching the scatter dot colors) even when the bar hasn't been
-   Shown — also doubles as a visual cue for the size of one grid step.
-   Positioned/sized by positionMarkers; colored via .scored/.missed by
-   updateBarLiveCellFill, always on, independent of which bar is "active". */
 .bar-live-cell {
   position: absolute;
   top: 0;
@@ -725,11 +656,6 @@ body.chromeless #panel .powerSliderContainer {
   background: #e0556b;
 }
 
-/* The bowtie marker = the current shot's value on that bar (two triangles
-   meeting at the marker's position). Always plain white — coloring it
-   directly used to camouflage it against an identically-colored cell once
-   the bar was Shown (the live-cell patch above now carries the color
-   instead). Positioned by AnalysisPanel via left %. */
 .bar-marker {
   position: absolute;
   top: 0;
@@ -762,10 +688,6 @@ body.chromeless #panel .powerSliderContainer {
   border-color: transparent transparent transparent #fff;
 }
 
-/* Step buttons: move the marker exactly one grid step left/right. Solid CSS
-   triangles (same construction as the marker) so the two read as one visual
-   language; muted grey by default, white on hover, dimmed once the studied
-   window's edge is reached (no further step possible). */
 .bar-step {
   flex: none;
   width: 14px;
@@ -818,8 +740,6 @@ body.chromeless #panel .powerSliderContainer {
   border-left-color: #fff;
 }
 
-/* The single white ring = the current shot's spin on the scatter. Positioned by
-   AnalysisPanel via left/top %. */
 .spin-marker {
   position: absolute;
   width: 14px;
@@ -832,9 +752,6 @@ body.chromeless #panel .powerSliderContainer {
   box-shadow: 0 0 0 1px rgb(0 0 0 / 50%);
 }
 
-/* Filled with the live point's simulated result (green/red, matching the
-   scatter dot colors) once known; hollow/white while pending or while a 1-D
-   bar is the active display. */
 .spin-marker.scored {
   background: #2ec27e;
 }
@@ -905,10 +822,6 @@ body.chromeless #panel .powerSliderContainer {
   background: #3a988e;
 }
 
-/* The spin scatter is currently the live display (blue = the live/active
- * accent, matching .bar-row.active .bar-show). Needs an explicit :hover
- * override too — otherwise .spin-show:hover (2 selectors) outranks
- * .spin-show.active (also 2) on hover and the green flashes back. */
 .spin-show.active,
 .spin-show.active:hover {
   background: #4aa3ff;
@@ -928,29 +841,18 @@ body.chromeless #panel .powerSliderContainer {
   cursor: pointer;
 }
 
-/* ===========================================================================
-   About Panel Overlay Styles
-   =========================================================================== */
-
 .about-more {
   position: fixed;
   inset: 0;
   z-index: 3000;
 }
 
-/* `display` is only set in the open state: the closed state relies on the
-   browser's own rule for the `hidden` attribute, which for hidden="until-found"
-   is content-visibility rather than display. Setting `display` here would
-   override it and break find-in-page reveal and indexing. */
 .about-more:not([hidden]) {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* The blur cannot live on .about-more: while closed the element keeps its box
-   (content-visibility skips its contents, not its own paint). A pseudo-element
-   is content, so it is skipped too. */
 .about-more::before {
   content: "";
   position: absolute;
@@ -983,20 +885,12 @@ body.chromeless #panel .powerSliderContainer {
   font-weight: 200;
 }
 
-/* Scrolling sits on an inner element so the close button can stay pinned
-   to the panel corner instead of scrolling away with the content. */
 .about-scroll {
   overflow-y: auto;
   scrollbar-width: none;
   touch-action: pan-y;
   min-height: 0;
-
-  /* index.css sets `div { color: antiquewhite }`; keep the panel's text
-     colour instead of inheriting that one. */
   color: inherit;
-
-  /* No top padding: the first section's 2px top margin provides it, so
-     the gap above Play matches the 2px between the panels. */
   padding: 0 2px 2px;
 }
 
@@ -1004,9 +898,6 @@ body.chromeless #panel .powerSliderContainer {
   color: #8ab6f8;
 }
 
-/* The close button and the Play chips are one button in two sizes: the same
-   face, rim, inner light, press and focus ring. Size, radius and type are set
-   per element below. */
 .about-close,
 .mode-nav a {
   position: relative;
@@ -1044,7 +935,6 @@ body.chromeless #panel .powerSliderContainer {
   border-radius: 6px;
 }
 
-/* The button is 24px; its hit area is 44px, without moving the corner chrome. */
 .about-close::before {
   content: "";
   position: absolute;
@@ -1083,7 +973,6 @@ body.chromeless #panel .powerSliderContainer {
   margin: 10px 0 4px;
 }
 
-/* The keyword list is a footnote, not reading copy. */
 .about-panel h2.keywords {
   font-size: 0.8rem;
   letter-spacing: 0.05em;
@@ -1098,7 +987,6 @@ body.chromeless #panel .powerSliderContainer {
   color: #9a9a9a;
 }
 
-/* Screenshot above the keyword footnote. */
 .about-panel .about-shot {
   display: block;
   margin: 12px 0 0;
@@ -1317,9 +1205,6 @@ body.chromeless #panel .powerSliderContainer {
   text-overflow: ellipsis;
 }
 
-/* Fixed-size buttons, at most four per row. The max-width is four buttons
-   (4 x 5rem, below) plus their three gaps, so a fifth can never fit on a
-   wide panel; narrower panels wrap to fewer per row and every row is centred. */
 .mode-nav {
   display: flex;
   flex-wrap: wrap;
@@ -1329,9 +1214,6 @@ body.chromeless #panel .powerSliderContainer {
   margin: 4px auto;
 }
 
-/* Play is a UI label, not a content heading: keeping it out of the heading
-   outline leaves the About h1 as the first heading on the page. Controls and
-   About are summaries, which the outline ignores anyway. */
 .play-section .panel-title {
   margin: 0 0 6px;
   font-size: 15px;
@@ -1344,9 +1226,6 @@ body.chromeless #panel .powerSliderContainer {
   height: 2rem;
   padding: 0 2px;
   border-radius: 5px;
-
-  /* One line centred in the fixed height (the 2px accounts for the top and
-     bottom border), so the label stays a block box and can still ellipsis. */
   line-height: calc(2rem - 2px);
   text-align: center;
   text-decoration: none;
@@ -1357,8 +1236,6 @@ body.chromeless #panel .powerSliderContainer {
   white-space: nowrap;
 }
 
-/* Hover is pointer-only: on a touch screen the last tapped chip would
-   otherwise keep its lit face and read as the selected game. */
 @media (hover: hover) and (pointer: fine) {
   .about-close:hover,
   .mode-nav a:hover {
@@ -1383,23 +1260,12 @@ body.chromeless #panel .powerSliderContainer {
     inset 0 1px 2px rgb(0 0 0 / 40%);
 }
 
-/* The tray's buttons ring in white; the panel's ring borrows its link blue so
-   the focus ring never disappears into the glass. */
 .about-close:focus-visible,
 .mode-nav a:focus-visible {
   outline: 2px solid #8ab6f8;
   outline-offset: 2px;
 }
 
-/* The rim glint of an incoming challenge (.challenge-pill::after in
-   lobby.css), swept along the border of the panel's buttons on hover.
-   A plain hover background alone would not read as the same effect, so
-   the ring is painted by a pseudo-element and masked to its 1px border
-   (mask-composite hides the content box). The element is pulled out by
-   1px because an absolutely positioned box is laid out against the
-   padding box. Applying the animation only while hovering restarts it
-   on every fresh hover; the keyframes are lobby.css's, so both glints
-   stay identical. */
 .about-close::after,
 .mode-nav a::after {
   content: "";

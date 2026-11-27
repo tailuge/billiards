@@ -21,7 +21,6 @@
   stroke: #ffd900;
 }
 
-/* Default / Pool Colors */
 .ball-0 {
   --ball-fill: #fff !important;
   --ball-stroke: #000;
@@ -143,7 +142,6 @@
   stroke: #600;
 }
 
-/* Snooker Overrides */
 .snooker .ball-1 {
   --ball-stroke: #ffd700;
 }
@@ -228,7 +226,6 @@
   stroke: #e00;
 }
 
-/* Sagu Overrides: 4-ball carom -- balls 2 & 3 are red object balls */
 .sagu .ball {
   --ball-stroke: #000;
 }
@@ -255,9 +252,6 @@
   stroke: #f00;
 }
 
-/* Libre Overrides: 3-ball carom -- yellow and red object balls. The lines stay
-   black like three-cushion's: this reset outranks the bare .traj-N strokes, so
-   only the cue ball's opacity difference remains. */
 .libre .ball {
   --ball-stroke: #000;
 }
@@ -274,9 +268,6 @@
   --ball-stroke: #f00;
 }
 
-/* Three-Cushion Overrides: remain as it was (no colour) */
-
-/* We ensure any colored strokes are reset to black for threecushion */
 .threecushion .ball {
   --ball-stroke: #000;
 }
@@ -285,7 +276,6 @@
   stroke: #000;
 }
 
-/* SVG Diagram Shared Styles */
 .table-stroke {
   fill: none;
   stroke: #000;
