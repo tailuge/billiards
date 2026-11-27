@@ -59,11 +59,48 @@
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#bfc7c1" />
     <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
       :root {
-        /* Shared by the power slider and the cue tip. */
+        /* The surfaces, from the window ground up to the plot sheet. A
+           mineral grey chassis rather than white: this page stays on screen
+           through long sessions, and the table's black ink carries itself on
+           a darker ground. Each step is a few percent of light, so the two
+           plots still read as the brightest thing on the page.
+           The four tones are kept apart by their jobs: --panel is the face,
+           --plate the recessed bars and the controls box, --sheet the drawing
+           surface, --key a button sitting on either. */
+        --page: #bfc7c1;
+        --panel: #d8ded9;
+        --plate: #c9d1cb;
+        --sheet: #d0d7d1;
+        --key: #eaf0eb;
+        --key-hover: #dee5df;
+        --key-pressed: #d2dad4;
+
+        /* A control's edge is heavier than a frame rule, so a key reads as
+           something to press rather than as a ruled rectangle; --key-shadow
+           is the one-pixel ledge it sits on. Both have to clear 3:1 against
+           the surfaces either side of them to count as a boundary. */
+        --edge: #5c6d61;
+        --edge-hover: #445448;
+        --key-shadow: 0 1px 0 rgb(16 24 19 / 18%);
+
+        /* Ink in three weights: body, secondary labels, and the muted
+           readouts that sit under a control. */
+        --ink: #151c18;
+        --ink-2: #36413b;
+        --ink-3: #4b5750;
+
+        /* Hairlines: a panel's frame, and the quieter rule inside one. */
+        --rule: #a6b2a9;
+        --rule-soft: #bcc6be;
+
+        /* Shared by the power slider and the cue tip. --cue-deep is the same
+           blue at text contrast, for focus rings and the selected toggle. */
         --cue-blue: #2b7bb9;
+        --cue-deep: #16536f;
 
         /* The drawn extent of the table diagram: its 2:1 play area plus the
            rails, the viewBox generateBilliardTable() sets in svg.js. The table
@@ -183,8 +220,9 @@
         flex-direction: column;
         margin: 0;
         padding: 0 4px;
-        background: #f0f0f0;
-        color: #111;
+        background: var(--page);
+        color: var(--ink);
+        color-scheme: light;
         font-family:
           system-ui,
           -apple-system,
@@ -206,9 +244,11 @@
       h1 {
         box-sizing: border-box;
         margin: 0;
-        font-size: 0.6rem;
+        font-size: 0.66rem;
         line-height: 1.1;
-        font-weight: 400;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        color: var(--ink-2);
         text-align: center;
 
         /* One line, always: the header height is part of the budget above, and
@@ -227,18 +267,20 @@
          drifts out into the empty margin on a wide screen. */
       .lobby-button {
         position: absolute;
-        top: 0;
+        top: 1px;
         right: 0.4rem;
         box-sizing: border-box;
         display: flex;
         align-items: center;
-        height: var(--title-height);
+        height: calc(var(--title-height) - 2px);
         padding: 0 0.5rem;
-        background: #f5f5f5;
-        color: #666;
-        border: 1px solid #ccc;
+        background: var(--key);
+        color: var(--ink-2);
+        border: 1px solid var(--edge);
         border-radius: 2px;
+        box-shadow: var(--key-shadow);
         font-size: 0.6rem;
+        font-weight: 500;
         line-height: 1;
         text-decoration: none;
 
@@ -247,12 +289,13 @@
       }
 
       .lobby-button:hover {
-        background: #ececec;
-        color: #111;
+        background: var(--key-hover);
+        border-color: var(--edge-hover);
+        color: var(--ink);
       }
 
       .lobby-button:focus-visible {
-        outline: 2px solid #1d5886;
+        outline: 2px solid var(--cue-deep);
         outline-offset: 1px;
       }
 
@@ -271,12 +314,14 @@
         box-sizing: border-box;
         height: calc(var(--title-height) - 2px);
         padding: 0 0.2rem;
-        background: #f5f5f5;
-        color: #666;
-        border: 1px solid #ccc;
+        background: var(--key);
+        color: var(--ink-2);
+        border: 1px solid var(--edge);
         border-radius: 2px;
+        box-shadow: var(--key-shadow);
         font: inherit;
         font-size: 0.6rem;
+        font-weight: 500;
         cursor: pointer;
 
         /* The title bar it sits in is uppercased; the option text is not. */
@@ -284,7 +329,7 @@
       }
 
       .ruletype-select:focus-visible {
-        outline: 2px solid #1d5886;
+        outline: 2px solid var(--cue-deep);
         outline-offset: 1px;
       }
 
@@ -302,14 +347,14 @@
       }
 
       footer a {
-        color: #1d5886;
+        color: var(--cue-deep);
       }
 
       /* The one line the footer shows: the details' summary, at the footer's
          own fixed height. Clicking it folds out the research panel. */
       footer summary {
         cursor: pointer;
-        color: #1d5886;
+        color: var(--cue-deep);
         user-select: none;
       }
 
@@ -318,7 +363,7 @@
       }
 
       footer summary:focus-visible {
-        outline: 2px solid #1d5886;
+        outline: 2px solid var(--cue-deep);
         outline-offset: 1px;
       }
 
@@ -339,18 +384,18 @@
         max-height: 90dvh;
         padding: 0.6rem 0.8rem;
         overflow-y: auto;
-        background: #fff;
-        border: var(--bw) solid #ddd;
-        border-radius: 0.25rem;
-        box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
-        color: #333;
+        background: #eef1ee;
+        border: var(--bw) solid var(--rule);
+        border-radius: 3px;
+        box-shadow: 0 18px 44px rgb(18 26 21 / 26%);
+        color: #26302a;
         font-size: 0.7rem;
         line-height: 1.5;
       }
 
       .research-body h2 {
         margin: 0.8rem 0 0.25rem;
-        color: #111;
+        color: var(--ink);
         font-size: 0.75rem;
         font-weight: 600;
       }
@@ -376,7 +421,7 @@
       .research-body section + section {
         margin-top: 0.8rem;
         padding-top: 0.5rem;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--rule-soft);
       }
 
       /* The two links, at the foot of the English text. */
@@ -399,9 +444,10 @@
         display: flex;
         flex-direction: column;
         min-width: 0;
-        background: #fff;
-        border: var(--bw) solid #ddd;
-        border-radius: 0.25rem;
+        background: var(--panel);
+        border: var(--bw) solid var(--rule);
+        border-radius: 3px;
+        box-shadow: 0 1px 2px rgb(18 26 21 / 7%);
       }
 
       /* The two media panels take the width that makes them exactly fill the
@@ -415,12 +461,14 @@
         box-sizing: border-box;
         margin: 0;
         padding: 0 0.6rem;
-        border-bottom: 1px solid #eee;
-        color: #666;
-        font-size: 0.7rem;
+        background: var(--plate);
+        border-bottom: 1px solid var(--rule);
+        border-radius: 2px 2px 0 0;
+        color: var(--ink-2);
+        font-size: 0.68rem;
         font-weight: 600;
         height: var(--title-height);
-        letter-spacing: 0.06em;
+        letter-spacing: 0.07em;
         line-height: var(--title-height);
         text-transform: uppercase;
       }
@@ -454,9 +502,21 @@
         width: auto;
         max-width: 100%;
         aspect-ratio: var(--table-aspect);
-        background: #fff;
+        background: var(--sheet);
         touch-action: none;
         user-select: none;
+      }
+
+      /* ball-colors.css draws the reference grid and the status line for a
+         white figure, where #ccc and #737373 are quiet. On this sheet both
+         nearly vanish, so each is keyed up a step and left alone otherwise. */
+      svg.billiards-table .grid-line {
+        stroke: #98a69b;
+      }
+
+      svg.billiards-table .worker-status {
+        fill: var(--ink-3);
+        font-variant-numeric: tabular-nums;
       }
 
       /* The input panel is the positioning context for the dialogs laid over
@@ -476,7 +536,7 @@
 
       .replaydiagram {
         overflow: hidden;
-        background: #fff;
+        background: var(--sheet);
       }
 
       .topview canvas {
@@ -523,24 +583,37 @@
         font-size: 0.7rem;
         line-height: 1.2;
         padding: 0.2rem 0.8rem;
-        background: #fff;
-        color: #111;
-        border: 1px solid #ccc;
-        border-radius: 3px;
+        background: var(--key);
+        color: var(--ink);
+        border: 1px solid var(--edge);
+        border-radius: 2px;
+        box-shadow: var(--key-shadow);
         cursor: pointer;
       }
 
       .action-button:hover {
-        background: #f5f5f5;
+        background: var(--key-hover);
+        border-color: var(--edge-hover);
+      }
+
+      .action-button:active {
+        background: var(--key-pressed);
+        box-shadow: inset 0 1px 2px rgb(26 34 30 / 16%);
+      }
+
+      .action-button:focus-visible {
+        outline: 2px solid var(--cue-deep);
+        outline-offset: 1px;
       }
 
       /* A button that does not apply to the game type on the table. Greyed
          rather than hidden: the action is still part of what this page does,
          and a control that comes and goes between rules is harder to find. */
       .action-button:disabled {
-        color: #aaa;
-        background: #fafafa;
-        border-color: #e5e5e5;
+        color: #63716a;
+        background: #ccd4ce;
+        border-color: #b3bfb6;
+        box-shadow: none;
         cursor: not-allowed;
       }
 
@@ -579,7 +652,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgb(0 0 0 / 35%);
+        background: rgb(16 24 19 / 38%);
       }
 
       /* hidden beats the flex above, so the closed dialog takes no clicks. */
@@ -599,10 +672,10 @@
            panel and over the replay above. */
         max-height: calc(100% - 0.6rem);
         padding: 0.6rem 0.7rem;
-        background: #fff;
-        border: var(--bw) solid #ddd;
-        border-radius: 0.25rem;
-        box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+        background: #e4e9e4;
+        border: var(--bw) solid var(--rule);
+        border-radius: 3px;
+        box-shadow: 0 18px 44px rgb(18 26 21 / 26%);
         font-size: 0.7rem;
       }
 
@@ -619,10 +692,10 @@
       .modal-title {
         flex: 1;
         margin: 0;
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         font-weight: 600;
-        color: #666;
-        letter-spacing: 0.06em;
+        color: var(--ink-3);
+        letter-spacing: 0.07em;
         text-transform: uppercase;
       }
 
@@ -634,20 +707,22 @@
         font-size: 0.75rem;
         line-height: 1;
         padding: 0.15rem 0.4rem;
-        background: #fff;
-        color: #666;
-        border: 1px solid #ccc;
-        border-radius: 3px;
+        background: var(--key);
+        color: var(--ink-2);
+        border: 1px solid var(--edge);
+        border-radius: 2px;
+        box-shadow: var(--key-shadow);
         cursor: pointer;
       }
 
       .modal-close:hover {
-        background: #f5f5f5;
-        color: #111;
+        background: var(--key-hover);
+        border-color: var(--edge-hover);
+        color: var(--ink);
       }
 
       .modal-close:focus-visible {
-        outline: 2px solid #1d5886;
+        outline: 2px solid var(--cue-deep);
         outline-offset: 1px;
       }
 
@@ -715,11 +790,13 @@
         font-size: 0.7rem;
         line-height: 1.2;
         padding: 0.2rem 0.4rem;
-        background: #fff;
-        color: #111;
-        border: 1px solid #ccc;
-        border-radius: 3px;
+        background: var(--key);
+        color: var(--ink);
+        border: 1px solid var(--edge);
+        border-radius: 2px;
+        box-shadow: var(--key-shadow);
         cursor: pointer;
+        font-weight: 500;
 
         /* Sized by its name, and never wrapping one: names are capped at 16
            characters, which fits the dialog on any window worth using. */
@@ -727,11 +804,12 @@
       }
 
       .preset-name:hover {
-        background: #f5f5f5;
+        background: var(--key-hover);
+        border-color: var(--edge-hover);
       }
 
       .preset-name:focus-visible {
-        outline: 2px solid #1d5886;
+        outline: 2px solid var(--cue-deep);
         outline-offset: 1px;
       }
 
@@ -741,39 +819,41 @@
         font-size: 0.7rem;
         line-height: 1.2;
         padding: 0 0.4rem;
-        background: #fff;
-        color: #666;
-        border: 1px solid #ccc;
-        border-radius: 3px;
+        background: var(--key);
+        color: var(--ink-2);
+        border: 1px solid var(--edge);
+        border-radius: 2px;
+        box-shadow: var(--key-shadow);
         cursor: pointer;
       }
 
       .preset-delete:hover {
-        background: #f5f5f5;
-        color: #111;
+        background: var(--key-hover);
+        border-color: var(--edge-hover);
+        color: var(--ink);
       }
 
       .preset-delete:focus-visible {
-        outline: 2px solid #1d5886;
+        outline: 2px solid var(--cue-deep);
         outline-offset: 1px;
       }
 
       /* Only while the list is empty; renderPresets owns both of them. */
       .presets-empty {
         margin: 0;
-        color: #666;
+        color: var(--ink-3);
         font-size: 0.65rem;
       }
 
       /* The one control in the dialog that cannot be undone, so it does not sit
          in the same ink as the two beside it. */
       .action-button.destructive {
-        color: #8a1f1f;
-        border-color: #e0bcbc;
+        color: #7d1c1c;
+        border-color: #a9857f;
       }
 
       .action-button.destructive:hover {
-        background: #fdf3f3;
+        background: #f1ded9;
       }
 
       /* Which cushion the shot is played on: a pair of radios drawn as one
@@ -793,10 +873,12 @@
       .model-toggle span {
         display: block;
         padding: 2px 0;
-        border: 1px solid #ddd;
-        background: #fff;
-        color: #111;
+        border: 1px solid var(--edge);
+        background: var(--key);
+        color: var(--ink);
+        box-shadow: var(--key-shadow);
         font-size: 0.7rem;
+        font-weight: 500;
         text-align: center;
       }
 
@@ -811,13 +893,13 @@
       }
 
       .model-toggle input:checked + span {
-        border-color: #1d5886;
-        background: var(--cue-blue);
+        border-color: var(--cue-deep);
+        background: var(--cue-deep);
         color: #fff;
       }
 
       .model-toggle input:focus-visible + span {
-        outline: 2px solid #1d5886;
+        outline: 2px solid var(--cue-deep);
         outline-offset: 1px;
       }
 
@@ -849,17 +931,25 @@
       .collapse-label {
         display: block;
         padding: 2px 4px;
-        border: 1px solid #ddd;
-        border-radius: 3px;
-        background: #f5f5f5;
-        color: #111;
+        border: 1px solid var(--edge);
+        border-radius: 2px;
+        background: var(--key);
+        color: var(--ink-2);
+        box-shadow: var(--key-shadow);
         font-size: 0.7rem;
+        font-weight: 500;
         text-align: center;
         cursor: pointer;
       }
 
+      .collapse-label:hover {
+        background: var(--key-hover);
+        border-color: var(--edge-hover);
+        color: var(--ink);
+      }
+
       .collapse-toggle:focus-visible + .collapse-label {
-        outline: 2px solid var(--cue-blue);
+        outline: 2px solid var(--cue-deep);
         outline-offset: 1px;
       }
 
@@ -882,8 +972,9 @@
       }
 
       .constant-row {
-        color: #595959;
+        color: var(--ink-3);
         font-size: 0.65rem;
+        font-variant-numeric: tabular-nums;
       }
 
       /* Shot input: the table takes the row, and the controls sit in a box over the
@@ -936,9 +1027,9 @@
         gap: var(--stack-gap);
         min-height: var(--controls-min-h);
         padding: var(--controls-pad);
-        background: #f7f7f7;
-        border: var(--controls-border) solid #e2e2e2;
-        border-radius: 0.25rem;
+        background: var(--plate);
+        border: var(--controls-border) solid var(--rule);
+        border-radius: 3px;
       }
 
       /* The slider and the widget stack side by side, the link box under both:
@@ -964,13 +1055,14 @@
         padding: 2px 3px;
         overflow-y: auto;
         overflow-wrap: anywhere;
-        background: #fff;
-        border: 1px solid #ddd;
+        background: var(--key);
+        border: 1px solid var(--rule-soft);
         border-radius: 2px;
-        color: #444;
+        color: var(--ink-2);
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 0.4rem;
         line-height: 1.25;
+        font-variant-numeric: tabular-nums;
         user-select: all;
 
         /* No scrollbar: on a box this small it would take a third of the
@@ -1030,7 +1122,7 @@
       }
 
       svg.billiards-table .aim-line {
-        stroke: #c2410c;
+        stroke: #b23b0a;
         stroke-width: 0.0025;
         stroke-linecap: round;
         stroke-opacity: 0.75;
@@ -1038,7 +1130,7 @@
 
       svg.billiards-table .aim-head {
         fill: none;
-        stroke: #c2410c;
+        stroke: #b23b0a;
         stroke-width: 0.002;
       }
 
@@ -1058,7 +1150,7 @@
 
       .spin-widget .spin-ball {
         fill: #fff;
-        stroke: #333;
+        stroke: var(--ink-2);
         stroke-width: 0.02;
       }
 
@@ -1076,14 +1168,14 @@
       }
 
       .spin-widget .spin-axis {
-        stroke: #bbb;
+        stroke: var(--rule);
         stroke-width: 0.016;
       }
 
       .spin-widget .spin-dot {
-        fill: var(--cue-blue);
-        fill-opacity: 0.85;
-        stroke: #1d5886;
+        fill: var(--cue-deep);
+        fill-opacity: 0.9;
+        stroke: var(--cue-deep);
         stroke-width: 0.016;
       }
 
@@ -1092,7 +1184,7 @@
          never clips. The padding in the viewBox is what gives it the room to
          sit outside the ball. */
       .spin-widget .spin-readout {
-        fill: #333;
+        fill: var(--ink-2);
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 0.15px;
         pointer-events: none;
@@ -1129,7 +1221,7 @@
       }
 
       .elevation-widget .elevation-line {
-        stroke: #333;
+        stroke: var(--ink-2);
         stroke-width: 1.2;
         stroke-linecap: round;
       }
@@ -1138,12 +1230,12 @@
          cap as a dashed line, so the drag's range is visible up front. */
       .elevation-widget .elevation-arc {
         fill: none;
-        stroke: #c0c6cc;
+        stroke: #91a095;
         stroke-width: 1;
       }
 
       .elevation-widget .elevation-max {
-        stroke: #8a9199;
+        stroke: #7c8a80;
         stroke-width: 1;
         stroke-dasharray: 3 2;
         stroke-linecap: round;
@@ -1152,8 +1244,8 @@
       /* The measured angle, centred in the widget. Stroked white underneath so
          it stays legible where the cue line crosses it. */
       .elevation-widget .elevation-readout {
-        fill: #111;
-        stroke: #fff;
+        fill: var(--ink);
+        stroke: var(--plate);
         stroke-width: 3px;
         stroke-linejoin: round;
         paint-order: stroke;
@@ -1334,16 +1426,17 @@
                   </button>
                   <!-- Also bound by the bundle, which looks the button up by
                      this id and clears the ghost trails the replay leaves
-                     behind. The glyph is the erase key's; the label stays in
-                     the accessible name, which the symbol cannot carry. -->
+                     behind. A short word rather than a glyph: the erase-key
+                     symbol is not in every font, and a missing glyph leaves
+                     an empty button. The tooltip carries the full action. -->
                   <button
                     id="cleartraces"
-                    class="action-button icon-only"
+                    class="action-button"
                     type="button"
                     title="Clear traces"
                     aria-label="Clear traces"
                   >
-                    ⌫
+                    clr
                   </button>
                 </div>
                 <!-- Named open-constants rather than constants: the constants
