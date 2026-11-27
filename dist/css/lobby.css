@@ -13,6 +13,12 @@
 #lobbyOverlay {
   display: flex;
   align-items: center;
+
+  /* Tighter than the shared a.pill's 8px (index.css): the name and the count
+     carry their own spacing, and this chip hangs in the corner over the cloth,
+     so it reads better compact. Matches the incoming challenge pill, which is
+     deliberately tighter than a.pill for the same reason. */
+  padding-inline: 4px;
 }
 
 .challenge-row {
@@ -64,8 +70,27 @@
 .lobby-count {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   font-size: 16px;
+}
+
+/* The online count. #lobbyContainer is pinned to the right edge and sized by
+   its children, so one extra digit used to widen this pill leftwards and drag
+   the challenge row with it. A two-digit floor means 0 through 99 all occupy
+   the same box, so nothing moves when the tenth user joins. Centred rather
+   than right-aligned so the extra space of a single digit is split either side
+   of it instead of opening one gap; tabular figures make both digits as wide
+   as the "0" that sets the ch floor. A count past 99 just widens once, which
+   min-width (not width) allows. */
+.lobby-total {
+  min-width: 2ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+
+  /* Half a digit of slack either side of a single-digit count is dead air. A
+     negative inline margin reclaims 1px of it on each side without touching
+     the 2ch floor, so the box still cannot change size between 9 and 10. */
+  margin-inline: -1px;
 }
 
 .status-emoji {
@@ -91,10 +116,6 @@
   /* Optical nudge down: flex centring leaves the mark a pixel high against
      the name. transform keeps it off the rest of the row's layout. */
   transform: translateY(1px);
-}
-
-.lobby-count.is-hidden {
-  display: none;
 }
 
 .challenge-pill {

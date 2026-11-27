@@ -357,15 +357,20 @@ export class LobbyIndicator {
         status = "🔴"
       }
     }
-    const statusEmoji = ` <span class='status-emoji'>${status}</span>`
+    const statusEmoji = ` <span class="status-emoji">${status}</span>`
     // Own element so .lobby-count (a flex row) centers it separately from the
     // name; bare text would be glued to the name in one anonymous flex item.
     const lobbyIcon = `<span class="lobby-icon">${this.isSpectator ? "👀" : "👥"}</span>`
 
+    // Its own element so the CSS can hold a two-digit slot for it: as a bare
+    // text node the number was an anonymous flex item with no box to size, so
+    // the tenth user widened the pill and slid the challenge row aside.
+    const total = `<span class="lobby-total">${this.count}</span>`
+
     // Not session.playername: in replay that has already been overwritten with
     // the footage's player 1 (see the userName field).
     const name = this.userName
-    this.countElement.innerHTML = `${this.ruleBadge()}${name} ${lobbyIcon}${this.count}${statusEmoji}`
+    this.countElement.innerHTML = `${this.ruleBadge()}${name} ${lobbyIcon}${total}${statusEmoji}`
 
     // One entry per name; a name playing a game carries its rule emoji so the
     // tooltip shows e.g. "veli ④" for a sagu player. ruleType is absent for

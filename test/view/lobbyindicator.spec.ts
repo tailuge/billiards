@@ -39,7 +39,19 @@ describe("LobbyIndicator", () => {
     const element = document.getElementById("lobbyOverlay")
     const countElement = element?.querySelector(".lobby-count")
     expect(countElement?.textContent).toContain("TestPlayer")
-    expect(countElement?.classList.contains("is-hidden")).toBe(false)
+  })
+
+  it("renders the count in its own slot so its width is the CSS's to hold", async () => {
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    await indicator.init()
+
+    // Before the first presence snapshot the count is 0; what matters is that
+    // the number is an element with a settable width, not a bare text node.
+    const total = document
+      .getElementById("lobbyOverlay")
+      ?.querySelector(".lobby-count .lobby-total")
+    expect(total?.textContent).toBe("0")
   })
 
   it("includes arenaId in presence when tournamentId is set", async () => {
@@ -93,8 +105,6 @@ describe("LobbyIndicator", () => {
       ruleType: "nineball",
     })
 
-    const countElement = element?.querySelector(".lobby-count")
-    expect(countElement?.classList.contains("is-hidden")).toBe(false)
     expect(document.getElementById("challengePill")?.textContent).toContain(
       "Bob"
     )
@@ -116,7 +126,6 @@ describe("LobbyIndicator", () => {
     })
     expect(document.getElementById("challengePill")?.hidden).toBe(true)
     expect(document.getElementById("challengeDecline")).not.toBeNull()
-    expect(countElement?.classList.contains("is-hidden")).toBe(false)
     expect(element?.getAttribute("href")).toBe(LOBBY_URL)
   })
 
@@ -360,7 +369,6 @@ describe("LobbyIndicator", () => {
       { userId: "p2", tableId: "table-1" },
     ])
     expect(countElement?.textContent).toContain("Player 1")
-    expect(countElement?.classList.contains("is-hidden")).toBe(false)
 
     // Simulate opponent disconnected (not in list)
     onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
