@@ -16,6 +16,10 @@ import { t } from "../utils/i18n"
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
   private readonly countElement: HTMLSpanElement | null
+  private readonly ruleElement: HTMLElement | null
+  private readonly nameElement: HTMLElement | null
+  private readonly iconElement: HTMLElement | null
+  private readonly totalElement: HTMLElement | null
   private readonly challengePill: HTMLElement | null
   private messagingClient: MessagingClient | null = null
   private initPromise: Promise<void> | null = null
@@ -118,8 +122,21 @@ export class LobbyIndicator {
     this.countElement = this.element?.querySelector(
       ".lobby-count"
     ) as HTMLSpanElement
+    this.ruleElement = this.part(".lobby-rule")
+    this.nameElement = this.part(".lobby-name")
+    this.iconElement = this.part(".lobby-icon")
+    this.totalElement = this.part(".lobby-total")
     this.challengePill = id("challengePill")
     this.setupElement()
+  }
+
+  /**
+   * One part of the pill. The parts are elements in index.html and only their
+   * text is ever set, because the name arrives unsanitised from `?userName=`:
+   * building this row as markup would let a player name run as HTML.
+   */
+  private part(selector: string): HTMLElement | null {
+    return this.countElement?.querySelector(selector) as HTMLElement | null
   }
 
   private setupElement(): void {
@@ -349,10 +366,12 @@ export class LobbyIndicator {
     const session = Session.getInstance()
     const isTwoPlayer = this.isTwoPlayerGame()
 
+    this.renderRow()
+
     // The status light is a drawn dot (see .lobby-count::after), and this
     // attribute is what colours it. The state lives on the count element rather
-    // than in markup because that is the element the dot is painted on and the
-    // one that survives the innerHTML rebuild below.
+    // than in markup because that is the element the dot is painted on, and the
+    // one that outlives the per-part render below.
     //
     // "unknown" is the neutral grey third state: no opponent id, a bot, replay
     // or spectate, or a two-player game whose first presence snapshot has not
@@ -367,19 +386,6 @@ export class LobbyIndicator {
       }
     }
     this.countElement.dataset.opponent = opponent
-    // Own element so .lobby-count (a flex row) centers it separately from the
-    // name; bare text would be glued to the name in one anonymous flex item.
-    const lobbyIcon = `<span class="lobby-icon">${this.isSpectator ? "👀" : "👥"}</span>`
-
-    // Its own element so the CSS can hold a two-digit slot for it: as a bare
-    // text node the number was an anonymous flex item with no box to size, so
-    // the tenth user widened the pill and slid the challenge row aside.
-    const total = `<span class="lobby-total">${this.count}</span>`
-
-    // Not session.playername: in replay that has already been overwritten with
-    // the footage's player 1 (see the userName field).
-    const name = this.userName
-    this.countElement.innerHTML = `${this.ruleBadge()}${name} ${lobbyIcon}${total}`
 
     // One entry per name; a name playing a game carries its rule emoji so the
     // tooltip shows e.g. "veli ④" for a sagu player. ruleType is absent for
@@ -402,23 +408,40 @@ export class LobbyIndicator {
   }
 
   /**
-   * The game the reader is playing, as the mark shown left of their own name:
-   * the same map the tooltip uses. This reads the rules object rather than
-   * `ruleType`: in replay and spectate `ruleType` is the presence label
-   * ("replay", "spectator"), while the rules were built from the URL's
-   * `ruletype` and so still name the game being watched. The base names the
-   * rule in bot, exam, speedrun and club games, and any base the map does not
-   * know shows nothing rather than printing the label as text.
-   *
-   * Its own element, like the lobby icon: inside the name's own text the mark's
-   * fallback font gave the line a taller box than the name's and the pair sat
-   * low against the rest of the row. As a flex item it is centred by the row
-   * instead, and its size is the CSS's to set without moving the name.
+   * Writes the pill's text: the game mark, the name, the lobby icon and the
+   * count. Text only, never markup — the name arrives unsanitised from
+   * `?userName=`, so it can only ever become a text node. Each part is its own
+   * element in index.html so the row can centre and size them separately,
+   * instead of one anonymous flex item holding the whole line.
    */
-  private ruleBadge(): string {
-    const base = this.rules.rulename.split("-")[0]
-    const emoji = ruleTypeMap[base]?.emoji
-    return emoji ? `<span class="lobby-rule">${emoji}</span>` : ""
+  private renderRow(): void {
+    if (this.ruleElement) {
+      // The same map the tooltip uses, read from rules.rulename rather than
+      // ruleType: in replay and spectate that is the presence label ("replay"),
+      // while the rules still name the game being watched. An unknown base
+      // hides the mark rather than printing the label as text.
+      const base = this.rules.rulename.split("-")[0]
+      const emoji = ruleTypeMap[base]?.emoji
+      this.ruleElement.hidden = !emoji
+      this.ruleElement.textContent = emoji ?? ""
+    }
+
+    if (this.nameElement) {
+      // Not session.playername: in replay that has already been overwritten
+      // with the footage's player 1 (see the userName field).
+      this.nameElement.textContent = this.userName
+    }
+
+    if (this.iconElement) {
+      this.iconElement.textContent = this.isSpectator ? "👀" : "👥"
+    }
+
+    // Its own element so the CSS can hold a two-digit slot for the number: as a
+    // bare text node it had no box to size, so the tenth user widened the pill
+    // and slid the challenge row aside.
+    if (this.totalElement) {
+      this.totalElement.textContent = String(this.count)
+    }
   }
 
   private updateChallengePill(challenged: boolean): void {

@@ -429,6 +429,31 @@ describe("LobbyIndicator", () => {
     await indicator2.stop()
   })
 
+  it("sets the name as text, so a markup-shaped userName cannot run", async () => {
+    // The name reaches this class from ?userName= with no sanitising step
+    // (BrowserContainer reads it straight off the query string), so the row must
+    // be built from text nodes: as innerHTML, this name would create an element.
+    const injected = '<img src=x onerror="globalThis.pwned = true">'
+    Session.init("p1", injected, "table-1", false)
+
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    await indicator.init()
+
+    const countElement = document
+      .getElementById("lobbyOverlay")
+      ?.querySelector(".lobby-count") as HTMLElement
+    const nameElement = countElement.querySelector(".lobby-name") as HTMLElement
+
+    // Round-trips as characters: nothing was parsed out of it, and there is no
+    // handler left to fire.
+    expect(nameElement.textContent).toBe(injected)
+    expect(countElement.querySelector("img")).toBeNull()
+    expect((globalThis as any).pwned).toBeUndefined()
+
+    await indicator.stop()
+  })
+
   it("shows the watched rule's emoji in replay and spectate modes", async () => {
     const mockRules = { rulename: "snooker" } as any
     const ruleBadge = () =>
