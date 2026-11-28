@@ -3,18 +3,19 @@
 ## Project Structure & Module Organization
 - `src/` contains all TypeScript source code. Core areas include `src/model` (physics), `src/view` (rendering/UI), `src/controller` (state system/input/game flow), and `src/network` (multiplayer).
 - `test/` contains Jest tests organized by domain.
-- `dist/` holds built artifacts and assets used for deployment (and models, HTML, CSS, images that are not built).
+- `dist/` holds built artifacts and assets used for deployment (and models, HTML, CSS, images that are not built). `dist/*.js` bundles are gitignored, so a fresh checkout has none until `yarn build`.
 - `dist/index.html` is the main game page.
 
 ## Build, Test, and Development Commands
-- `yarn serve` starts the webpack dev server; open `http://localhost:8080/`.
-- `yarn build` produces a production build via webpack.
+- `yarn serve` runs `webpack --watch` alongside `http-server` serving `dist/` on port 8080; open `http://localhost:8080/`. It is not the webpack dev server: no script calls `webpack serve`.
+- `yarn build` runs `version-gen` (which writes `src/utils/version.ts`) then webpack, producing production-mode bundles in `dist/`.
+- `yarn dev` runs webpack alone, without `version-gen`, so `src/utils/version.ts` must already exist.
 - `yarn test` runs Jest with the repo’s config.
 - `yarn coverage` runs Jest with coverage reporting.
 - `yarn lint` runs `tsc --noEmit` and ESLint.
-- `yarn lint:css` runs stylelint on CSS files in `dist/css/`.
-- `yarn lint:html` runs html-validate on HTML files in `dist/`.
-- `yarn prettify` formats JS/TS/JSON/CSS/HTML and caches results.
+- `yarn lint:css` runs stylelint over `dist/**/*.{css,html}` — HTML included, not just `dist/css/`.
+- `yarn lint:html` runs html-validate with `test/.htmlvalidate.json`, skipping `yandex_*.html`.
+- `yarn prettify` formats `{src,test}/**/*.[jt]s`, `dist/**/*.{css,html}`, root `*.[jt]s` and `*.json`, with caching. It leaves CSS/HTML at the repo root alone, and it does rewrite tracked `dist/**/*.html`.
 
 ## Coding Style & Naming Conventions
 - TypeScript is the primary language; keep types explicit at public boundaries.
@@ -29,11 +30,13 @@
 - After making changes, run `yarn lint` and `yarn test`.
 
 ## Configuration Notes
-- Node/Yarn usage matches the README instructions (Yarn 1.x; see `package.json` engines).## Basic Quality Checks
+- Yarn 4.9.1, per `packageManager` in `package.json` (there is no `engines` field). Node 26 no longer bundles Corepack, so install the CLI directly: `npm i -g @yarnpkg/cli-dist@4.9.1`, then follow the README's "Local setup and build".
+
+## Basic Quality Checks
 
 Before submitting changes, ensure the following commands pass:
 
-- **Build:** `yarn dev`
+- **Build:** `yarn build` — it generates `src/utils/version.ts`; plain `yarn dev` cannot resolve that import on a fresh checkout
 - **Test:** `yarn test`
 - **Format:** `yarn prettify`
 

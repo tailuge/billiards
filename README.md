@@ -233,10 +233,9 @@ $$\vec{\omega} \leftarrow \vec{\omega} + \frac{mR}{I} (-\hat{n} \times \Delta v_
 ### Local setup and build
 
 ```shell
-nvm use v24.11.0
-corepack enable
-yarn set version 4.9.1
-yarn install
+npm i -g @yarnpkg/cli-dist@4.9.1
+yarn --version
+yarn install --immutable
 yarn build
 yarn gltfpack
 ```
